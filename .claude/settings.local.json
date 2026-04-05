@@ -1,0 +1,24 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx --version)",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(ls /mingw64/bin/busybox*)",
+      "Bash(ls /usr/bin/busybox*)",
+      "Bash(where.exe node:*)",
+      "Bash(where.exe python3:*)",
+      "Bash(where.exe deno:*)",
+      "Bash(where.exe powershell:*)",
+      "Bash(where.exe pwsh:*)",
+      "Bash(powershell -NoProfile -ExecutionPolicy Bypass -Command \"$l=[System.Net.HttpListener]::new\\(\\);$l.Prefixes.Add\\(''http://localhost:3001/''\\);$l.Start\\(\\);Write-Host ''OK'';$l.Stop\\(\\)\")",
+      "Bash(netstat -ano)",
+      "Bash(ls /usr/bin/nc* /usr/bin/ncat* /mingw64/bin/nc*)",
+      "Read(//c/Users/Jowy/.local/bin//**)",
+      "Read(//c/Users/Jowy/AppData/Local/Programs//**)",
+      "Bash(ls /mingw64/bin/*.exe)",
+      "Bash(xargs -I{} basename {})",
+      "Bash(where.exe dotnet:*)",
+      "Bash(perl -v)"
+    ]
+  }
+}

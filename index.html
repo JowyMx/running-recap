@@ -1,0 +1,1414 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Running Recap</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  background: #0a0a0a;
+  color: #fff;
+  font-family: 'Arial Black', 'Arial', sans-serif;
+  min-height: 100vh;
+}
+
+/* ── UPLOAD ── */
+#upload-view {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+.upload-card { width: 100%; max-width: 440px; text-align: center; }
+.upload-title {
+  font-size: clamp(14px, 3vw, 22px);
+  font-weight: 900;
+  letter-spacing: 0.3em;
+  color: rgba(255,255,255,0.88);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
+.upload-sub {
+  font-size: clamp(10px, 1.8vw, 13px);
+  letter-spacing: 0.25em;
+  color: rgba(255,255,255,0.28);
+  text-transform: uppercase;
+  margin-bottom: 40px;
+}
+#drop-zone {
+  border: 1px dashed rgba(255,255,255,0.18);
+  border-radius: 8px;
+  padding: 28px 24px;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+  margin-bottom: 4px;
+}
+#drop-zone:hover, #drop-zone.drag-over {
+  border-color: rgba(255,255,255,0.55);
+  background: rgba(255,255,255,0.03);
+}
+.drop-icon { font-size: 30px; color: rgba(255,255,255,0.22); margin-bottom: 14px; }
+.drop-text {
+  font-size: clamp(13px, 2.5vw, 16px);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: rgba(255,255,255,0.45);
+  margin-bottom: 6px;
+}
+.drop-sub { font-size: 11px; color: rgba(255,255,255,0.18); letter-spacing: 0.12em; }
+.opt-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin-bottom: 10px;
+}
+.opt-row label {
+  font-size: 11px;
+  color: rgba(255,255,255,0.32);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.opt-row input {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.14);
+  color: #fff;
+  padding: 7px 12px;
+  font-size: 13px;
+  font-family: inherit;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  border-radius: 4px;
+  width: 200px;
+  text-align: center;
+  transition: border-color 0.2s;
+}
+.opt-row input:focus { outline: none; border-color: rgba(255,255,255,0.45); }
+.error-msg { margin-top: 18px; font-size: 12px; color: rgba(255,100,100,0.95); letter-spacing: 0.08em; background: rgba(255,60,60,0.08); border: 1px solid rgba(255,80,80,0.25); border-radius: 6px; padding: 10px 14px; line-height: 1.6; }
+.upload-steps {
+  margin-bottom: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  text-align: left;
+}
+.step-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+.step-n {
+  font-size: 11px;
+  font-weight: 900;
+  color: rgba(255,255,255,0.5);
+  letter-spacing: 0.1em;
+  min-width: 16px;
+  padding-top: 1px;
+}
+.step-txt {
+  font-size: 11px;
+  color: rgba(255,255,255,0.32);
+  letter-spacing: 0.06em;
+  line-height: 1.7;
+}
+.step-txt strong { color: rgba(255,255,255,0.60); }
+#gps-zone-text {
+  font-size: clamp(13px, 2.5vw, 16px);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: rgba(255,255,255,0.45);
+}
+#gps-zone-text.loaded { color: rgba(127,255,212,0.7); font-size: 13px; }
+.drop-text.loaded { color: rgba(127,255,212,0.7); }
+.drop-sub.loaded  { color: rgba(127,255,212,0.45); }
+
+/* GPS input */
+#gps-zone {
+  border: 1px dashed rgba(255,255,255,0.18);
+  border-radius: 8px;
+  padding: 28px 24px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  transition: border-color 0.2s, background 0.2s;
+}
+#gps-zone:hover, #gps-zone.drag-over {
+  border-color: rgba(255,255,255,0.35);
+  background: rgba(255,255,255,0.02);
+}
+#gps-zone-text {
+  font-size: 11px;
+  color: rgba(255,255,255,0.25);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+#gps-zone-text.loaded { color: rgba(127,255,212,0.7); }
+
+#route-canvas-wrap {
+  flex: 1;
+  min-width: 0;
+  perspective: 700px;
+  perspective-origin: 50% 20%;
+}
+#route-canvas {
+  width: 100%;
+  height: min(20vh, 150px);
+  display: block;
+  transform: rotateX(42deg) scale(1.18);
+  transform-origin: center 85%;
+  border-radius: 4px;
+}
+
+/* ── RECAP ── */
+#recap-view { display: none; width: 100vw; height: 100vh; position: relative; overflow: hidden; }
+#screen {
+  width: 100%; height: 100%;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  position: relative;
+}
+.slide {
+  display: none; flex-direction: column;
+  align-items: center; justify-content: center;
+  text-align: center; width: 100%;
+  animation: fadeIn 0.35s ease;
+}
+.slide.active { display: flex; }
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to   { opacity: 1; transform: scale(1); }
+}
+.label {
+  font-size: clamp(13px, 2.5vw, 20px);
+  font-weight: 700; letter-spacing: 0.25em;
+  color: rgba(255,255,255,1); text-transform: uppercase;
+  margin-bottom: 8px;
+  text-shadow: 0 1px 8px rgba(0,0,0,0.8), 0 0 20px rgba(0,0,0,0.6);
+}
+.value {
+  font-size: clamp(60px, 18vw, 140px);
+  font-weight: 900; letter-spacing: -0.02em; line-height: 1;
+  color: #fff;
+  text-shadow: 0 2px 16px rgba(0,0,0,0.7), 0 0 40px rgba(0,0,0,0.5);
+}
+.unit {
+  font-size: clamp(16px, 3.5vw, 30px);
+  font-weight: 700; color: rgba(255,255,255,1);
+  margin-top: 8px; letter-spacing: 0.1em;
+  text-shadow: 0 1px 8px rgba(0,0,0,0.8);
+}
+.sub {
+  font-size: clamp(11px, 2vw, 16px);
+  color: rgba(255,255,255,1); margin-top: 12px;
+  letter-spacing: 0.15em; text-transform: uppercase;
+  text-shadow: 0 1px 6px rgba(0,0,0,0.8);
+}
+
+/* Rows slide (intervals & laps) */
+#rows-slide {
+  display: none; flex-direction: column;
+  align-items: center; width: 92%; max-width: 640px;
+  max-height: 100vh; overflow: hidden;
+  animation: fadeIn 0.35s ease;
+}
+#rows-slide.active { display: flex; }
+#rows-body { width: 100%; }
+.rows-label {
+  font-size: clamp(11px, 2vw, 15px);
+  letter-spacing: 0.3em; color: rgba(255,255,255,1);
+  text-transform: uppercase; margin-bottom: 18px;
+  text-shadow: 0 1px 6px rgba(0,0,0,0.8);
+}
+
+/* ── Interval list (vertical) ── */
+.int-row {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 80px 1fr 1fr 1fr;
+  border-bottom: 1px solid rgba(255,255,255,0.22);
+  align-items: center;
+}
+.int-row:last-child { border-bottom: none; }
+.int-n {
+  font-size: clamp(22px, 4vw, 38px);
+  font-weight: 900; color: rgba(255,255,255,1);
+  text-shadow: 0 1px 8px rgba(0,0,0,0.8);
+}
+.int-col { text-align: center; }
+.int-val {
+  font-size: clamp(18px, 3.5vw, 30px);
+  font-weight: 900; color: #fff; line-height: 1;
+  text-shadow: 0 1px 10px rgba(0,0,0,0.7);
+}
+.int-u {
+  font-size: clamp(8px, 1.3vw, 11px);
+  color: rgba(255,255,255,1); letter-spacing: 0.1em;
+  text-transform: uppercase; margin-top: 2px;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.9);
+}
+.int-fc   { color: #fff; text-shadow: 0 1px 10px rgba(0,0,0,0.9); }
+.int-pace { color: #fff; text-shadow: 0 1px 10px rgba(0,0,0,0.9); }
+.int-pow  { color: #fff; text-shadow: 0 1px 10px rgba(0,0,0,0.9); }
+
+/* ── Lap bar chart ── */
+#rows-body { width: 100%; }
+.laps-bars { width: 100%; display: flex; flex-direction: column; gap: 0; }
+.lap-row {
+  display: grid;
+  grid-template-columns: 3em 4em 1fr 3em;
+  align-items: center;
+  gap: 10px;
+  padding: 5px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.18);
+}
+.lap-row:last-child { border-bottom: none; }
+.lap-row-header {
+  border-bottom: 1px solid rgba(255,255,255,0.25) !important;
+  margin-bottom: 2px;
+}
+.lap-row-header .lap-row-n,
+.lap-row-header .lap-row-pace,
+.lap-row-header .lap-row-hr {
+  font-size: clamp(8px, 1.5vw, 11px) !important;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: rgba(255,255,255,0.70) !important;
+}
+.lap-row-n {
+  font-size: clamp(13px, 2.5vw, 20px);
+  font-weight: 900;
+  color: rgba(255,255,255,1);
+  text-align: right;
+}
+.lap-row-pace {
+  font-size: clamp(13px, 2.5vw, 20px);
+  font-weight: 900;
+  color: #fff;
+  text-align: right;
+}
+.lap-row-bar-wrap { position: relative; height: clamp(20px,3.5vw,32px); }
+.lap-row-bar {
+  position: absolute; left: 0; top: 0; height: 100%;
+  background: rgba(255,255,255,1);
+  border-radius: 6px;
+  width: 0%;
+}
+.lap-row-hr {
+  font-size: clamp(13px, 2.5vw, 20px);
+  font-weight: 900;
+  color: rgba(255,255,255,1);
+  text-align: left;
+}
+
+/* Summary */
+#summary-slide {
+  display: none; flex-direction: column;
+  align-items: center; width: 100%;
+  animation: fadeIn 0.4s ease;
+}
+#summary-slide.active { display: flex; }
+.sum-title {
+  font-size: clamp(9px, 2.5vw, 13px);
+  letter-spacing: 0.2em; color: rgba(255,255,255,1);
+  text-transform: uppercase; margin-bottom: 10px;
+  text-shadow: 0 1px 6px rgba(0,0,0,0.8);
+  width: 100%; text-align: center;
+  word-break: break-word;
+}
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px; width: 90%; max-width: 700px;
+}
+.stat-cell { padding: 3px 6px; border: none; text-align: center; }
+.stat-label {
+  font-size: clamp(8px, 1.3vw, 11px);
+  letter-spacing: 0.15em; color: rgba(255,255,255,1);
+  text-transform: uppercase; margin-bottom: 2px;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.8);
+}
+.stat-val {
+  font-size: clamp(13px, 2.5vw, 20px);
+  font-weight: 900; color: #fff; line-height: 1;
+  text-shadow: 0 1px 8px rgba(0,0,0,0.7);
+}
+.stat-u {
+  font-size: clamp(7px, 1vw, 9px);
+  color: rgba(255,255,255,1); margin-top: 2px;
+  text-transform: uppercase; letter-spacing: 0.1em;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.9);
+}
+.verdict {
+  margin-top: 20px;
+  font-size: clamp(10px, 1.8vw, 14px);
+  color: rgba(255,255,255,1); letter-spacing: 0.08em;
+  text-align: center; max-width: 500px; line-height: 1.8;
+  text-shadow: 0 1px 6px rgba(0,0,0,0.8);
+}
+.verdict span { color: #fff; text-shadow: 0 1px 6px rgba(0,0,0,0.9); }
+
+/* Nav */
+#dots {
+  position: fixed; bottom: 28px; left: 50%;
+  transform: translateX(-50%); display: flex; gap: 8px;
+}
+.dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: rgba(255,255,255,0.18); transition: background 0.3s;
+}
+.dot.on { background: rgba(255,255,255,0.9); }
+#bar {
+  position: fixed; bottom: 0; left: 0;
+  height: 2px; background: rgba(255,255,255,0.65);
+  width: 0%; transition: width 0.1s linear;
+}
+#tap-hint {
+  position: fixed; bottom: 48px; right: 28px;
+  font-size: 10px; color: rgba(255,255,255,0.18);
+  letter-spacing: 0.15em; text-transform: uppercase;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.8);
+}
+#replay {
+  display: none; margin-top: 8px;
+  padding: 8px 20px; background: transparent;
+  border: 1px solid rgba(255,255,255,0.22);
+  color: rgba(255,255,255,0.45); font-size: 11px;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  cursor: pointer; border-radius: 4px;
+  transition: border-color 0.2s, color 0.2s; font-family: inherit;
+}
+#replay:hover { border-color: rgba(255,255,255,0.8); color: #fff; }
+#new-session {
+  display: none; margin-top: 8px; padding: 8px 20px;
+  background: transparent; border: none;
+  color: rgba(255,255,255,0.2); font-size: 10px;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  cursor: pointer; font-family: inherit; transition: color 0.2s;
+}
+#new-session:hover { color: rgba(255,255,255,0.6); }
+</style>
+</head>
+<body>
+
+<!-- ── UPLOAD ── -->
+<div id="upload-view">
+  <div class="upload-card">
+    <div class="upload-title">Recap Running</div>
+    <div class="upload-steps">
+      <div class="step-row"><span class="step-n">1</span><span class="step-txt">Captura el nombre de la sesión</span></div>
+      <div class="step-row"><span class="step-n">2</span><span class="step-txt">Sube un archivo <strong>GPX / TCX / KML</strong> (Ruta + Métricas básicas) o <strong>CSV</strong> (Sin ruta + Métricas avanzadas), también puedes subir ambos archivos para Ruta + Métricas avanzadas</span></div>
+      <div class="step-row"><span class="step-n">3</span><span class="step-txt">Click en <strong>VER RECAP</strong></span></div>
+    </div>
+    <div class="opt-row" style="margin-bottom:14px;">
+      <label>Nombre de la sesión</label>
+      <input type="text" id="session-name" placeholder="Auto">
+    </div>
+    <div id="gps-zone" onclick="document.getElementById('gps-input').click()">
+      <span style="font-size:14px;color:rgba(255,255,255,0.2)">⊕</span>
+      <span id="gps-zone-text">GPX / TCX / KML</span>
+    </div>
+    <input type="file" id="gps-input" accept=".gpx,.tcx,.kml" style="display:none">
+    <div id="drop-zone" onclick="document.getElementById('file-input').click()">
+      <div class="drop-icon">↑</div>
+      <div class="drop-text" style="color:rgba(255,255,255,0.45)">CSV</div>
+      <div class="drop-sub" style="color:rgba(255,255,255,0.18)">Arrastra o haz clic para seleccionar</div>
+    </div>
+    <input type="file" id="file-input" accept=".csv" style="display:none">
+    <div id="upload-error" class="error-msg" style="display:none"></div>
+    <button id="gps-only-btn" onclick="startRecap()" style="display:none;margin-top:16px;width:100%;padding:12px;background:transparent;border:1px solid rgba(255,255,255,0.3);color:rgba(255,255,255,0.7);font-size:12px;letter-spacing:0.2em;text-transform:uppercase;cursor:pointer;border-radius:4px;font-family:inherit;transition:border-color 0.2s,color 0.2s;">
+      Ver Recap
+    </button>
+  </div>
+</div>
+
+<!-- ── RECAP ── -->
+<div id="recap-view">
+  <div id="screen">
+
+    <div class="slide" id="s0">
+      <div class="label" id="s0-label" style="display:none;"></div>
+      <div class="value" id="s0-value" style="font-size:clamp(28px,7vw,64px);letter-spacing:0.04em;"></div>
+      <div class="unit"  id="s0-unit"  style="display:none;"></div>
+    </div>
+
+    <div class="slide" id="s1">
+      <div class="label" id="s1-label">Distancia</div>
+      <div class="value" id="v-dist">0.00</div>
+      <div class="unit">Km</div>
+    </div>
+
+    <div class="slide" id="s2">
+      <div class="label" id="s2-label">Tiempo</div>
+      <div class="value" id="v-time" style="font-size:clamp(48px,13vw,110px);">00:00</div>
+      <div class="unit">hr : min : seg</div>
+    </div>
+
+    <div id="rows-slide">
+      <div class="rows-label" id="rows-label"></div>
+      <div id="rows-body"></div>
+    </div>
+
+    <div class="slide" id="s4">
+      <div class="label">FC media</div>
+      <div class="value" id="v-hr">0</div>
+      <div class="unit">ppm · FC máx <span id="v-hr-max">—</span></div>
+    </div>
+
+    <div class="slide" id="s5">
+      <div class="label">Ritmo medio</div>
+      <div class="value" id="v-pace">0:00</div>
+      <div class="unit">min / km</div>
+    </div>
+
+    <div class="slide" id="s6">
+      <div class="label">Cadencia</div>
+      <div class="value" id="v-cad">0</div>
+      <div class="unit">spm</div>
+    </div>
+
+    <div class="slide" id="s7">
+      <div class="label">Contacto con el suelo</div>
+      <div class="value" id="v-gct">0</div>
+      <div class="unit">ms</div>
+    </div>
+
+    <div class="slide" id="s8">
+      <div class="label">Potencia media</div>
+      <div class="value" id="v-pow">0</div>
+      <div class="unit" id="v-pow-unit">W</div>
+    </div>
+
+    <div class="slide" id="s9">
+      <div class="label">Calorías</div>
+      <div class="value" id="v-cal">0</div>
+      <div class="unit">kcal</div>
+    </div>
+
+    <div class="slide" id="s10">
+      <div class="label">Desnivel</div>
+      <div class="value" id="v-elev" style="font-size:clamp(32px,8vw,72px);letter-spacing:0.02em;">+0 / −0</div>
+      <div class="unit">metros</div>
+    </div>
+
+    <div class="slide" id="s11">
+      <div class="label">Temperatura</div>
+      <div class="value" id="v-temp">0</div>
+      <div class="unit">°C</div>
+    </div>
+
+    <div class="slide" id="s12">
+      <div class="label">Longitud de zancada</div>
+      <div class="value" id="v-stride">0</div>
+      <div class="unit">m</div>
+    </div>
+
+    <div class="slide" id="s13">
+      <div class="label">Relación vertical</div>
+      <div class="value" id="v-vr">0</div>
+      <div class="unit">%</div>
+    </div>
+
+    <div class="slide" id="s14">
+      <div class="label">Oscilación vertical</div>
+      <div class="value" id="v-vo">0</div>
+      <div class="unit">cm</div>
+    </div>
+
+    <div id="summary-slide">
+      <div class="sum-title" id="sum-title"></div>
+      <div class="stats-grid" id="stats-grid-top"></div>
+      <div id="route-canvas-wrap" style="display:none;margin-top:6px;">
+        <canvas id="route-canvas"></canvas>
+      </div>
+      <div class="verdict" id="verdict-text"></div>
+      <button id="replay" onclick="startShow()">↺ &nbsp; Repetir</button>
+      <button id="new-session" onclick="newSession()">Nueva sesión</button>
+    </div>
+
+  </div>
+  <div id="dots"></div>
+  <div id="bar"></div>
+  <div id="tap-hint">toca para avanzar</div>
+</div>
+
+<script>
+// ── CSV PARSER (soporta campos con saltos de línea internos) ──────────────
+function parseCSV(text) {
+  const rows = [];
+  let row = [], field = '', inQ = false;
+  const t = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+
+  for (let i = 0; i < t.length; i++) {
+    const c = t[i], n = t[i + 1];
+    if (inQ) {
+      if (c === '"' && n === '"') { field += '"'; i++; }
+      else if (c === '"') { inQ = false; }
+      else { field += c; }
+    } else {
+      if (c === '"') { inQ = true; }
+      else if (c === ',') { row.push(field); field = ''; }
+      else if (c === '\n') {
+        row.push(field); field = '';
+        if (row.some(f => f !== '')) rows.push(row);
+        row = [];
+      } else { field += c; }
+    }
+  }
+  if (field !== '' || row.length > 0) { row.push(field); if (row.some(f => f !== '')) rows.push(row); }
+  return rows;
+}
+
+// Normaliza cabecera: quita la parte de unidad después del primer \n
+function normalizeHeader(h) {
+  return h.split('\n')[0].trim();
+}
+
+function parseGarminCSV(text) {
+  // Eliminar BOM UTF-8 que Garmin incluye al exportar
+  const clean = text.replace(/^\uFEFF/, '');
+  const rows = parseCSV(clean.trim());
+  if (rows.length < 2) throw new Error('CSV vacío o sin datos suficientes.');
+
+  const headers = rows[0].map(normalizeHeader);
+  const dataRows = rows.slice(1).map(vals => {
+    const obj = {};
+    headers.forEach((h, j) => { obj[h] = (vals[j] || '').trim(); });
+    return obj;
+  });
+
+  // Detectar formato
+  if (headers.includes('Intervalo')) {
+    // Formato A: exportación de Pasos/Intervalos
+    const intervals = dataRows.filter(r => /^\d+$/.test(r['Intervalo']));
+    const summary   = dataRows.find(r => r['Intervalo'] === 'Resumen');
+    if (!intervals.length) throw new Error('No se encontraron filas de intervalo.');
+    if (!summary) throw new Error('No se encontró fila de Resumen.');
+    return { type: 'intervals', rows: intervals, summary };
+
+  } else if (headers.includes('Vueltas')) {
+    // Formato B: exportación de Vueltas
+    const laps    = dataRows.filter(r => /^\d+$/.test(r['Vueltas']));
+    const summary = dataRows.find(r => r['Vueltas'] === 'Resumen');
+    if (!laps.length) throw new Error('No se encontraron vueltas.');
+    if (!summary) throw new Error('No se encontró fila de Resumen.');
+    return { type: 'laps', rows: laps, summary };
+
+  } else {
+    throw new Error('Formato no reconocido. Exporta desde Garmin Connect → Actividad → Vueltas o Pasos.');
+  }
+}
+
+// ── HELPERS ───────────────────────────────────────────────────────────────
+function paceToSec(p) {
+  const parts = (p || '').split(':');
+  if (parts.length < 2) return 0;
+  return parseInt(parts[0]) * 60 + parseFloat(parts[1]);
+}
+function timeToSec(t) {
+  const parts = (t || '').split(':');
+  if (parts.length === 3) return parseInt(parts[0])*3600 + parseInt(parts[1])*60 + parseFloat(parts[2]);
+  if (parts.length === 2) return parseInt(parts[0])*60 + parseFloat(parts[1]);
+  return 0;
+}
+function secToMMSS(sec) {
+  const s = Math.round(sec);
+  return Math.floor(s/60) + ':' + String(s%60).padStart(2,'0');
+}
+function formatDate(d) {
+  const M = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  return `${d.getDate()} ${M[d.getMonth()]} ${d.getFullYear()}`;
+}
+function safeInt(v)   { return parseInt(v)   || 0; }
+function safeFloat(v) { return parseFloat(v) || 0; }
+function isDash(v)    { return !v || v === '--'; }
+
+// ── GPS PARSERS ────────────────────────────────────────────────────────────
+function parseGPX(text) {
+  const doc = new DOMParser().parseFromString(text, 'application/xml');
+  const pts = [...doc.querySelectorAll('trkpt,rtept')];
+  return pts.map(p => {
+    const ele  = p.querySelector('ele');
+    const time = p.querySelector('time');
+    const hr   = p.querySelector('hr, heartrate, HeartRateBpm Value');
+    const cad  = p.querySelector('cad, cadence, RunCadence');
+    const temp = p.querySelector('atemp, airtemp, temp, temperature');
+    const pow  = p.querySelector('power, watts');
+    return {
+      lat:  parseFloat(p.getAttribute('lat')),
+      lon:  parseFloat(p.getAttribute('lon')),
+      ele:  ele  ? parseFloat(ele.textContent)  : null,
+      time: time ? new Date(time.textContent).getTime() : null,
+      hr:   hr   ? parseFloat(hr.textContent)   : null,
+      cad:  cad  ? parseFloat(cad.textContent)  : null,
+      temp: temp ? parseFloat(temp.textContent) : null,
+      pow:  pow  ? parseFloat(pow.textContent)  : null,
+    };
+  }).filter(p => !isNaN(p.lat) && !isNaN(p.lon));
+}
+
+function parseTCX(text) {
+  const doc = new DOMParser().parseFromString(text, 'application/xml');
+  const pts = [...doc.querySelectorAll('Trackpoint')];
+  return pts.map(p => {
+    const lat  = p.querySelector('LatitudeDegrees');
+    const lon  = p.querySelector('LongitudeDegrees');
+    if (!lat || !lon) return null;
+    const ele  = p.querySelector('AltitudeMeters');
+    const time = p.querySelector('Time');
+    const hr   = p.querySelector('HeartRateBpm Value');
+    const cad  = p.querySelector('RunCadence, Cadence');
+    const pow  = p.querySelector('Watts');
+    return {
+      lat:  parseFloat(lat.textContent),
+      lon:  parseFloat(lon.textContent),
+      ele:  ele  ? parseFloat(ele.textContent)  : null,
+      time: time ? new Date(time.textContent).getTime() : null,
+      hr:   hr   ? parseFloat(hr.textContent)   : null,
+      cad:  cad  ? parseFloat(cad.textContent)  : null,
+      temp: null,
+      pow:  pow  ? parseFloat(pow.textContent)  : null,
+    };
+  }).filter(p => p && !isNaN(p.lat) && !isNaN(p.lon));
+}
+
+function parseKML(text) {
+  const doc = new DOMParser().parseFromString(text, 'application/xml');
+  const coords = [...doc.querySelectorAll('coordinates')];
+  const points = [];
+  coords.forEach(c => {
+    c.textContent.trim().split(/\s+/).forEach(triple => {
+      const parts = triple.split(',');
+      if (parts.length >= 2) {
+        const lon = parseFloat(parts[0]), lat = parseFloat(parts[1]);
+        const ele = parts.length >= 3 ? parseFloat(parts[2]) : null;
+        if (!isNaN(lat) && !isNaN(lon)) points.push({ lat, lon, ele, time: null, hr: null, cad: null, temp: null, pow: null });
+      }
+    });
+  });
+  return points;
+}
+
+function parseGPSFile(filename, text) {
+  const ext = filename.split('.').pop().toLowerCase();
+  if (ext === 'gpx') return parseGPX(text);
+  if (ext === 'tcx') return parseTCX(text);
+  if (ext === 'kml') return parseKML(text);
+  throw new Error('Formato no soportado. Usa .gpx, .tcx o .kml');
+}
+
+// Haversine distance between two lat/lon points in meters
+function haversine(a, b) {
+  const R = 6371000, toR = Math.PI/180;
+  const dLat = (b.lat - a.lat) * toR;
+  const dLon = (b.lon - a.lon) * toR;
+  const x = Math.sin(dLat/2)**2 + Math.cos(a.lat*toR)*Math.cos(b.lat*toR)*Math.sin(dLon/2)**2;
+  return R * 2 * Math.atan2(Math.sqrt(x), Math.sqrt(1-x));
+}
+
+function computeGPSStats(pts) {
+  const valid = pts.filter(p => !isNaN(p.lat) && !isNaN(p.lon));
+  if (valid.length < 2) return {};
+
+  // Distance
+  let distM = 0;
+  for (let i = 1; i < valid.length; i++) distM += haversine(valid[i-1], valid[i]);
+  const dist = distM / 1000;
+
+  // Time
+  const hasTimes = valid.filter(p => p.time).length > 2;
+  let totalSec = 0;
+  if (hasTimes) {
+    const times = valid.filter(p => p.time).map(p => p.time);
+    totalSec = Math.round((Math.max(...times) - Math.min(...times)) / 1000);
+  }
+  const h = Math.floor(totalSec/3600), m = Math.floor((totalSec%3600)/60), s = totalSec%60;
+  const time = totalSec > 0
+    ? (h > 0 ? `${h}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}` : `${m}:${String(s).padStart(2,'0')}`)
+    : '0:00';
+
+  // Pace
+  const avgPaceSec = totalSec > 0 && dist > 0 ? totalSec / dist : 0;
+
+  // Elevation
+  const eleVals = valid.filter(p => p.ele !== null).map(p => p.ele);
+  let elevation = 0, descent = 0;
+  for (let i = 1; i < eleVals.length; i++) {
+    const d = eleVals[i] - eleVals[i-1];
+    if (d > 0) elevation += d; else descent += Math.abs(d);
+  }
+
+  // HR
+  const hrVals = valid.filter(p => p.hr !== null && p.hr > 0).map(p => p.hr);
+  const avgHR = hrVals.length ? Math.round(hrVals.reduce((a,b)=>a+b,0)/hrVals.length) : 0;
+  const maxHR = hrVals.length ? Math.max(...hrVals) : 0;
+
+  // Cadence
+  const cadVals = valid.filter(p => p.cad !== null && p.cad > 0).map(p => p.cad);
+  const avgCad = cadVals.length ? Math.round(cadVals.reduce((a,b)=>a+b,0)/cadVals.length) : 0;
+
+  // Temp
+  const tempVals = valid.filter(p => p.temp !== null).map(p => p.temp);
+  const avgTemp = tempVals.length ? parseFloat((tempVals.reduce((a,b)=>a+b,0)/tempVals.length).toFixed(1)) : 0;
+
+  // Power
+  const powVals = valid.filter(p => p.pow !== null && p.pow > 0).map(p => p.pow);
+  const avgPow = powVals.length ? Math.round(powVals.reduce((a,b)=>a+b,0)/powVals.length) : 0;
+
+  return { dist, time, avgPaceSec, avgHR, maxHR, avgCad, avgTemp, avgPow,
+           elevation: Math.round(elevation), descent: Math.round(descent) };
+}
+
+// ── ROUTE RENDERER ─────────────────────────────────────────────────────────
+function drawRoute(canvas, points) {
+  // Subsample for performance (max 2000 pts)
+  const step = Math.max(1, Math.floor(points.length / 2000));
+  const pts  = points.filter((_, i) => i % step === 0);
+  if (pts.length < 2) return;
+
+  const W = canvas.width, H = canvas.height;
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, W, H);
+
+  let minLat=Infinity, maxLat=-Infinity, minLon=Infinity, maxLon=-Infinity;
+  pts.forEach(p => {
+    minLat = Math.min(minLat, p.lat); maxLat = Math.max(maxLat, p.lat);
+    minLon = Math.min(minLon, p.lon); maxLon = Math.max(maxLon, p.lon);
+  });
+
+  const pad    = 10;
+  const latR   = maxLat - minLat || 0.001;
+  const lonR   = maxLon - minLon || 0.001;
+  // Mercator-ish: correct lon scale for latitude
+  const latMid = (minLat + maxLat) / 2;
+  const lonRcorr = lonR * Math.cos(latMid * Math.PI / 180);
+  const scaleX = (W - 2*pad) / lonRcorr;
+  const scaleY = (H - 2*pad) / latR;
+  const scale  = Math.min(scaleX, scaleY);
+  const offX   = (W - lonRcorr * scale) / 2;
+  const offY   = (H - latR    * scale) / 2;
+
+  function xy(p) {
+    return {
+      x: offX + (p.lon - minLon) * Math.cos(latMid * Math.PI / 180) * scale,
+      y: H - (offY + (p.lat - minLat) * scale),
+    };
+  }
+
+  const path = pts.map(xy);
+
+  function drawPath() {
+    ctx.beginPath();
+    path.forEach((p, i) => i === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y));
+    ctx.stroke();
+  }
+
+  ctx.save();
+  ctx.lineCap = ctx.lineJoin = 'round';
+
+  // Outer diffuse glow
+  ctx.strokeStyle = 'rgba(200,200,200,0.06)';
+  ctx.lineWidth = 28;
+  drawPath();
+
+  // Mid glow
+  ctx.strokeStyle = 'rgba(210,210,210,0.15)';
+  ctx.lineWidth = 16;
+  drawPath();
+
+  // Inner glow
+  ctx.strokeStyle = 'rgba(220,220,220,0.35)';
+  ctx.lineWidth = 8;
+  drawPath();
+
+  // Main line
+  ctx.strokeStyle = 'rgba(235,235,235,0.90)';
+  ctx.lineWidth = 3.5;
+  drawPath();
+
+  // Bright center highlight
+  ctx.strokeStyle = 'rgba(255,255,255,0.85)';
+  ctx.lineWidth = 1.2;
+  drawPath();
+
+  ctx.restore();
+
+  // Start dot
+  const s = path[0];
+  ctx.beginPath(); ctx.arc(s.x, s.y, 5, 0, Math.PI*2);
+  ctx.fillStyle = 'rgba(255,255,255,0.9)'; ctx.fill();
+
+  // End dot
+  const e = path[path.length-1];
+  ctx.beginPath(); ctx.arc(e.x, e.y, 5, 0, Math.PI*2);
+  ctx.fillStyle = 'rgba(255,255,255,0.9)'; ctx.fill();
+}
+
+// ── DATA PROCESSING ───────────────────────────────────────────────────────
+function processData(data, customName) {
+  const { type, rows, summary } = data;
+  // Busca el primer valor no vacío entre los nombres de columna dados
+  const col = (...keys) => { for (const k of keys) { const v = summary[k]; if (v && v !== '--') return v; } return ''; };
+  // Búsqueda fuzzy: si ninguna clave exacta coincide, busca por substring (insensible a mayúsculas/tildes)
+  const colFuzzy = (...terms) => {
+    const keys = Object.keys(summary);
+    for (const term of terms) {
+      const t = term.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+      const found = keys.find(k => k.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').includes(t));
+      if (found && summary[found] && summary[found] !== '--') return summary[found];
+    }
+    return '';
+  };
+
+  const avgHR      = safeInt(col('Frecuencia cardiaca media', 'FC media', 'Frec. card. media') || colFuzzy('cardiaca media', 'fc media'));
+  const maxHR      = safeInt(col('FC máxima', 'FC máx.', 'Frec. card. máxima') || colFuzzy('fc maxima', 'fc max', 'cardiaca maxima'));
+  const avgPaceSec = paceToSec(col('Ritmo medio') || colFuzzy('ritmo medio'));
+  const avgCad     = safeInt(col('Cadencia de carrera media', 'Cadencia media', 'Cadencia') || colFuzzy('cadencia'));
+  const avgGCT     = safeInt(col('Tiempo medio de contacto con el suelo', 'Tiempo de contacto con el suelo', 'TCS media') || colFuzzy('contacto con el suelo', 'tcs'));
+  const avgPow     = safeInt(col('Potencia media', 'Potencia') || colFuzzy('potencia'));
+  const wkg        = safeFloat(col('Media de W/kg', 'W/kg medio', 'W/kg') || colFuzzy('w/kg'));
+  const cals       = safeInt(col('Calorías', 'Calorias') || colFuzzy('calor'));
+  const dist       = safeFloat(col('Distancia'));
+  const time       = col('Tiempo');
+  const elevation  = safeInt(col('Ascenso total', 'Desnivel positivo total', 'Desnivel positivo', 'Subida total')
+                          || colFuzzy('ascenso', 'desnivel positivo', 'subida'));
+  const descent    = safeInt(col('Descenso total', 'Desnivel negativo total', 'Desnivel negativo', 'Bajada total')
+                          || colFuzzy('descenso', 'desnivel negativo', 'bajada'));
+  const avgTemp    = safeFloat(col('Temperatura media', 'Temperatura promedio', 'Temperatura')
+                          || colFuzzy('temperatura'));
+  const strideLen  = safeFloat(col('Longitud media de zancada', 'Longitud de zancada media', 'Longitud de zancada')
+                          || colFuzzy('longitud de zancada', 'longitud media de zancada'));
+  const vertRatio  = safeFloat(col('Relación vertical media', '% de relación vertical', 'Relación vertical')
+                          || colFuzzy('relacion vertical', 'relación vertical'));
+  const vertOsc    = safeFloat(col('Oscilación vertical media', 'Oscilación vertical')
+                          || colFuzzy('oscilacion vertical', 'oscilación vertical'));
+  const dateStr    = formatDate(new Date());
+
+  let sessionName, sessionLabel, rowsLabel;
+
+  if (type === 'intervals') {
+    const count      = rows.length;
+    const durSec     = timeToSec(rows[0]['Tiempo'] || '0');
+    const typicalMin = Math.round(durSec / 60);
+    const autoName   = `${count} × ${typicalMin} MIN`;
+    sessionName  = customName.trim() || autoName;
+    sessionLabel = 'Sesión clave';
+    rowsLabel    = 'Intervalos';
+  } else {
+    const autoName = `${dist.toFixed(1)} KM`;
+    sessionName  = customName.trim() || autoName;
+    sessionLabel = 'Entrenamiento';
+    rowsLabel    = 'Vueltas';
+  }
+
+  // Armar filas para la tabla
+  const idKey   = type === 'intervals' ? 'Intervalo' : 'Vueltas';
+  const tableRows = rows.map(r => ({
+    n:    r[idKey],
+    hr:   r['Frecuencia cardiaca media'],
+    pace: r['Ritmo medio'],
+    pow:  r['Potencia media'],
+    dist: r['Distancia'],
+  }));
+
+  // Compacidad según número de filas
+  const rowPad = rows.length <= 4 ? '13px' : rows.length <= 7 ? '8px' : '5px';
+
+  return {
+    type, sessionName, sessionLabel, rowsLabel,
+    distLabel: 'Distancia', timeLabel: 'Tiempo',
+    dateStr, avgHR, maxHR, avgPaceSec, avgCad, avgGCT, avgPow, wkg,
+    cals, dist, time, elevation, descent, avgTemp, strideLen, vertRatio, vertOsc, tableRows, rowPad
+  };
+}
+
+// ── SLIDESHOW ─────────────────────────────────────────────────────────────
+let SLIDE_IDS, TOTAL, DUR;
+let cur=0, timer=null, barTimer=null, barStart=null, _stats=null, _gpsPoints=null, _csvStats=null, _csvFile=null;
+
+function initSlides(stats) {
+  const add = (id, dur) => { SLIDE_IDS.push(id); DUR.push(dur); };
+  SLIDE_IDS = []; DUR = [];
+
+  if (stats.tableRows && stats.tableRows.length > 0)    add('rows-slide', 3000);
+  if (stats.dist > 0)                                   add('s1',  2000);
+  if (timeToSec(stats.time) > 0)                        add('s2',  2000);
+  if (stats.avgPaceSec > 0)                             add('s5',  2000);
+  if (stats.avgHR > 0)                                  add('s4',  2000);
+  if (stats.elevation > 0 || stats.descent > 0)          add('s10', 1800);
+  if (stats.cals > 0)                                   add('s9',  1800);
+  if (stats.avgTemp !== 0)                              add('s11', 1800);
+  if (stats.avgCad > 0)                                 add('s6',  1800);
+  if (stats.strideLen > 0)                              add('s12', 1800);
+  if (stats.vertRatio > 0)                              add('s13', 1800);
+  if (stats.vertOsc > 0)                                add('s14', 1800);
+  if (stats.avgGCT > 0)                                 add('s7',  1800);
+  if (stats.avgPow > 0)                                 add('s8',  1800);
+
+  add('summary-slide', 0);
+  TOTAL = SLIDE_IDS.length;
+}
+
+function countUp(el, target, dur, fmt) {
+  const t0 = performance.now();
+  (function step(now) {
+    const p = Math.min((now-t0)/dur, 1);
+    const e = p<.5 ? 2*p*p : -1+(4-2*p)*p;
+    el.textContent = fmt(target*e);
+    if (p<1) requestAnimationFrame(step);
+  })(performance.now());
+}
+function countPace(el, sec, dur) {
+  const t0 = performance.now();
+  (function step(now) {
+    const p = Math.min((now-t0)/dur, 1);
+    const e = p<.5 ? 2*p*p : -1+(4-2*p)*p;
+    el.textContent = secToMMSS(sec*e);
+    if (p<1) requestAnimationFrame(step);
+  })(performance.now());
+}
+
+function showSlide(n) {
+  SLIDE_IDS.forEach(id => { const el=document.getElementById(id); if(el) el.classList.remove('active'); });
+  document.querySelectorAll('.dot').forEach((d,i) => d.classList.toggle('on', i===n));
+
+  const replay  = document.getElementById('replay');
+  const newSess = document.getElementById('new-session');
+  const hint    = document.getElementById('tap-hint');
+  const bar     = document.getElementById('bar');
+
+  if (n === TOTAL-1) {
+    document.getElementById('summary-slide').classList.add('active');
+    replay.style.display = newSess.style.display = 'block';
+    hint.style.opacity = '0'; bar.style.width = '100%';
+    const wrap   = document.getElementById('route-canvas-wrap');
+    const canvas = document.getElementById('route-canvas');
+    if (_gpsPoints && _gpsPoints.length > 1) {
+      wrap.style.display = 'block';
+      requestAnimationFrame(() => {
+        canvas.width  = canvas.offsetWidth;
+        canvas.height = canvas.offsetHeight;
+        drawRoute(canvas, _gpsPoints);
+      });
+    } else {
+      wrap.style.display = 'none';
+    }
+    return;
+  }
+  replay.style.display = newSess.style.display = 'none';
+  hint.style.opacity = '1';
+
+  const sl = document.getElementById(SLIDE_IDS[n]);
+  if (sl) sl.classList.add('active');
+
+  const d = Math.min(DUR[n]*.7, 1200);
+  const s = _stats;
+
+  const idx = id => SLIDE_IDS.indexOf(id);
+
+  // Animar barras de vueltas
+  if (n === idx('rows-slide')) {
+    // Escalar para que quepa en pantalla si hay muchas vueltas
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      const body  = document.getElementById('rows-body');
+      const label = document.getElementById('rows-label');
+      body.style.zoom = '';
+      const labelH = label ? label.offsetHeight + 18 : 0;
+      const bodyH  = body.scrollHeight;
+      const availH = window.innerHeight * 0.94 - labelH;
+      if (bodyH > availH) {
+        body.style.zoom = String(availH / bodyH);
+      }
+    }));
+
+    const bars = document.querySelectorAll('.lap-row-bar');
+    bars.forEach(el => { el.style.width = '0%'; });
+    const dur = 900;
+    let t0 = null;
+    function animBars(now) {
+      if (t0 === null) t0 = now;
+      const p = Math.min((now - t0) / dur, 1);
+      const e = p < .5 ? 2*p*p : -1+(4-2*p)*p;
+      bars.forEach(el => {
+        el.style.width = (parseFloat(el.dataset.pct) * e) + '%';
+      });
+      if (p < 1) requestAnimationFrame(animBars);
+    }
+    requestAnimationFrame(animBars);
+  }
+
+  if (n === idx('s1')) countUp(document.getElementById('v-dist'), s.dist, d, v=>v.toFixed(2));
+  if (n === idx('s2')) countUp(document.getElementById('v-time'), timeToSec(s.time), d, v => {
+    const t = Math.round(v), h = Math.floor(t/3600), m = Math.floor((t%3600)/60), sec = t%60;
+    return h > 0 ? `${h}:${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}` : `${m}:${String(sec).padStart(2,'0')}`;
+  });
+  if (n === idx('s5')) countPace(document.getElementById('v-pace'), s.avgPaceSec, d);
+  if (n === idx('s4')) {
+    countUp(document.getElementById('v-hr'), s.avgHR, d, v=>Math.round(v));
+    document.getElementById('v-hr-max').textContent = s.maxHR;
+  }
+  if (n === idx('s10') && idx('s10') !== -1) {
+    const el = document.getElementById('v-elev'), t0 = performance.now();
+    (function step(now) {
+      const p = Math.min((now-t0)/d, 1), e = p<.5 ? 2*p*p : -1+(4-2*p)*p;
+      el.textContent = `+${Math.round(s.elevation*e)} / −${Math.round(s.descent*e)}`;
+      if (p<1) requestAnimationFrame(step);
+    })(performance.now());
+  }
+  if (n === idx('s9'))  countUp(document.getElementById('v-cal'),    s.cals,      d, v=>Math.round(v));
+  if (n === idx('s11') && idx('s11') !== -1) countUp(document.getElementById('v-temp'),   s.avgTemp,   d, v=>v.toFixed(1));
+  if (n === idx('s6'))  countUp(document.getElementById('v-cad'),    s.avgCad,    d, v=>Math.round(v));
+  if (n === idx('s12') && idx('s12') !== -1) countUp(document.getElementById('v-stride'), s.strideLen, d, v=>v.toFixed(2));
+  if (n === idx('s13') && idx('s13') !== -1) countUp(document.getElementById('v-vr'),     s.vertRatio, d, v=>v.toFixed(1));
+  if (n === idx('s14') && idx('s14') !== -1) countUp(document.getElementById('v-vo'),     s.vertOsc,   d, v=>v.toFixed(1));
+  if (n === idx('s7'))  countUp(document.getElementById('v-gct'),    s.avgGCT,    d, v=>Math.round(v));
+  if (n === idx('s8'))  countUp(document.getElementById('v-pow'),    s.avgPow,    d, v=>Math.round(v));
+
+  if (barTimer) cancelAnimationFrame(barTimer);
+  barStart = performance.now();
+  const p0 = (n/(TOTAL-1))*100, p1 = ((n+1)/(TOTAL-1))*100;
+  (function animBar(now) {
+    const p = Math.min((now-barStart)/DUR[n], 1);
+    bar.style.width = (p0+(p1-p0)*p)+'%';
+    if (p<1) barTimer = requestAnimationFrame(animBar);
+  })(performance.now());
+
+  if (timer) clearTimeout(timer);
+  timer = setTimeout(advance, DUR[n]);
+}
+
+function advance()   { if (cur<TOTAL-1) { cur++; showSlide(cur); } }
+function startShow() { cur=0; if(timer) clearTimeout(timer); document.getElementById('bar').style.width='0%'; showSlide(0); }
+function newSession() {
+  _gpsPoints = null;
+  _csvStats  = null;
+  _csvFile   = null;
+  document.getElementById('gps-zone-text').textContent = 'Ruta opcional · GPX / TCX / KML';
+  document.getElementById('gps-zone-text').classList.remove('loaded');
+  document.getElementById('gps-input').value  = '';
+  document.getElementById('file-input').value = '';
+  const _dt = document.getElementById('drop-zone').querySelector('.drop-text');
+  const _ds = document.getElementById('drop-zone').querySelector('.drop-sub');
+  _dt.textContent = 'CSV'; _dt.style.color = '';
+  _ds.textContent = 'Arrastra o haz clic para seleccionar'; _ds.style.color = '';
+  updateRecapBtn();
+  document.getElementById('recap-view').style.display = 'none';
+  document.getElementById('upload-view').style.display = 'flex';
+}
+
+function startRecap() {
+  // Prioridad: si hay archivo CSV pendiente de parsear
+  if (_csvFile) {
+    const reader = new FileReader();
+    reader.onload = e => {
+      try {
+        const text = e.target.result.replace(/^\uFEFF/, ''); // quitar BOM
+        const data = parseGarminCSV(text);
+        const name = document.getElementById('session-name').value.trim();
+        _csvStats = processData(data, name);
+        buildRecap(_csvStats);
+      } catch (err1) {
+        // Reintentar con Latin-1
+        const r2 = new FileReader();
+        r2.onload = e2 => {
+          try {
+            const text2 = e2.target.result.replace(/^\uFEFF/, '');
+            const data2 = parseGarminCSV(text2);
+            const name = document.getElementById('session-name').value.trim();
+            _csvStats = processData(data2, name);
+            buildRecap(_csvStats);
+          } catch (err2) {
+            showError('Error al procesar CSV: ' + err2.message);
+          }
+        };
+        r2.readAsText(_csvFile, 'ISO-8859-1');
+      }
+    };
+    reader.readAsText(_csvFile, 'UTF-8');
+    return;
+  }
+  // CSV ya parseado
+  if (_csvStats) {
+    const name = document.getElementById('session-name').value.trim();
+    if (name) _csvStats.sessionName = name;
+    buildRecap(_csvStats);
+    return;
+  }
+  // Solo GPS
+  if (!_gpsPoints || _gpsPoints.length < 2) return;
+  const name = document.getElementById('session-name').value.trim() || 'Ruta';
+  const g = computeGPSStats(_gpsPoints);
+  const stats = {
+    type: 'laps', sessionName: name, sessionLabel: 'Ruta',
+    rowsLabel: '', distLabel: 'Distancia', timeLabel: 'Tiempo',
+    dateStr: '',
+    dist:       g.dist       || 0,
+    time:       g.time       || '0:00',
+    avgPaceSec: g.avgPaceSec || 0,
+    avgHR:      g.avgHR      || 0,
+    maxHR:      g.maxHR      || 0,
+    avgCad:     g.avgCad     || 0,
+    avgGCT:     0,
+    avgPow:     g.avgPow     || 0,
+    wkg:        0,
+    cals:       0,
+    elevation:  g.elevation  || 0,
+    descent:    g.descent    || 0,
+    avgTemp:    g.avgTemp    || 0,
+    strideLen:  0,
+    vertRatio:  0,
+    vertOsc:    0,
+    tableRows:  [],
+    rowPad:     '0'
+  };
+  buildRecap(stats);
+}
+// Alias por compatibilidad
+function startGPSOnly() { startRecap(); }
+
+// ── BUILD RECAP ───────────────────────────────────────────────────────────
+function buildRecap(stats) {
+  _stats = stats;
+
+  // Slide 0
+  document.getElementById('s0-label').textContent = stats.sessionLabel;
+  document.getElementById('s0-value').textContent = stats.sessionName;
+  document.getElementById('s0-unit').textContent  = stats.dateStr;
+
+  // Labels dinámicos
+  document.getElementById('s1-label').textContent = stats.distLabel;
+  document.getElementById('s2-label').textContent = stats.timeLabel;
+
+  // Power unit
+  document.getElementById('v-pow-unit').textContent = stats.wkg
+    ? `W · ${stats.wkg.toFixed(2)} W/kg`
+    : 'W';
+
+  // Tabla de filas
+  document.getElementById('rows-label').textContent = stats.rowsLabel;
+  if (stats.type === 'laps') {
+    // Calcular rango de ritmo para escalar barras
+    const paceSecs = stats.tableRows
+      .filter(r => !isDash(r.pace))
+      .map(r => paceToSec(r.pace));
+    const minPace = Math.min(...paceSecs);
+    const maxPace = Math.max(...paceSecs);
+    const paceRange = maxPace - minPace || 1;
+
+    const rows = stats.tableRows.map((r, i) => {
+      const paceVal = isDash(r.pace) ? '—' : r.pace;
+      const hrVal   = isDash(r.hr)   ? '' : r.hr;
+      const sec     = isDash(r.pace) ? 0 : paceToSec(r.pace);
+      // barra más larga = ritmo más rápido (menor segundos)
+      const pct = isDash(r.pace) ? 0 : Math.round(((maxPace - sec) / paceRange) * 70 + 15);
+      const distVal = (() => {
+        const d = parseFloat(r.dist) || 0;
+        if (d === 0) return r.n;
+        // vuelta completa (≥ 0.95 km) → acumulado entero
+        if (d >= 0.95) {
+          const cumulative = stats.tableRows
+            .slice(0, i + 1)
+            .reduce((sum, row) => sum + (parseFloat(row.dist) || 0), 0);
+          return Math.round(cumulative);
+        }
+        // vuelta fraccionada → solo la fracción
+        return parseFloat(d.toFixed(2));
+      })();
+      return `<div class="lap-row">
+        <div class="lap-row-n">${distVal}</div>
+        <div class="lap-row-pace">${paceVal}</div>
+        <div class="lap-row-bar-wrap"><div class="lap-row-bar" data-pct="${pct}"></div></div>
+        <div class="lap-row-hr">${hrVal}</div>
+      </div>`;
+    }).join('');
+
+    const header = `<div class="lap-row lap-row-header">
+      <div class="lap-row-n">KM</div>
+      <div class="lap-row-pace">RITMO</div>
+      <div class="lap-row-bar-wrap"></div>
+      <div class="lap-row-hr">PPM</div>
+    </div>`;
+
+    document.getElementById('rows-body').innerHTML = `<div class="laps-bars">${header}${rows}</div>`;
+
+    // barras se animan desde showSlide cuando el slide se vuelve visible
+  } else {
+    // Intervalos: mismo diseño de barras que vueltas
+    const paceSecs = stats.tableRows
+      .filter(r => !isDash(r.pace))
+      .map(r => paceToSec(r.pace));
+    const minPace   = Math.min(...paceSecs);
+    const maxPace   = Math.max(...paceSecs);
+    const paceRange = maxPace - minPace || 1;
+
+    const rows = stats.tableRows.map(r => {
+      const paceVal = isDash(r.pace) ? '—' : r.pace;
+      const hrVal   = isDash(r.hr)   ? '' : r.hr;
+      const sec     = isDash(r.pace) ? 0 : paceToSec(r.pace);
+      const pct     = isDash(r.pace) ? 0 : Math.round(((maxPace - sec) / paceRange) * 70 + 15);
+      return `<div class="lap-row">
+        <div class="lap-row-n">${r.n}</div>
+        <div class="lap-row-pace">${paceVal}</div>
+        <div class="lap-row-bar-wrap"><div class="lap-row-bar" data-pct="${pct}"></div></div>
+        <div class="lap-row-hr">${hrVal}</div>
+      </div>`;
+    }).join('');
+
+    const header = `<div class="lap-row lap-row-header">
+      <div class="lap-row-n">INT</div>
+      <div class="lap-row-pace">RITMO</div>
+      <div class="lap-row-bar-wrap"></div>
+      <div class="lap-row-hr">PPM</div>
+    </div>`;
+
+    document.getElementById('rows-body').innerHTML = `<div class="laps-bars">${header}${rows}</div>`;
+  }
+
+  // Summary
+  document.getElementById('sum-title').textContent = stats.sessionName;
+
+  // Desnivel slide: set directly (not countUp)
+  if (stats.elevation > 0 || stats.descent > 0) {
+    document.getElementById('v-elev').textContent = `+${stats.elevation} / −${stats.descent}`;
+  }
+
+  const showGCT    = stats.avgGCT > 0;
+  const showPow    = stats.avgPow > 0;
+  const showElev   = stats.elevation > 0 || stats.descent > 0;
+  const showTemp   = stats.avgTemp !== 0;
+  const showStride = stats.strideLen > 0;
+  const showVR     = stats.vertRatio > 0;
+  const showVO     = stats.vertOsc > 0;
+
+  const cellHTML = c => `<div class="stat-cell">
+    <div class="stat-label">${c.label}</div>
+    <div class="stat-val">${c.val}</div>
+    <div class="stat-u">${c.u}</div>
+  </div>`;
+
+  const topCells = [
+    { label: 'Distancia',   val: stats.dist.toFixed(2),       u: 'km' },
+    { label: 'Tiempo',      val: (() => { const t=timeToSec(stats.time); const h=Math.floor(t/3600),m=Math.floor((t%3600)/60),s=t%60; return h>0?`${h}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`:`${m}:${String(s).padStart(2,'0')}`; })(), u: 'h:m:s' },
+    { label: 'Ritmo medio', val: secToMMSS(stats.avgPaceSec), u: 'min/km' },
+    { label: 'FC media',    val: stats.avgHR,                 u: 'ppm' },
+    ...(showElev   ? [{ label:'Desnivel',          val:`+${stats.elevation} / −${stats.descent}`, u:'metros' }] : []),
+    { label: 'Calorías',    val: stats.cals,                  u: 'kcal' },
+    ...(showTemp   ? [{ label:'Temperatura',        val:stats.avgTemp.toFixed(1),   u:'°C'  }] : []),
+    { label: 'Cadencia',    val: stats.avgCad,                u: 'spm' },
+    ...(showStride ? [{ label:'Long. zancada',       val:stats.strideLen.toFixed(2), u:'m'   }] : []),
+    ...(showVR     ? [{ label:'Relación vertical',   val:stats.vertRatio.toFixed(1), u:'%'   }] : []),
+    ...(showVO     ? [{ label:'Oscilación vertical', val:stats.vertOsc.toFixed(1),   u:'cm'  }] : []),
+    ...(showGCT    ? [{ label:'GCT',                 val:stats.avgGCT,               u:'ms'  }] : []),
+    ...(showPow    ? [{ label:'Potencia',             val:stats.avgPow, u:`W · ${stats.wkg.toFixed(2)} W/kg` }] : []),
+  ];
+  document.getElementById('stats-grid-top').innerHTML = topCells.map(cellHTML).join('');
+
+  document.getElementById('verdict-text').innerHTML = '';
+
+  initSlides(stats);
+
+  // Dots
+  const dotsEl = document.getElementById('dots');
+  dotsEl.innerHTML = '';
+  for (let i=0; i<TOTAL; i++) {
+    const d = document.createElement('div');
+    d.className='dot'; d.id='dot'+i; dotsEl.appendChild(d);
+  }
+
+  document.getElementById('upload-view').style.display = 'none';
+  document.getElementById('recap-view').style.display  = 'block';
+  startShow();
+}
+
+// ── MOSTRAR / OCULTAR BOTON ───────────────────────────────────────────────
+function updateRecapBtn() {
+  const btn = document.getElementById('gps-only-btn');
+  btn.style.cssText = btn.style.cssText; // forzar reflow
+  if (_csvFile || (_gpsPoints && _gpsPoints.length > 1)) {
+    btn.style.display = 'block';
+  } else {
+    btn.style.display = 'none';
+  }
+}
+
+// ── FILE HANDLING ─────────────────────────────────────────────────────────
+function handleFile(file) {
+  if (!file) return;
+  if (!file.name.toLowerCase().endsWith('.csv')) {
+    showError('Por favor selecciona un archivo .csv de Garmin Connect.'); return;
+  }
+  document.getElementById('upload-error').style.display = 'none';
+  _csvFile  = file;
+  _csvStats = null;
+  const dt = document.getElementById('drop-zone').querySelector('.drop-text');
+  const ds = document.getElementById('drop-zone').querySelector('.drop-sub');
+  dt.textContent = `✓ ${file.name}`;
+  dt.style.color = 'rgba(127,255,212,0.7)';
+  ds.textContent = 'CSV listo';
+  ds.style.color = 'rgba(127,255,212,0.45)';
+  updateRecapBtn();
+}
+
+function showError(msg) {
+  const el = document.getElementById('upload-error');
+  el.textContent = msg; el.style.display = 'block';
+}
+
+document.getElementById('file-input').addEventListener('change', function() {
+  if (this.files && this.files[0]) handleFile(this.files[0]);
+});
+
+// GPS file
+function handleGPSFile(file) {
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const pts = parseGPSFile(file.name, e.target.result);
+      if (pts.length < 2) throw new Error('No se encontraron coordenadas GPS en el archivo.');
+      _gpsPoints = pts;
+      const el = document.getElementById('gps-zone-text');
+      el.textContent = `✓ ${file.name} · ${pts.length} puntos`;
+      el.classList.add('loaded');
+      updateRecapBtn();
+    } catch (err) {
+      showError('GPS: ' + err.message);
+    }
+  };
+  reader.readAsText(file, 'UTF-8');
+}
+document.getElementById('gps-input').addEventListener('change', function() {
+  if (this.files && this.files[0]) handleGPSFile(this.files[0]);
+});
+const gz = document.getElementById('gps-zone');
+gz.addEventListener('dragover',  e => { e.preventDefault(); gz.classList.add('drag-over'); });
+gz.addEventListener('dragleave', ()  => gz.classList.remove('drag-over'));
+gz.addEventListener('drop', e => {
+  e.preventDefault(); gz.classList.remove('drag-over');
+  if (e.dataTransfer.files[0]) handleGPSFile(e.dataTransfer.files[0]);
+});
+const dz = document.getElementById('drop-zone');
+dz.addEventListener('dragover',  e => { e.preventDefault(); dz.classList.add('drag-over'); });
+dz.addEventListener('dragleave', ()  => dz.classList.remove('drag-over'));
+dz.addEventListener('drop', e => {
+  e.preventDefault(); dz.classList.remove('drag-over');
+  if (e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
+});
+
+document.getElementById('screen').addEventListener('click', () => {
+  if (cur<TOTAL-1) { if(timer) clearTimeout(timer); advance(); }
+});
+document.addEventListener('keydown', e => {
+  if (e.key==='ArrowRight'||e.key===' ') { if(timer) clearTimeout(timer); advance(); }
+  if (e.key==='ArrowLeft'&&cur>0) { if(timer) clearTimeout(timer); cur--; showSlide(cur); }
+  if (e.key==='r') startShow();
+});
+</script>
+</body>
+</html>

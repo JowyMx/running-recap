@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "Static HTML (npx serve)",
+      "runtimeExecutable": "cmd",
+      "runtimeArgs": ["/c", "C:\\Users\\Jowy\\OneDrive\\Joao Martinez\\Deporte\\App\\serve.bat"],
+      "port": 8000
+    }
+  ]
+}
