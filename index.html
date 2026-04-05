@@ -354,6 +354,27 @@ body {
 }
 .verdict span { color: #fff; text-shadow: 0 1px 6px rgba(0,0,0,0.9); }
 
+/* Record button */
+#record-btn {
+  position: fixed;
+  top: 18px;
+  right: 18px;
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.18);
+  color: rgba(255,255,255,0.35);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  cursor: pointer;
+  border-radius: 4px;
+  padding: 6px 12px;
+  font-family: inherit;
+  transition: border-color 0.2s, color 0.2s;
+  z-index: 100;
+}
+#record-btn:hover { border-color: rgba(255,255,255,0.5); color: rgba(255,255,255,0.7); }
+#record-btn.recording { color: rgba(255,80,80,0.9); border-color: rgba(255,80,80,0.45); }
+
 /* Nav */
 #dots {
   position: fixed; bottom: 28px; left: 50%;
@@ -533,6 +554,7 @@ body {
     </div>
 
   </div>
+  <button id="record-btn" onclick="toggleRecording()">⏺ Grabar</button>
   <div id="dots"></div>
   <div id="bar"></div>
   <div id="tap-hint">toca para avanzar</div>
@@ -987,6 +1009,8 @@ function showSlide(n) {
     document.getElementById('summary-slide').classList.add('active');
     replay.style.display = newSess.style.display = 'block';
     hint.style.opacity = '0'; bar.style.width = '100%';
+    // Auto-detener grabación al llegar al summary
+    setTimeout(stopRecording, 800);
     const wrap   = document.getElementById('route-canvas-wrap');
     const canvas = document.getElementById('route-canvas');
     if (_gpsPoints && _gpsPoints.length > 1) {
@@ -1324,6 +1348,53 @@ function buildRecap(stats) {
   document.getElementById('upload-view').style.display = 'none';
   document.getElementById('recap-view').style.display  = 'block';
   startShow();
+}
+
+// ── GRABACIÓN DE PANTALLA ─────────────────────────────────────────────────
+let _mediaRecorder = null;
+let _recordedChunks = [];
+
+async function startRecording() {
+  try {
+    const stream = await navigator.mediaDevices.getDisplayMedia({ video: { frameRate: 30 }, audio: false });
+    _recordedChunks = [];
+    const mimeType = MediaRecorder.isTypeSupported('video/webm; codecs=vp9') ? 'video/webm; codecs=vp9' : 'video/webm';
+    _mediaRecorder = new MediaRecorder(stream, { mimeType });
+    _mediaRecorder.ondataavailable = e => { if (e.data.size > 0) _recordedChunks.push(e.data); };
+    _mediaRecorder.onstop = () => {
+      const blob = new Blob(_recordedChunks, { type: 'video/webm' });
+      const url  = URL.createObjectURL(blob);
+      const a    = document.createElement('a');
+      a.href     = url;
+      a.download = (_stats ? _stats.sessionName.replace(/[^a-z0-9áéíóúñ]/gi, '_') : 'recap') + '.webm';
+      a.click();
+      URL.revokeObjectURL(url);
+      stream.getTracks().forEach(t => t.stop());
+      setRecordBtn(false);
+    };
+    _mediaRecorder.start();
+    setRecordBtn(true);
+    // Si el usuario cierra el stream desde el navegador (botón "Detener")
+    stream.getVideoTracks()[0].onended = () => { stopRecording(); };
+  } catch (e) { /* usuario canceló */ }
+}
+
+function stopRecording() {
+  if (_mediaRecorder && _mediaRecorder.state === 'recording') {
+    _mediaRecorder.stop();
+  }
+}
+
+function toggleRecording() {
+  if (_mediaRecorder && _mediaRecorder.state === 'recording') stopRecording();
+  else startRecording();
+}
+
+function setRecordBtn(recording) {
+  const btn = document.getElementById('record-btn');
+  if (!btn) return;
+  if (recording) { btn.textContent = '⏹ Detener'; btn.classList.add('recording'); }
+  else           { btn.textContent = '⏺ Grabar';  btn.classList.remove('recording'); }
 }
 
 // ── MOSTRAR / OCULTAR BOTON ───────────────────────────────────────────────
