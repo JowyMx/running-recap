@@ -934,7 +934,7 @@ let cur=0, timer=null, barTimer=null, barStart=null, _stats=null, _gpsPoints=nul
 
 function initSlides(stats) {
   const add = (id, dur) => { SLIDE_IDS.push(id); DUR.push(dur); };
-  SLIDE_IDS = []; DUR = [];
+  SLIDE_IDS = ['s0']; DUR = [2500];
 
   if (stats.tableRows && stats.tableRows.length > 0)    add('rows-slide', 3000);
   if (stats.dist > 0)                                   add('s1',  2000);
