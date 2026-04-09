@@ -11,6 +11,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="Recap Running">
 <link rel="apple-touch-icon" href="icon.svg">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body {
@@ -361,6 +362,38 @@ body {
 }
 .verdict span { color: #fff; text-shadow: 0 1px 6px rgba(0,0,0,0.9); }
 
+/* Bottom action buttons */
+#bottom-btns {
+  position: fixed;
+  bottom: 16px;
+  left: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  z-index: 100;
+}
+.action-btn {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.18);
+  color: rgba(255,255,255,0.35);
+  font-size: 10px;
+  font-family: inherit;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  cursor: pointer;
+  border-radius: 4px;
+  height: 28px;
+  padding: 0 10px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: border-color 0.2s, color 0.2s;
+  white-space: nowrap;
+}
+.action-btn:hover { border-color: rgba(255,255,255,0.55); color: rgba(255,255,255,0.8); }
+#pause-btn { padding: 0 9px; font-size: 13px; }
+
 /* Nav */
 #dots {
   position: fixed; bottom: 28px; left: 50%;
@@ -539,6 +572,11 @@ body {
       <button id="new-session" onclick="newSession()">Nueva sesión</button>
     </div>
 
+  </div>
+  <div id="bottom-btns">
+    <button id="pause-btn" class="action-btn" onclick="togglePause()">⏸</button>
+    <button id="download-btn" class="action-btn" onclick="downloadSlide()">⬇ Descargar</button>
+    <button id="share-btn" class="action-btn" onclick="shareSlide()">Compartir</button>
   </div>
   <div id="dots"></div>
   <div id="bar"></div>
@@ -1091,7 +1129,14 @@ function showSlide(n) {
 }
 
 function advance()   { if (cur<TOTAL-1) { cur++; showSlide(cur); } }
-function startShow() { cur=0; if(timer) clearTimeout(timer); document.getElementById('bar').style.width='0%'; showSlide(0); }
+function startShow() {
+  cur=0; _paused=false;
+  const pb = document.getElementById('pause-btn');
+  if (pb) pb.textContent = '⏸';
+  if(timer) clearTimeout(timer);
+  document.getElementById('bar').style.width='0%';
+  showSlide(0);
+}
 function newSession() {
   _gpsPoints = null;
   _csvStats  = null;
@@ -1331,6 +1376,67 @@ function buildRecap(stats) {
   document.getElementById('upload-view').style.display = 'none';
   document.getElementById('recap-view').style.display  = 'block';
   startShow();
+}
+
+// ── PAUSA ─────────────────────────────────────────────────────────────────
+let _paused = false;
+function togglePause() {
+  _paused = !_paused;
+  const btn = document.getElementById('pause-btn');
+  if (_paused) {
+    if (timer)    { clearTimeout(timer);          timer    = null; }
+    if (barTimer) { cancelAnimationFrame(barTimer); barTimer = null; }
+    btn.textContent = '▶';
+  } else {
+    btn.textContent = '⏸';
+    showSlide(cur);
+  }
+}
+
+// ── CAPTURA SLIDE ─────────────────────────────────────────────────────────
+async function captureSlide() {
+  return html2canvas(document.getElementById('recap-view'), {
+    backgroundColor: '#0a0a0a', scale: 2, useCORS: true, logging: false,
+  });
+}
+function slideName() {
+  return (_stats ? _stats.sessionName.replace(/[^a-z0-9áéíóúñ]/gi, '_') : 'recap') + '.png';
+}
+
+async function downloadSlide() {
+  const btn = document.getElementById('download-btn');
+  btn.style.opacity = '0.4'; btn.disabled = true;
+  try {
+    const canvas = await captureSlide();
+    canvas.toBlob(blob => {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = slideName(); a.click();
+      URL.revokeObjectURL(url);
+      btn.style.opacity = ''; btn.disabled = false;
+    }, 'image/png');
+  } catch (e) { btn.style.opacity = ''; btn.disabled = false; }
+}
+
+async function shareSlide() {
+  const btn = document.getElementById('share-btn');
+  btn.style.opacity = '0.4'; btn.disabled = true;
+  try {
+    const canvas = await captureSlide();
+    canvas.toBlob(async blob => {
+      const name = slideName();
+      const file = new File([blob], name, { type: 'image/png' });
+      if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+        await navigator.share({ files: [file], title: 'Recap Running' });
+      } else {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url; a.download = name; a.click();
+        URL.revokeObjectURL(url);
+      }
+      btn.style.opacity = ''; btn.disabled = false;
+    }, 'image/png');
+  } catch (e) { btn.style.opacity = ''; btn.disabled = false; }
 }
 
 // ── MOSTRAR / OCULTAR BOTON ───────────────────────────────────────────────
