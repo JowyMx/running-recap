@@ -167,7 +167,7 @@ body {
 }
 #route-canvas {
   width: 100%;
-  height: min(20vh, 150px);
+  height: min(30vh, 220px);
   display: block;
   transform: rotateX(42deg) scale(1.18);
   transform-origin: center 85%;
@@ -270,7 +270,7 @@ body {
 .laps-bars { width: 100%; display: flex; flex-direction: column; gap: 0; }
 .lap-row {
   display: grid;
-  grid-template-columns: 3em 4em 1fr 3em;
+  grid-template-columns: 3em 4em 1fr 4em;
   align-items: center;
   gap: 10px;
   padding: 5px 0;
@@ -313,6 +313,12 @@ body {
   font-weight: 900;
   color: rgba(255,255,255,1);
   text-align: left;
+}
+.lap-row-cum {
+  font-size: clamp(11px, 2vw, 16px);
+  font-weight: 700;
+  color: rgba(255,255,255,1);
+  text-align: right;
 }
 
 /* Summary */
@@ -880,20 +886,16 @@ function drawRoute(canvas, points) {
   ctx.fillStyle = 'rgba(255,255,255,0.9)';
   ctx.font = 'bold 13px Arial';
   ctx.textAlign = 'center';
-  ctx.textBaseline = 'bottom';
+  ctx.textBaseline = 'middle';
 
-  // Start — triángulo play
+  // Start — solo ▶
   const s = path[0];
-  ctx.beginPath(); ctx.arc(s.x, s.y, 4, 0, Math.PI*2);
-  ctx.fill();
-  ctx.fillText('▶', s.x, s.y - 5);
+  ctx.fillText('▶', s.x, s.y);
 
-  // End — bandera a cuadros (emoji)
+  // End — solo ■
   const e = path[path.length-1];
-  ctx.beginPath(); ctx.arc(e.x, e.y, 4, 0, Math.PI*2);
-  ctx.fill();
-  ctx.font = '13px Arial';
-  ctx.fillText('🏁', e.x, e.y - 5);
+  ctx.font = 'bold 17px Arial';
+  ctx.fillText('■', e.x, e.y);
 }
 
 // ── DATA PROCESSING ───────────────────────────────────────────────────────
@@ -965,7 +967,7 @@ function processData(data, customName) {
     ? safeFloat(rowSum('Distancia').toFixed(2))
     : safeFloat(col('Distancia'));
   const time       = type === 'intervals'
-    ? (() => { const s = rowTotalSec(); const h=Math.floor(s/3600),m=Math.floor((s%3600)/60),sec=Math.round(s%60); return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`; })()
+    ? (() => { const s = rowTotalSec(); const h=Math.floor(s/3600),m=Math.floor((s%3600)/60),sec=Math.round(s%60); return h>0?`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`:`${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`; })()
     : col('Tiempo');
   const elevation  = type === 'intervals'
     ? Math.round(rowSum('Ascenso total'))
@@ -1032,21 +1034,20 @@ function initSlides(stats) {
   SLIDE_IDS = ['s0']; DUR = [2500];
 
   if (stats.dist > 0)                                   add('s1',  2000);
-  if (stats.tableRows && stats.tableRows.length > 0)    add('rows-slide', 3000);
-  if (stats.tableRows && stats.tableRows.filter(r => !isDash(r.pace)).length >= 2) add('pace-chart-slide', 3000);
   if (timeToSec(stats.time) > 0)                        add('s2',  2000);
   if (stats.avgPaceSec > 0)                             add('s5',  2000);
+  if (stats.tableRows && stats.tableRows.length > 0)    add('rows-slide', 3000);
+  if (stats.tableRows && stats.tableRows.filter(r => !isDash(r.pace)).length >= 2) add('pace-chart-slide', 3000);
   if (stats.avgHR > 0)                                  add('s4',  2000);
   if (stats.elevation > 0 || stats.descent > 0)          add('s10', 1800);
   if (_gpsPoints && _gpsPoints.length > 1 && _gpsPoints.some(p => p.ele !== null)) add('elev-profile-slide', 2800);
-  if (stats.cals > 0)                                   add('s9',  1800);
-  if (stats.avgTemp !== 0)                              add('s11', 1800);
   if (stats.avgCad > 0)                                 add('s6',  1800);
   if (stats.strideLen > 0)                              add('s12', 1800);
   if (stats.vertRatio > 0)                              add('s13', 1800);
   if (stats.vertOsc > 0)                                add('s14', 1800);
   if (stats.avgGCT > 0)                                 add('s7',  1800);
   if (stats.avgPow > 0)                                 add('s8',  1800);
+  if (stats.avgTemp !== 0)                              add('s11', 1800);
 
   add('summary-slide', 0);
   TOTAL = SLIDE_IDS.length;
@@ -1153,7 +1154,7 @@ function showSlide(n) {
   if (n === idx('s1')) countUp(document.getElementById('v-dist'), s.dist, d, v=>v.toFixed(2));
   if (n === idx('s2')) countUp(document.getElementById('v-time'), timeToSec(s.time), d, v => {
     const t = Math.round(v), h = Math.floor(t/3600), m = Math.floor((t%3600)/60), sec = t%60;
-    return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;
+    return h > 0 ? `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}` : `${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;
   });
   if (n === idx('s5')) countPace(document.getElementById('v-pace'), s.avgPaceSec, d);
   if (n === idx('s4')) {
@@ -1310,7 +1311,7 @@ function buildElevProfile() {
   const minEle = Math.min(...eles), maxEle = Math.max(...eles);
   const eleRange = maxEle - minEle || 1;
 
-  const W = 400, H = 160, padL = 8, padR = 8, padT = 22, padB = 22;
+  const W = 400, H = 170, padL = 8, padR = 8, padT = 28, padB = 30;
   const cW = W - padL - padR, cH = H - padT - padB;
   svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
 
@@ -1325,6 +1326,19 @@ function buildElevProfile() {
     sampled.slice(1).map((p, i) => `L${xOf(cumDist[i+1])},${yOf(eles[i+1])}`).join(' ');
 
   const maxIdx = eles.indexOf(maxEle);
+  const minIdx = eles.indexOf(minEle);
+
+  // Marcas de km en el eje inferior (cada ~5km, más inicio y fin)
+  const kmStep = totalDist <= 10 ? 2 : totalDist <= 20 ? 5 : 10;
+  let kmMarks = '';
+  for (let km = 0; km <= totalDist; km += kmStep) {
+    const x = xOf(km);
+    kmMarks += `<text x="${x}" y="${H-4}" font-family="Arial,sans-serif" font-size="8" fill="rgba(255,255,255,0.4)" text-anchor="middle">${km}</text>`;
+    kmMarks += `<line x1="${x}" y1="${padT+cH}" x2="${x}" y2="${padT+cH+4}" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>`;
+  }
+  // Asegurar etiqueta del km final
+  const xEnd = xOf(totalDist);
+  kmMarks += `<text x="${xEnd}" y="${H-4}" font-family="Arial,sans-serif" font-size="8" fill="rgba(255,255,255,0.4)" text-anchor="end">${totalDist.toFixed(1)}</text>`;
 
   svg.innerHTML = `
     <defs>
@@ -1335,11 +1349,11 @@ function buildElevProfile() {
     </defs>
     <path d="${areaPath}" fill="url(#eg)"/>
     <path id="elev-line" d="${lineD}" fill="none" stroke="rgba(255,255,255,0.85)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-    <text x="${padL}" y="${H-6}" font-family="Arial,sans-serif" font-size="8" fill="rgba(255,255,255,0.35)">0 km</text>
-    <text x="${W-padR}" y="${H-6}" font-family="Arial,sans-serif" font-size="8" fill="rgba(255,255,255,0.35)" text-anchor="end">${totalDist.toFixed(1)} km</text>
-    <text x="${padL}" y="${padT-6}" font-family="Arial,sans-serif" font-size="8" fill="rgba(255,255,255,0.35)">${Math.round(minEle)}m</text>
+    ${kmMarks}
     <circle cx="${xOf(cumDist[maxIdx])}" cy="${yOf(maxEle)}" r="3" fill="rgba(255,255,255,0.9)"/>
     <text x="${xOf(cumDist[maxIdx])}" y="${yOf(maxEle)-8}" font-family="Arial Black,Arial" font-weight="900" font-size="9" fill="rgba(255,255,255,0.9)" text-anchor="middle">${Math.round(maxEle)}m</text>
+    <circle cx="${xOf(cumDist[minIdx])}" cy="${yOf(minEle)}" r="3" fill="rgba(255,255,255,0.6)"/>
+    <text x="${xOf(cumDist[minIdx])}" y="${yOf(minEle)+16}" font-family="Arial Black,Arial" font-weight="900" font-size="9" fill="rgba(255,255,255,0.6)" text-anchor="middle">${Math.round(minEle)}m</text>
   `;
 
   const line = document.getElementById('elev-line');
@@ -1402,15 +1416,22 @@ function buildPaceChart(stats) {
   // Puntos y etiquetas — solo mostrar etiqueta si hay suficiente espacio horizontal
   const MIN_SPACING = 32;
   let lastLabelX = -Infinity;
+  let cumSecChart = 0;
   pts.forEach((r, i) => {
     const x = xOf(i), y = yOf(secs[i]);
     const isFirst = i === 0, isLast = i === pts.length - 1;
     const showLabel = isFirst || isLast || (x - lastLabelX) >= MIN_SPACING;
     if (showLabel) lastLabelX = x;
+    const lapDist = parseFloat(r.dist) || 1;
+    cumSecChart += secs[i] * lapDist;
+    const cumH = Math.floor(cumSecChart/3600), cumM = Math.floor((cumSecChart%3600)/60), cumS = Math.round(cumSecChart%60);
+    const cumVal = cumH > 0
+      ? `${cumH}:${String(cumM).padStart(2,'0')}:${String(cumS).padStart(2,'0')}`
+      : `${String(cumM).padStart(2,'0')}:${String(cumS).padStart(2,'0')}`;
     html += `<circle cx="${x}" cy="${y}" r="3.5" fill="#fff" opacity="0" class="pace-dot" style="transition:opacity 0.3s ${i*80}ms"/>`;
     if (showLabel) {
       html += `<text x="${x}" y="${y - 8}" text-anchor="middle" font-family="Arial Black,Arial" font-weight="900" font-size="11" fill="rgba(255,255,255,0.9)" opacity="0" class="pace-lbl" style="transition:opacity 0.3s ${i*80}ms">${r.pace}</text>`;
-      if (!isDash(r.hr)) html += `<text x="${x}" y="${y - 20}" text-anchor="middle" font-family="Arial,sans-serif" font-size="8" fill="rgba(255,255,255,0.9)" opacity="0" class="pace-lbl" style="transition:opacity 0.3s ${i*80}ms">${r.hr} ppm</text>`;
+      html += `<text x="${x}" y="${y - 20}" text-anchor="middle" font-family="Arial,sans-serif" font-size="8" fill="rgba(255,255,255,0.9)" opacity="0" class="pace-lbl" style="transition:opacity 0.3s ${i*80}ms">${cumVal}</text>`;
       html += `<text x="${x}" y="${padT+cH+16}" text-anchor="middle" font-family="Arial,sans-serif" font-size="9" fill="rgba(255,255,255,0.45)">${r.n}</text>`;
     }
   });
@@ -1467,30 +1488,35 @@ function buildRecap(stats) {
     const maxPace = Math.max(...paceSecs);
     const paceRange = maxPace - minPace || 1;
 
+    let cumSec = 0;
     const rows = stats.tableRows.map((r, i) => {
       const paceVal = isDash(r.pace) ? '—' : r.pace;
       const hrVal   = isDash(r.hr)   ? '' : r.hr;
       const sec     = isDash(r.pace) ? 0 : paceToSec(r.pace);
-      // barra más larga = ritmo más rápido (menor segundos)
       const pct = isDash(r.pace) ? 0 : Math.round(((maxPace - sec) / paceRange) * 70 + 15);
       const distVal = (() => {
         const d = parseFloat(r.dist) || 0;
         if (d === 0) return r.n;
-        // vuelta completa (≥ 0.95 km) → acumulado entero
         if (d >= 0.95) {
           const cumulative = stats.tableRows
             .slice(0, i + 1)
             .reduce((sum, row) => sum + (parseFloat(row.dist) || 0), 0);
           return Math.round(cumulative);
         }
-        // vuelta fraccionada → solo la fracción
         return parseFloat(d.toFixed(2));
       })();
+      // Tiempo acumulado: ritmo * distancia de esta vuelta
+      const lapDist = parseFloat(r.dist) || 1;
+      cumSec += sec * lapDist;
+      const cumH = Math.floor(cumSec/3600), cumM = Math.floor((cumSec%3600)/60), cumS = Math.round(cumSec%60);
+      const cumVal = cumH > 0
+        ? `${cumH}:${String(cumM).padStart(2,'0')}:${String(cumS).padStart(2,'0')}`
+        : `${String(cumM).padStart(2,'0')}:${String(cumS).padStart(2,'0')}`;
       return `<div class="lap-row">
         <div class="lap-row-n">${distVal}</div>
         <div class="lap-row-pace">${paceVal}</div>
         <div class="lap-row-bar-wrap"><div class="lap-row-bar" data-pct="${pct}"></div></div>
-        <div class="lap-row-hr">${hrVal}</div>
+        <div class="lap-row-cum">${cumVal}</div>
       </div>`;
     }).join('');
 
@@ -1498,7 +1524,7 @@ function buildRecap(stats) {
       <div class="lap-row-n">KM</div>
       <div class="lap-row-pace">RITMO</div>
       <div class="lap-row-bar-wrap"></div>
-      <div class="lap-row-hr">PPM</div>
+      <div class="lap-row-cum">TOTAL</div>
     </div>`;
 
     document.getElementById('rows-body').innerHTML = `<div class="laps-bars">${header}${rows}</div>`;
@@ -1513,16 +1539,23 @@ function buildRecap(stats) {
     const maxPace   = Math.max(...paceSecs);
     const paceRange = maxPace - minPace || 1;
 
+    let cumSecInt = 0;
     const rows = stats.tableRows.map(r => {
       const paceVal = isDash(r.pace) ? '—' : r.pace;
       const hrVal   = isDash(r.hr)   ? '' : r.hr;
       const sec     = isDash(r.pace) ? 0 : paceToSec(r.pace);
       const pct     = isDash(r.pace) ? 0 : Math.round(((maxPace - sec) / paceRange) * 70 + 15);
+      const lapDist = parseFloat(r.dist) || 1;
+      cumSecInt += sec * lapDist;
+      const cumH = Math.floor(cumSecInt/3600), cumM = Math.floor((cumSecInt%3600)/60), cumS = Math.round(cumSecInt%60);
+      const cumVal = cumH > 0
+        ? `${cumH}:${String(cumM).padStart(2,'0')}:${String(cumS).padStart(2,'0')}`
+        : `${String(cumM).padStart(2,'0')}:${String(cumS).padStart(2,'0')}`;
       return `<div class="lap-row">
         <div class="lap-row-n">${r.n}</div>
         <div class="lap-row-pace">${paceVal}</div>
         <div class="lap-row-bar-wrap"><div class="lap-row-bar" data-pct="${pct}"></div></div>
-        <div class="lap-row-hr">${hrVal}</div>
+        <div class="lap-row-cum">${cumVal}</div>
       </div>`;
     }).join('');
 
@@ -1530,7 +1563,7 @@ function buildRecap(stats) {
       <div class="lap-row-n">INT</div>
       <div class="lap-row-pace">RITMO</div>
       <div class="lap-row-bar-wrap"></div>
-      <div class="lap-row-hr">PPM</div>
+      <div class="lap-row-cum">TOTAL</div>
     </div>`;
 
     document.getElementById('rows-body').innerHTML = `<div class="laps-bars">${header}${rows}</div>`;
@@ -1562,20 +1595,20 @@ function buildRecap(stats) {
     <div class="stat-u">${c.u}</div>
   </div>`;
 
+  // Orden igual al de los slides: Dist → Tiempo → Ritmo → FC → Desnivel → Cad → Zancada → VR → VO → GCT → Potencia → Temp
   const topCells = [
     { label: 'Distancia',   val: stats.dist.toFixed(2),       u: 'km' },
-    { label: 'Tiempo',      val: (() => { const t=timeToSec(stats.time); const h=Math.floor(t/3600),m=Math.floor((t%3600)/60),s=t%60; return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`; })(), u: 'h:m:s' },
+    { label: 'Tiempo',      val: (() => { const t=timeToSec(stats.time); const h=Math.floor(t/3600),m=Math.floor((t%3600)/60),s=t%60; return h>0?`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`:`${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`; })(), u: 'h:m:s' },
     { label: 'Ritmo medio', val: secToMMSS(stats.avgPaceSec), u: 'min/km' },
     { label: 'FC media',    val: stats.avgHR,                 u: 'ppm' },
     ...(showElev   ? [{ label:'Desnivel',          val:`+${stats.elevation} / −${stats.descent}`, u:'metros' }] : []),
-    { label: 'Calorías',    val: stats.cals,                  u: 'kcal' },
-    ...(showTemp   ? [{ label:'Temperatura',        val:stats.avgTemp.toFixed(1),   u:'°C'  }] : []),
     { label: 'Cadencia',    val: stats.avgCad,                u: 'spm' },
     ...(showStride ? [{ label:'Long. zancada',       val:stats.strideLen.toFixed(2), u:'m'   }] : []),
     ...(showVR     ? [{ label:'Relación vertical',   val:stats.vertRatio.toFixed(1), u:'%'   }] : []),
     ...(showVO     ? [{ label:'Oscilación vertical', val:stats.vertOsc.toFixed(1),   u:'cm'  }] : []),
     ...(showGCT    ? [{ label:'GCT',                 val:stats.avgGCT,               u:'ms'  }] : []),
     ...(showPow    ? [{ label:'Potencia',             val:stats.avgPow, u:`W · ${stats.wkg.toFixed(2)} W/kg` }] : []),
+    ...(showTemp   ? [{ label:'Temperatura',          val:stats.avgTemp.toFixed(1),  u:'°C'  }] : []),
   ];
   document.getElementById('stats-grid-top').innerHTML = topCells.map(cellHTML).join('');
 
