@@ -644,7 +644,7 @@ function parseGarminCSV(text) {
   // Detectar formato
   if (headers.includes('Intervalo')) {
     // Formato A: exportación de Pasos/Intervalos
-    const intervals = dataRows.filter(r => /^\d+$/.test(r['Intervalo']));
+    const intervals = dataRows.filter(r => /^\d+$/.test(r['Intervalo']) && (r['Tipo de paso'] || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'') !== 'recuperacion');
     const summary   = dataRows.find(r => r['Intervalo'] === 'Resumen');
     if (!intervals.length) throw new Error('No se encontraron filas de intervalo.');
     if (!summary) throw new Error('No se encontró fila de Resumen.');
@@ -904,28 +904,77 @@ function processData(data, customName) {
     return '';
   };
 
-  const avgHR      = safeInt(col('Frecuencia cardiaca media', 'FC media', 'Frec. card. media') || colFuzzy('cardiaca media', 'fc media'));
-  const maxHR      = safeInt(col('FC máxima', 'FC máx.', 'Frec. card. máxima') || colFuzzy('fc maxima', 'fc max', 'cardiaca maxima'));
-  const avgPaceSec = paceToSec(col('Ritmo medio') || colFuzzy('ritmo medio'));
-  const avgCad     = safeInt(col('Cadencia de carrera media', 'Cadencia media', 'Cadencia') || colFuzzy('cadencia'));
-  const avgGCT     = safeInt(col('Tiempo medio de contacto con el suelo', 'Tiempo de contacto con el suelo', 'TCS media') || colFuzzy('contacto con el suelo', 'tcs'));
-  const avgPow     = safeInt(col('Potencia media', 'Potencia') || colFuzzy('potencia'));
-  const wkg        = safeFloat(col('Media de W/kg', 'W/kg medio', 'W/kg') || colFuzzy('w/kg'));
-  const cals       = safeInt(col('Calorías', 'Calorias') || colFuzzy('calor'));
-  const dist       = safeFloat(col('Distancia'));
-  const time       = col('Tiempo');
-  const elevation  = safeInt(col('Ascenso total', 'Desnivel positivo total', 'Desnivel positivo', 'Subida total')
-                          || colFuzzy('ascenso', 'desnivel positivo', 'subida'));
-  const descent    = safeInt(col('Descenso total', 'Desnivel negativo total', 'Desnivel negativo', 'Bajada total')
-                          || colFuzzy('descenso', 'desnivel negativo', 'bajada'));
-  const avgTemp    = safeFloat(col('Temperatura media', 'Temperatura promedio', 'Temperatura')
-                          || colFuzzy('temperatura'));
-  const strideLen  = safeFloat(col('Longitud media de zancada', 'Longitud de zancada media', 'Longitud de zancada')
-                          || colFuzzy('longitud de zancada', 'longitud media de zancada'));
-  const vertRatio  = safeFloat(col('Relación vertical media', '% de relación vertical', 'Relación vertical')
-                          || colFuzzy('relacion vertical', 'relación vertical'));
-  const vertOsc    = safeFloat(col('Oscilación vertical media', 'Oscilación vertical')
-                          || colFuzzy('oscilacion vertical', 'oscilación vertical'));
+  // Para intervalos, recalcular métricas solo desde filas de carrera
+  const srcRows = type === 'intervals' ? rows : null;
+  const rowAvg = (key) => {
+    if (!srcRows) return 0;
+    const vals = srcRows.map(r => safeFloat(r[key])).filter(v => v > 0);
+    return vals.length ? vals.reduce((a,b) => a+b, 0) / vals.length : 0;
+  };
+  const rowSum = (key) => {
+    if (!srcRows) return 0;
+    return srcRows.reduce((a, r) => a + safeFloat(r[key]), 0);
+  };
+  const rowMax = (key) => {
+    if (!srcRows) return 0;
+    return Math.max(...srcRows.map(r => safeFloat(r[key])).filter(v => v > 0), 0);
+  };
+  const rowTotalSec = () => {
+    if (!srcRows) return 0;
+    return srcRows.reduce((a, r) => a + timeToSec(r['Tiempo'] || '0'), 0);
+  };
+  const rowPaceSec = () => {
+    if (!srcRows) return 0;
+    const vals = srcRows.map(r => paceToSec(r['Ritmo medio'] || '')).filter(v => v > 0);
+    return vals.length ? vals.reduce((a,b) => a+b, 0) / vals.length : 0;
+  };
+
+  const avgHR      = type === 'intervals'
+    ? Math.round(rowAvg('Frecuencia cardiaca media'))
+    : safeInt(col('Frecuencia cardiaca media', 'FC media', 'Frec. card. media') || colFuzzy('cardiaca media', 'fc media'));
+  const maxHR      = type === 'intervals'
+    ? Math.round(rowMax('FC máxima'))
+    : safeInt(col('FC máxima', 'FC máx.', 'Frec. card. máxima') || colFuzzy('fc maxima', 'fc max', 'cardiaca maxima'));
+  const avgPaceSec = type === 'intervals'
+    ? rowPaceSec()
+    : paceToSec(col('Ritmo medio') || colFuzzy('ritmo medio'));
+  const avgCad     = type === 'intervals'
+    ? Math.round(rowAvg('Cadencia de carrera media'))
+    : safeInt(col('Cadencia de carrera media', 'Cadencia media', 'Cadencia') || colFuzzy('cadencia'));
+  const avgGCT     = type === 'intervals'
+    ? Math.round(rowAvg('Tiempo medio de contacto con el suelo'))
+    : safeInt(col('Tiempo medio de contacto con el suelo', 'Tiempo de contacto con el suelo', 'TCS media') || colFuzzy('contacto con el suelo', 'tcs'));
+  const avgPow     = type === 'intervals'
+    ? Math.round(rowAvg('Potencia media'))
+    : safeInt(col('Potencia media', 'Potencia') || colFuzzy('potencia'));
+  const wkg        = type === 'intervals'
+    ? safeFloat((rowAvg('Media de W/kg')).toFixed(2))
+    : safeFloat(col('Media de W/kg', 'W/kg medio', 'W/kg') || colFuzzy('w/kg'));
+  const cals       = type === 'intervals'
+    ? Math.round(rowSum('Calorías'))
+    : safeInt(col('Calorías', 'Calorias') || colFuzzy('calor'));
+  const dist       = type === 'intervals'
+    ? safeFloat(rowSum('Distancia').toFixed(2))
+    : safeFloat(col('Distancia'));
+  const time       = type === 'intervals'
+    ? (() => { const s = rowTotalSec(); const h=Math.floor(s/3600),m=Math.floor((s%3600)/60),sec=Math.round(s%60); return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`; })()
+    : col('Tiempo');
+  const elevation  = type === 'intervals'
+    ? Math.round(rowSum('Ascenso total'))
+    : safeInt(col('Ascenso total', 'Desnivel positivo total', 'Desnivel positivo', 'Subida total') || colFuzzy('ascenso', 'desnivel positivo', 'subida'));
+  const descent    = type === 'intervals'
+    ? Math.round(rowSum('Descenso total'))
+    : safeInt(col('Descenso total', 'Desnivel negativo total', 'Desnivel negativo', 'Bajada total') || colFuzzy('descenso', 'desnivel negativo', 'bajada'));
+  const avgTemp    = safeFloat(col('Temperatura media', 'Temperatura promedio', 'Temperatura') || colFuzzy('temperatura'));
+  const strideLen  = type === 'intervals'
+    ? safeFloat(rowAvg('Longitud media de zancada').toFixed(2))
+    : safeFloat(col('Longitud media de zancada', 'Longitud de zancada media', 'Longitud de zancada') || colFuzzy('longitud de zancada', 'longitud media de zancada'));
+  const vertRatio  = type === 'intervals'
+    ? safeFloat(rowAvg('Relación vertical media').toFixed(1))
+    : safeFloat(col('Relación vertical media', '% de relación vertical', 'Relación vertical') || colFuzzy('relacion vertical', 'relación vertical'));
+  const vertOsc    = type === 'intervals'
+    ? safeFloat(rowAvg('Oscilación vertical media').toFixed(1))
+    : safeFloat(col('Oscilación vertical media', 'Oscilación vertical') || colFuzzy('oscilacion vertical', 'oscilación vertical'));
   const dateStr    = formatDate(new Date());
 
   let sessionName, sessionLabel, rowsLabel;
@@ -1096,7 +1145,7 @@ function showSlide(n) {
   if (n === idx('s1')) countUp(document.getElementById('v-dist'), s.dist, d, v=>v.toFixed(2));
   if (n === idx('s2')) countUp(document.getElementById('v-time'), timeToSec(s.time), d, v => {
     const t = Math.round(v), h = Math.floor(t/3600), m = Math.floor((t%3600)/60), sec = t%60;
-    return h > 0 ? `${h}:${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}` : `${m}:${String(sec).padStart(2,'0')}`;
+    return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;
   });
   if (n === idx('s5')) countPace(document.getElementById('v-pace'), s.avgPaceSec, d);
   if (n === idx('s4')) {
@@ -1507,7 +1556,7 @@ function buildRecap(stats) {
 
   const topCells = [
     { label: 'Distancia',   val: stats.dist.toFixed(2),       u: 'km' },
-    { label: 'Tiempo',      val: (() => { const t=timeToSec(stats.time); const h=Math.floor(t/3600),m=Math.floor((t%3600)/60),s=t%60; return h>0?`${h}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`:`${m}:${String(s).padStart(2,'0')}`; })(), u: 'h:m:s' },
+    { label: 'Tiempo',      val: (() => { const t=timeToSec(stats.time); const h=Math.floor(t/3600),m=Math.floor((t%3600)/60),s=t%60; return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`; })(), u: 'h:m:s' },
     { label: 'Ritmo medio', val: secToMMSS(stats.avgPaceSec), u: 'min/km' },
     { label: 'FC media',    val: stats.avgHR,                 u: 'ppm' },
     ...(showElev   ? [{ label:'Desnivel',          val:`+${stats.elevation} / −${stats.descent}`, u:'metros' }] : []),
