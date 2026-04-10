@@ -495,6 +495,13 @@ body {
       <div id="rows-body"></div>
     </div>
 
+    <div class="slide" id="pace-chart-slide">
+      <div class="label">Ritmo por vuelta</div>
+      <div id="pace-chart-wrap" style="width:88%;max-width:580px;margin-top:12px;">
+        <svg id="pace-chart-svg" width="100%" style="overflow:visible;"></svg>
+      </div>
+    </div>
+
     <div class="slide" id="s4">
       <div class="label">FC media</div>
       <div class="value" id="v-hr">0</div>
@@ -537,6 +544,13 @@ body {
       <div class="unit">metros</div>
     </div>
 
+    <div class="slide" id="elev-profile-slide">
+      <div class="label">Perfil de elevación</div>
+      <div id="elev-profile-wrap" style="width:90%;max-width:600px;margin-top:14px;">
+        <svg id="elev-profile-svg" width="100%" style="overflow:visible;"></svg>
+      </div>
+    </div>
+
     <div class="slide" id="s11">
       <div class="label">Temperatura</div>
       <div class="value" id="v-temp">0</div>
@@ -576,7 +590,6 @@ body {
   <div id="bottom-btns">
     <button id="pause-btn" class="action-btn" onclick="togglePause()">⏸</button>
     <button id="download-btn" class="action-btn" onclick="downloadSlide()">⬇ Descargar</button>
-    <button id="share-btn" class="action-btn" onclick="shareSlide()">Compartir</button>
   </div>
   <div id="dots"></div>
   <div id="bar"></div>
@@ -857,29 +870,9 @@ function drawRoute(canvas, points) {
   ctx.save();
   ctx.lineCap = ctx.lineJoin = 'round';
 
-  // Outer diffuse glow
-  ctx.strokeStyle = 'rgba(200,200,200,0.06)';
-  ctx.lineWidth = 28;
-  drawPath();
-
-  // Mid glow
-  ctx.strokeStyle = 'rgba(210,210,210,0.15)';
-  ctx.lineWidth = 16;
-  drawPath();
-
-  // Inner glow
-  ctx.strokeStyle = 'rgba(220,220,220,0.35)';
-  ctx.lineWidth = 8;
-  drawPath();
-
-  // Main line
-  ctx.strokeStyle = 'rgba(235,235,235,0.90)';
-  ctx.lineWidth = 3.5;
-  drawPath();
-
-  // Bright center highlight
+  // Línea blanca simple
   ctx.strokeStyle = 'rgba(255,255,255,0.85)';
-  ctx.lineWidth = 1.2;
+  ctx.lineWidth = 1.8;
   drawPath();
 
   ctx.restore();
@@ -981,12 +974,14 @@ function initSlides(stats) {
   const add = (id, dur) => { SLIDE_IDS.push(id); DUR.push(dur); };
   SLIDE_IDS = ['s0']; DUR = [2500];
 
-  if (stats.tableRows && stats.tableRows.length > 0)    add('rows-slide', 3000);
   if (stats.dist > 0)                                   add('s1',  2000);
+  if (stats.tableRows && stats.tableRows.length > 0)    add('rows-slide', 3000);
+  if (stats.tableRows && stats.tableRows.filter(r => !isDash(r.pace)).length >= 2) add('pace-chart-slide', 3000);
   if (timeToSec(stats.time) > 0)                        add('s2',  2000);
   if (stats.avgPaceSec > 0)                             add('s5',  2000);
   if (stats.avgHR > 0)                                  add('s4',  2000);
   if (stats.elevation > 0 || stats.descent > 0)          add('s10', 1800);
+  if (_gpsPoints && _gpsPoints.length > 1 && _gpsPoints.some(p => p.ele !== null)) add('elev-profile-slide', 2800);
   if (stats.cals > 0)                                   add('s9',  1800);
   if (stats.avgTemp !== 0)                              add('s11', 1800);
   if (stats.avgCad > 0)                                 add('s6',  1800);
@@ -1056,6 +1051,16 @@ function showSlide(n) {
   const s = _stats;
 
   const idx = id => SLIDE_IDS.indexOf(id);
+
+  // Animar gráfica de ritmo
+  if (n === idx('pace-chart-slide')) {
+    requestAnimationFrame(() => requestAnimationFrame(() => animatePaceChart()));
+  }
+
+  // Animar perfil de elevación
+  if (n === idx('elev-profile-slide')) {
+    requestAnimationFrame(() => requestAnimationFrame(() => animateElevProfile()));
+  }
 
   // Animar barras de vueltas
   if (n === idx('rows-slide')) {
@@ -1224,9 +1229,161 @@ function startRecap() {
 // Alias por compatibilidad
 function startGPSOnly() { startRecap(); }
 
+// ── ELEVATION PROFILE ─────────────────────────────────────────────────────
+function buildElevProfile() {
+  const svg = document.getElementById('elev-profile-svg');
+  if (!svg) return;
+  if (!_gpsPoints || _gpsPoints.length < 2) { svg.innerHTML = ''; return; }
+
+  const pts = _gpsPoints.filter(p => p.ele !== null);
+  if (pts.length < 2) { svg.innerHTML = ''; return; }
+
+  const step = Math.max(1, Math.floor(pts.length / 150));
+  const sampled = pts.filter((_, i) => i % step === 0);
+
+  let cumDist = [0];
+  for (let i = 1; i < sampled.length; i++) {
+    const dx = (sampled[i].lon - sampled[i-1].lon) * Math.cos(sampled[i-1].lat * Math.PI / 180) * 111.32;
+    const dy = (sampled[i].lat - sampled[i-1].lat) * 110.57;
+    cumDist.push(cumDist[i-1] + Math.sqrt(dx*dx + dy*dy));
+  }
+
+  const totalDist = cumDist[cumDist.length - 1];
+  const eles = sampled.map(p => p.ele);
+  const minEle = Math.min(...eles), maxEle = Math.max(...eles);
+  const eleRange = maxEle - minEle || 1;
+
+  const W = 400, H = 160, padL = 8, padR = 8, padT = 22, padB = 22;
+  const cW = W - padL - padR, cH = H - padT - padB;
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+
+  const xOf = d => padL + (d / totalDist) * cW;
+  const yOf = e => padT + cH - ((e - minEle) / eleRange) * cH;
+
+  const areaPath = `M${xOf(cumDist[0])},${yOf(eles[0])} ` +
+    sampled.slice(1).map((p, i) => `L${xOf(cumDist[i+1])},${yOf(eles[i+1])}`).join(' ') +
+    ` L${xOf(totalDist)},${padT+cH} L${xOf(0)},${padT+cH} Z`;
+
+  const lineD = `M${xOf(cumDist[0])},${yOf(eles[0])} ` +
+    sampled.slice(1).map((p, i) => `L${xOf(cumDist[i+1])},${yOf(eles[i+1])}`).join(' ');
+
+  const maxIdx = eles.indexOf(maxEle);
+
+  svg.innerHTML = `
+    <defs>
+      <linearGradient id="eg" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="rgba(255,255,255,0.18)"/>
+        <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+      </linearGradient>
+    </defs>
+    <path d="${areaPath}" fill="url(#eg)"/>
+    <path id="elev-line" d="${lineD}" fill="none" stroke="rgba(255,255,255,0.85)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="${padL}" y="${H-6}" font-family="Arial,sans-serif" font-size="8" fill="rgba(255,255,255,0.35)">0 km</text>
+    <text x="${W-padR}" y="${H-6}" font-family="Arial,sans-serif" font-size="8" fill="rgba(255,255,255,0.35)" text-anchor="end">${totalDist.toFixed(1)} km</text>
+    <text x="${padL}" y="${padT-6}" font-family="Arial,sans-serif" font-size="8" fill="rgba(255,255,255,0.35)">${Math.round(minEle)}m</text>
+    <circle cx="${xOf(cumDist[maxIdx])}" cy="${yOf(maxEle)}" r="3" fill="rgba(255,255,255,0.9)"/>
+    <text x="${xOf(cumDist[maxIdx])}" y="${yOf(maxEle)-8}" font-family="Arial Black,Arial" font-weight="900" font-size="9" fill="rgba(255,255,255,0.9)" text-anchor="middle">${Math.round(maxEle)}m</text>
+  `;
+
+  const line = document.getElementById('elev-line');
+  if (line && line.getTotalLength) {
+    const len = line.getTotalLength();
+    line.style.strokeDasharray = len;
+    line.style.strokeDashoffset = len;
+  }
+}
+
+function animateElevProfile() {
+  const line = document.getElementById('elev-line');
+  if (line) {
+    const len = parseFloat(line.style.strokeDasharray) || 400;
+    line.style.transition = 'stroke-dashoffset 1.5s cubic-bezier(0.4,0,0.2,1)';
+    line.style.strokeDashoffset = '0';
+  }
+}
+
+// ── PACE CHART ────────────────────────────────────────────────────────────
+function buildPaceChart(stats) {
+  const svg = document.getElementById('pace-chart-svg');
+  if (!svg) return;
+  const pts = stats.tableRows.filter(r => !isDash(r.pace));
+  if (pts.length < 2) { svg.innerHTML = ''; return; }
+
+  const W = 400, H = 190;
+  const padL = 8, padR = 8, padT = 52, padB = 28;
+  const cW = W - padL - padR, cH = H - padT - padB;
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+
+  const secs = pts.map(r => paceToSec(r.pace));
+  const minS = Math.min(...secs), maxS = Math.max(...secs);
+  const range = maxS - minS || 1;
+
+  const xOf = i => padL + (i / (pts.length - 1)) * cW;
+  const yOf = s => padT + ((s - minS) / range) * cH; // más lento = más abajo
+
+  // Área de relleno
+  const areaPoints = pts.map((r, i) => `${xOf(i)},${yOf(secs[i])}`).join(' ');
+  const areaPath = `M${xOf(0)},${yOf(secs[0])} ` +
+    pts.slice(1).map((r, i) => `L${xOf(i+1)},${yOf(secs[i+1])}`).join(' ') +
+    ` L${xOf(pts.length-1)},${padT+cH} L${xOf(0)},${padT+cH} Z`;
+
+  // Línea principal
+  const lineD = `M${xOf(0)},${yOf(secs[0])} ` +
+    pts.slice(1).map((r, i) => `L${xOf(i+1)},${yOf(secs[i+1])}`).join(' ');
+
+  let html = `
+    <defs>
+      <linearGradient id="pg" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="rgba(255,255,255,0.18)"/>
+        <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+      </linearGradient>
+    </defs>
+    <path d="${areaPath}" fill="url(#pg)"/>
+    <path id="pace-line" d="${lineD}" fill="none" stroke="rgba(255,255,255,0.85)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  `;
+
+  // Puntos y etiquetas — solo mostrar etiqueta si hay suficiente espacio horizontal
+  const MIN_SPACING = 32;
+  let lastLabelX = -Infinity;
+  pts.forEach((r, i) => {
+    const x = xOf(i), y = yOf(secs[i]);
+    const isFirst = i === 0, isLast = i === pts.length - 1;
+    const showLabel = isFirst || isLast || (x - lastLabelX) >= MIN_SPACING;
+    if (showLabel) lastLabelX = x;
+    html += `<circle cx="${x}" cy="${y}" r="3.5" fill="#fff" opacity="0" class="pace-dot" style="transition:opacity 0.3s ${i*80}ms"/>`;
+    if (showLabel) {
+      html += `<text x="${x}" y="${y - 8}" text-anchor="middle" font-family="Arial Black,Arial" font-weight="900" font-size="11" fill="rgba(255,255,255,0.9)" opacity="0" class="pace-lbl" style="transition:opacity 0.3s ${i*80}ms">${r.pace}</text>`;
+      if (!isDash(r.hr)) html += `<text x="${x}" y="${y - 20}" text-anchor="middle" font-family="Arial,sans-serif" font-size="8" fill="rgba(255,255,255,0.9)" opacity="0" class="pace-lbl" style="transition:opacity 0.3s ${i*80}ms">${r.hr} ppm</text>`;
+      html += `<text x="${x}" y="${padT+cH+16}" text-anchor="middle" font-family="Arial,sans-serif" font-size="9" fill="rgba(255,255,255,0.45)">${r.n}</text>`;
+    }
+  });
+
+  svg.innerHTML = html;
+
+  // Preparar animación de línea
+  const line = document.getElementById('pace-line');
+  if (line) {
+    const len = line.getTotalLength ? line.getTotalLength() : 400;
+    line.style.strokeDasharray = len;
+    line.style.strokeDashoffset = len;
+  }
+}
+
+function animatePaceChart() {
+  const line = document.getElementById('pace-line');
+  if (line) {
+    const len = parseFloat(line.style.strokeDasharray) || 400;
+    line.style.transition = 'stroke-dashoffset 1.2s cubic-bezier(0.4,0,0.2,1)';
+    line.style.strokeDashoffset = '0';
+  }
+  document.querySelectorAll('.pace-dot, .pace-lbl').forEach(el => { el.style.opacity = '1'; });
+}
+
 // ── BUILD RECAP ───────────────────────────────────────────────────────────
 function buildRecap(stats) {
   _stats = stats;
+  const nameInput = document.getElementById('session-name');
+  try { if (nameInput.value.trim()) localStorage.setItem('lastSessionName', nameInput.value.trim()); } catch(e) {}
 
   // Slide 0
   document.getElementById('s0-label').textContent = stats.sessionLabel;
@@ -1321,6 +1478,10 @@ function buildRecap(stats) {
 
     document.getElementById('rows-body').innerHTML = `<div class="laps-bars">${header}${rows}</div>`;
   }
+
+  // Pace chart
+  buildPaceChart(stats);
+  buildElevProfile();
 
   // Summary
   document.getElementById('sum-title').textContent = stats.sessionName;
@@ -1524,6 +1685,8 @@ document.addEventListener('keydown', e => {
 });
 </script>
 <script>
+try { const _savedName = localStorage.getItem('lastSessionName'); if (_savedName) document.getElementById('session-name').value = _savedName; } catch(e) {}
+
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('./sw.js');
