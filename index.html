@@ -877,15 +877,23 @@ function drawRoute(canvas, points) {
 
   ctx.restore();
 
-  // Start dot
-  const s = path[0];
-  ctx.beginPath(); ctx.arc(s.x, s.y, 5, 0, Math.PI*2);
-  ctx.fillStyle = 'rgba(255,255,255,0.9)'; ctx.fill();
+  ctx.fillStyle = 'rgba(255,255,255,0.9)';
+  ctx.font = 'bold 13px Arial';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'bottom';
 
-  // End dot
+  // Start — triángulo play
+  const s = path[0];
+  ctx.beginPath(); ctx.arc(s.x, s.y, 4, 0, Math.PI*2);
+  ctx.fill();
+  ctx.fillText('▶', s.x, s.y - 5);
+
+  // End — bandera a cuadros (emoji)
   const e = path[path.length-1];
-  ctx.beginPath(); ctx.arc(e.x, e.y, 5, 0, Math.PI*2);
-  ctx.fillStyle = 'rgba(255,255,255,0.9)'; ctx.fill();
+  ctx.beginPath(); ctx.arc(e.x, e.y, 4, 0, Math.PI*2);
+  ctx.fill();
+  ctx.font = '13px Arial';
+  ctx.fillText('🏁', e.x, e.y - 5);
 }
 
 // ── DATA PROCESSING ───────────────────────────────────────────────────────
