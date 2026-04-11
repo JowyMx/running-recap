@@ -228,6 +228,14 @@ body {
 }
 #rows-slide.active { display: flex; }
 #rows-body { width: 100%; }
+#hr-rows-slide {
+  display: none; flex-direction: column;
+  align-items: center; width: 92%; max-width: 640px;
+  max-height: 100vh; overflow: hidden;
+  animation: fadeIn 0.35s ease;
+}
+#hr-rows-slide.active { display: flex; }
+#hr-rows-body { width: 100%; }
 .rows-label {
   font-size: clamp(11px, 2vw, 15px);
   letter-spacing: 0.3em; color: rgba(255,255,255,1);
@@ -316,6 +324,218 @@ body {
 }
 .lap-row-cum {
   font-size: clamp(11px, 2vw, 16px);
+  font-weight: 700;
+  color: rgba(255,255,255,1);
+  text-align: right;
+}
+
+/* HR rows table */
+.hr-row {
+  display: grid;
+  grid-template-columns: 3em 4em 1fr 4em;
+  align-items: center;
+  gap: 10px;
+  padding: 5px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.18);
+}
+.hr-row:last-child { border-bottom: none; }
+.hr-row-header {
+  border-bottom: 1px solid rgba(255,255,255,0.25) !important;
+  margin-bottom: 2px;
+}
+.hr-row-header .hr-row-n,
+.hr-row-header .hr-row-val {
+  font-size: clamp(8px,1.5vw,11px) !important;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: rgba(255,255,255,0.70) !important;
+}
+.hr-row-n {
+  font-size: clamp(13px,2.5vw,20px);
+  font-weight: 900;
+  color: rgba(255,255,255,1);
+  text-align: right;
+}
+.hr-row-val {
+  font-size: clamp(13px,2.5vw,20px);
+  font-weight: 900;
+  color: rgba(255,255,255,1);
+  text-align: right;
+}
+.hr-bar-wrap { position: relative; height: clamp(20px,3.5vw,32px); }
+.hr-bar {
+  position: absolute; left: 0; top: 0; height: 100%;
+  background: rgba(255,255,255,1);
+  border-radius: 6px;
+  width: 0%;
+}
+.hr-row-cum {
+  font-size: clamp(11px,2vw,16px);
+  font-weight: 700;
+  color: rgba(255,255,255,1);
+  text-align: right;
+}
+
+/* Cadence rows table */
+#cad-rows-slide {
+  display: none; flex-direction: column;
+  align-items: center; width: 92%; max-width: 640px;
+  max-height: 100vh; overflow: hidden;
+  animation: fadeIn 0.35s ease;
+}
+#cad-rows-slide.active { display: flex; }
+#cad-rows-body { width: 100%; }
+.cad-row {
+  display: grid;
+  grid-template-columns: 3em 4em 1fr 4em;
+  align-items: center;
+  gap: 10px;
+  padding: 5px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.18);
+}
+.cad-row:last-child { border-bottom: none; }
+.cad-row-header {
+  border-bottom: 1px solid rgba(255,255,255,0.25) !important;
+  margin-bottom: 2px;
+}
+.cad-row-header .cad-row-n,
+.cad-row-header .cad-row-val {
+  font-size: clamp(8px,1.5vw,11px) !important;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: rgba(255,255,255,0.70) !important;
+}
+.cad-row-n {
+  font-size: clamp(13px,2.5vw,20px);
+  font-weight: 900;
+  color: rgba(255,255,255,1);
+  text-align: right;
+}
+.cad-row-val {
+  font-size: clamp(13px,2.5vw,20px);
+  font-weight: 900;
+  color: rgba(255,255,255,1);
+  text-align: right;
+}
+.cad-bar-wrap { position: relative; height: clamp(20px,3.5vw,32px); }
+.cad-bar {
+  position: absolute; left: 0; top: 0; height: 100%;
+  background: rgba(255,255,255,1);
+  border-radius: 6px;
+  width: 0%;
+}
+.cad-row-cum {
+  font-size: clamp(11px,2vw,16px);
+  font-weight: 700;
+  color: rgba(255,255,255,1);
+  text-align: right;
+}
+
+/* Power rows table */
+#pow-rows-slide {
+  display: none; flex-direction: column;
+  align-items: center; width: 92%; max-width: 640px;
+  max-height: 100vh; overflow: hidden;
+  animation: fadeIn 0.35s ease;
+}
+#pow-rows-slide.active { display: flex; }
+#pow-rows-body { width: 100%; }
+.pow-row {
+  display: grid;
+  grid-template-columns: 3em 4em 1fr 4em;
+  align-items: center;
+  gap: 10px;
+  padding: 5px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.18);
+}
+.pow-row:last-child { border-bottom: none; }
+.pow-row-header {
+  border-bottom: 1px solid rgba(255,255,255,0.25) !important;
+  margin-bottom: 2px;
+}
+.pow-row-header .pow-row-n,
+.pow-row-header .pow-row-val {
+  font-size: clamp(8px,1.5vw,11px) !important;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: rgba(255,255,255,0.70) !important;
+}
+.pow-row-n {
+  font-size: clamp(13px,2.5vw,20px);
+  font-weight: 900;
+  color: rgba(255,255,255,1);
+  text-align: right;
+}
+.pow-row-val {
+  font-size: clamp(13px,2.5vw,20px);
+  font-weight: 900;
+  color: rgba(255,255,255,1);
+  text-align: right;
+}
+.pow-bar-wrap { position: relative; height: clamp(20px,3.5vw,32px); }
+.pow-bar {
+  position: absolute; left: 0; top: 0; height: 100%;
+  background: rgba(255,255,255,1);
+  border-radius: 6px;
+  width: 0%;
+}
+.pow-row-cum {
+  font-size: clamp(11px,2vw,16px);
+  font-weight: 700;
+  color: rgba(255,255,255,1);
+  text-align: right;
+}
+
+/* Stride rows table */
+#stride-rows-slide {
+  display: none; flex-direction: column;
+  align-items: center; width: 92%; max-width: 640px;
+  max-height: 100vh; overflow: hidden;
+  animation: fadeIn 0.35s ease;
+}
+#stride-rows-slide.active { display: flex; }
+#stride-rows-body { width: 100%; }
+.stride-row {
+  display: grid;
+  grid-template-columns: 3em 4em 1fr 4em;
+  align-items: center;
+  gap: 10px;
+  padding: 5px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.18);
+}
+.stride-row:last-child { border-bottom: none; }
+.stride-row-header {
+  border-bottom: 1px solid rgba(255,255,255,0.25) !important;
+  margin-bottom: 2px;
+}
+.stride-row-header .stride-row-n,
+.stride-row-header .stride-row-val {
+  font-size: clamp(8px,1.5vw,11px) !important;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: rgba(255,255,255,0.70) !important;
+}
+.stride-row-n {
+  font-size: clamp(13px,2.5vw,20px);
+  font-weight: 900;
+  color: rgba(255,255,255,1);
+  text-align: right;
+}
+.stride-row-val {
+  font-size: clamp(13px,2.5vw,20px);
+  font-weight: 900;
+  color: rgba(255,255,255,1);
+  text-align: right;
+}
+.stride-bar-wrap { position: relative; height: clamp(20px,3.5vw,32px); }
+.stride-bar {
+  position: absolute; left: 0; top: 0; height: 100%;
+  background: rgba(255,255,255,1);
+  border-radius: 6px;
+  width: 0%;
+}
+.stride-row-cum {
+  font-size: clamp(11px,2vw,16px);
   font-weight: 700;
   color: rgba(255,255,255,1);
   text-align: right;
@@ -514,6 +734,18 @@ body {
       <div class="unit">ppm · FC máx <span id="v-hr-max">—</span></div>
     </div>
 
+    <div id="hr-rows-slide">
+      <div class="rows-label" id="hr-rows-label"></div>
+      <div id="hr-rows-body"></div>
+    </div>
+
+    <div class="slide" id="hr-chart-slide">
+      <div class="label">FC por vuelta</div>
+      <div id="hr-chart-wrap" style="width:88%;max-width:580px;margin-top:12px;">
+        <svg id="hr-chart-svg" width="100%" style="overflow:visible;"></svg>
+      </div>
+    </div>
+
     <div class="slide" id="s5">
       <div class="label">Ritmo medio</div>
       <div class="value" id="v-pace">0:00</div>
@@ -526,6 +758,18 @@ body {
       <div class="unit">spm</div>
     </div>
 
+    <div id="cad-rows-slide">
+      <div class="rows-label" id="cad-rows-label"></div>
+      <div id="cad-rows-body"></div>
+    </div>
+
+    <div class="slide" id="cad-chart-slide">
+      <div class="label">Cadencia por vuelta</div>
+      <div id="cad-chart-wrap" style="width:88%;max-width:580px;margin-top:12px;">
+        <svg id="cad-chart-svg" width="100%" style="overflow:visible;"></svg>
+      </div>
+    </div>
+
     <div class="slide" id="s7">
       <div class="label">Contacto con el suelo</div>
       <div class="value" id="v-gct">0</div>
@@ -536,6 +780,18 @@ body {
       <div class="label">Potencia media</div>
       <div class="value" id="v-pow">0</div>
       <div class="unit" id="v-pow-unit">W</div>
+    </div>
+
+    <div id="pow-rows-slide">
+      <div class="rows-label" id="pow-rows-label"></div>
+      <div id="pow-rows-body"></div>
+    </div>
+
+    <div class="slide" id="pow-chart-slide">
+      <div class="label">Potencia por vuelta</div>
+      <div id="pow-chart-wrap" style="width:88%;max-width:580px;margin-top:12px;">
+        <svg id="pow-chart-svg" width="100%" style="overflow:visible;"></svg>
+      </div>
     </div>
 
     <div class="slide" id="s9">
@@ -567,6 +823,18 @@ body {
       <div class="label">Longitud de zancada</div>
       <div class="value" id="v-stride">0</div>
       <div class="unit">m</div>
+    </div>
+
+    <div id="stride-rows-slide">
+      <div class="rows-label" id="stride-rows-label"></div>
+      <div id="stride-rows-body"></div>
+    </div>
+
+    <div class="slide" id="stride-chart-slide">
+      <div class="label">Zancada por vuelta</div>
+      <div id="stride-chart-wrap" style="width:88%;max-width:580px;margin-top:12px;">
+        <svg id="stride-chart-svg" width="100%" style="overflow:visible;"></svg>
+      </div>
     </div>
 
     <div class="slide" id="s13">
@@ -1012,6 +1280,8 @@ function processData(data, customName) {
     pace: r['Ritmo medio'],
     pow:  r['Potencia media'],
     dist: r['Distancia'],
+    cad:    r['Cadencia de carrera media'] || r['Cadencia media'] || r['Cadencia'],
+    stride: r['Longitud media de zancada'] || r['Longitud de zancada media'] || r['Longitud de zancada'],
   }));
 
   // Compacidad según número de filas
@@ -1039,14 +1309,22 @@ function initSlides(stats) {
   if (stats.tableRows && stats.tableRows.length > 0)    add('rows-slide', 3000);
   if (stats.tableRows && stats.tableRows.filter(r => !isDash(r.pace)).length >= 2) add('pace-chart-slide', 3000);
   if (stats.avgHR > 0)                                  add('s4',  2000);
+  if (stats.tableRows && stats.tableRows.filter(r => !isDash(r.hr) && parseFloat(r.hr) > 0).length >= 2) add('hr-rows-slide', 3000);
+  if (stats.tableRows && stats.tableRows.filter(r => !isDash(r.hr) && parseFloat(r.hr) > 0).length >= 2) add('hr-chart-slide', 3000);
   if (stats.elevation > 0 || stats.descent > 0)          add('s10', 1800);
   if (_gpsPoints && _gpsPoints.length > 1 && _gpsPoints.some(p => p.ele !== null)) add('elev-profile-slide', 2800);
   if (stats.avgCad > 0)                                 add('s6',  1800);
+  if (stats.tableRows && stats.tableRows.filter(r => !isDash(r.cad) && parseFloat(r.cad) > 0).length >= 2) add('cad-rows-slide', 3000);
+  if (stats.tableRows && stats.tableRows.filter(r => !isDash(r.cad) && parseFloat(r.cad) > 0).length >= 2) add('cad-chart-slide', 3000);
   if (stats.strideLen > 0)                              add('s12', 1800);
+  if (stats.strideLen > 0 && stats.tableRows && stats.tableRows.filter(r => !isDash(r.stride) && parseFloat(r.stride) > 0).length >= 2) add('stride-rows-slide', 3000);
+  if (stats.strideLen > 0 && stats.tableRows && stats.tableRows.filter(r => !isDash(r.stride) && parseFloat(r.stride) > 0).length >= 2) add('stride-chart-slide', 3000);
   if (stats.vertRatio > 0)                              add('s13', 1800);
   if (stats.vertOsc > 0)                                add('s14', 1800);
   if (stats.avgGCT > 0)                                 add('s7',  1800);
   if (stats.avgPow > 0)                                 add('s8',  1800);
+  if (stats.avgPow > 0 && stats.tableRows && stats.tableRows.filter(r => !isDash(r.pow) && parseFloat(r.pow) > 0).length >= 2) add('pow-rows-slide', 3000);
+  if (stats.avgPow > 0 && stats.tableRows && stats.tableRows.filter(r => !isDash(r.pow) && parseFloat(r.pow) > 0).length >= 2) add('pow-chart-slide', 3000);
   if (stats.avgTemp !== 0)                              add('s11', 1800);
 
   add('summary-slide', 0);
@@ -1113,6 +1391,126 @@ function showSlide(n) {
   // Animar gráfica de ritmo
   if (n === idx('pace-chart-slide')) {
     requestAnimationFrame(() => requestAnimationFrame(() => animatePaceChart()));
+  }
+
+  // Animar tabla de FC por vuelta
+  if (n === idx('hr-rows-slide')) {
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      const body  = document.getElementById('hr-rows-body');
+      const label = document.getElementById('hr-rows-label');
+      body.style.zoom = '';
+      const labelH = label ? label.offsetHeight + 18 : 0;
+      const bodyH  = body.scrollHeight;
+      const availH = window.innerHeight * 0.94 - labelH;
+      if (bodyH > availH) body.style.zoom = String(availH / bodyH);
+    }));
+    const bars = document.querySelectorAll('.hr-bar');
+    bars.forEach(el => { el.style.width = '0%'; });
+    const dur = 900;
+    let t0hr = null;
+    function animHRBars(now) {
+      if (t0hr === null) t0hr = now;
+      const p = Math.min((now - t0hr) / dur, 1);
+      const e = p < .5 ? 2*p*p : -1+(4-2*p)*p;
+      bars.forEach(el => { el.style.width = (parseFloat(el.dataset.pct) * e) + '%'; });
+      if (p < 1) requestAnimationFrame(animHRBars);
+    }
+    requestAnimationFrame(animHRBars);
+  }
+
+  // Animar gráfica de FC
+  if (n === idx('hr-chart-slide')) {
+    requestAnimationFrame(() => requestAnimationFrame(() => animateHRChart()));
+  }
+
+  // Animar tabla de cadencia por vuelta
+  if (n === idx('cad-rows-slide')) {
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      const body  = document.getElementById('cad-rows-body');
+      const label = document.getElementById('cad-rows-label');
+      body.style.zoom = '';
+      const labelH = label ? label.offsetHeight + 18 : 0;
+      const bodyH  = body.scrollHeight;
+      const availH = window.innerHeight * 0.94 - labelH;
+      if (bodyH > availH) body.style.zoom = String(availH / bodyH);
+    }));
+    const bars = document.querySelectorAll('.cad-bar');
+    bars.forEach(el => { el.style.width = '0%'; });
+    const dur = 900;
+    let t0cad = null;
+    function animCadBars(now) {
+      if (t0cad === null) t0cad = now;
+      const p = Math.min((now - t0cad) / dur, 1);
+      const e = p < .5 ? 2*p*p : -1+(4-2*p)*p;
+      bars.forEach(el => { el.style.width = (parseFloat(el.dataset.pct) * e) + '%'; });
+      if (p < 1) requestAnimationFrame(animCadBars);
+    }
+    requestAnimationFrame(animCadBars);
+  }
+
+  // Animar gráfica de cadencia
+  if (n === idx('cad-chart-slide')) {
+    requestAnimationFrame(() => requestAnimationFrame(() => animateCadChart()));
+  }
+
+  // Animar tabla de potencia por vuelta
+  if (n === idx('pow-rows-slide')) {
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      const body  = document.getElementById('pow-rows-body');
+      const label = document.getElementById('pow-rows-label');
+      body.style.zoom = '';
+      const labelH = label ? label.offsetHeight + 18 : 0;
+      const bodyH  = body.scrollHeight;
+      const availH = window.innerHeight * 0.94 - labelH;
+      if (bodyH > availH) body.style.zoom = String(availH / bodyH);
+    }));
+    const bars = document.querySelectorAll('.pow-bar');
+    bars.forEach(el => { el.style.width = '0%'; });
+    const dur = 900;
+    let t0pow = null;
+    function animPowBars(now) {
+      if (t0pow === null) t0pow = now;
+      const p = Math.min((now - t0pow) / dur, 1);
+      const e = p < .5 ? 2*p*p : -1+(4-2*p)*p;
+      bars.forEach(el => { el.style.width = (parseFloat(el.dataset.pct) * e) + '%'; });
+      if (p < 1) requestAnimationFrame(animPowBars);
+    }
+    requestAnimationFrame(animPowBars);
+  }
+
+  // Animar gráfica de potencia
+  if (n === idx('pow-chart-slide')) {
+    requestAnimationFrame(() => requestAnimationFrame(() => animatePowChart()));
+  }
+
+  // Animar tabla de zancada por vuelta
+  if (n === idx('stride-rows-slide')) {
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      const body  = document.getElementById('stride-rows-body');
+      const label = document.getElementById('stride-rows-label');
+      body.style.zoom = '';
+      const labelH = label ? label.offsetHeight + 18 : 0;
+      const bodyH  = body.scrollHeight;
+      const availH = window.innerHeight * 0.94 - labelH;
+      if (bodyH > availH) body.style.zoom = String(availH / bodyH);
+    }));
+    const bars = document.querySelectorAll('.stride-bar');
+    bars.forEach(el => { el.style.width = '0%'; });
+    const dur = 900;
+    let t0stride = null;
+    function animStrideBars(now) {
+      if (t0stride === null) t0stride = now;
+      const p = Math.min((now - t0stride) / dur, 1);
+      const e = p < .5 ? 2*p*p : -1+(4-2*p)*p;
+      bars.forEach(el => { el.style.width = (parseFloat(el.dataset.pct) * e) + '%'; });
+      if (p < 1) requestAnimationFrame(animStrideBars);
+    }
+    requestAnimationFrame(animStrideBars);
+  }
+
+  // Animar gráfica de zancada
+  if (n === idx('stride-chart-slide')) {
+    requestAnimationFrame(() => requestAnimationFrame(() => animateStrideChart()));
   }
 
   // Animar perfil de elevación
@@ -1457,6 +1855,294 @@ function animatePaceChart() {
   document.querySelectorAll('.pace-dot, .pace-lbl').forEach(el => { el.style.opacity = '1'; });
 }
 
+// ── HR CHART ──────────────────────────────────────────────────────────────
+function buildHRChart(stats) {
+  const svg = document.getElementById('hr-chart-svg');
+  if (!svg) return;
+  const pts = stats.tableRows.filter(r => !isDash(r.hr) && parseFloat(r.hr) > 0);
+  if (pts.length < 2) { svg.innerHTML = ''; return; }
+
+  const W = 400, H = 190;
+  const padL = 8, padR = 8, padT = 52, padB = 28;
+  const cW = W - padL - padR, cH = H - padT - padB;
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+
+  const vals = pts.map(r => parseFloat(r.hr));
+  const minV = Math.min(...vals), maxV = Math.max(...vals);
+  const range = maxV - minV || 1;
+
+  const xOf = i => padL + (i / (pts.length - 1)) * cW;
+  const yOf = v => padT + ((maxV - v) / range) * cH; // mayor FC = más arriba
+
+  const areaPath = `M${xOf(0)},${yOf(vals[0])} ` +
+    vals.slice(1).map((v, i) => `L${xOf(i+1)},${yOf(v)}`).join(' ') +
+    ` L${xOf(pts.length-1)},${padT+cH} L${xOf(0)},${padT+cH} Z`;
+
+  const lineD = `M${xOf(0)},${yOf(vals[0])} ` +
+    vals.slice(1).map((v, i) => `L${xOf(i+1)},${yOf(v)}`).join(' ');
+
+  let html = `
+    <defs>
+      <linearGradient id="hrg" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="rgba(255,255,255,0.18)"/>
+        <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+      </linearGradient>
+    </defs>
+    <path d="${areaPath}" fill="url(#hrg)"/>
+    <path id="hr-line" d="${lineD}" fill="none" stroke="rgba(255,255,255,0.85)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  `;
+
+  const MIN_SPACING = 32;
+  let lastLabelX = -Infinity;
+  pts.forEach((r, i) => {
+    const x = xOf(i), y = yOf(vals[i]);
+    const isFirst = i === 0, isLast = i === pts.length - 1;
+    const showLabel = isFirst || isLast || (x - lastLabelX) >= MIN_SPACING;
+    if (showLabel) lastLabelX = x;
+    const lapLabel = r.n !== undefined ? r.n : (i + 1);
+    html += `<circle cx="${x}" cy="${y}" r="3.5" fill="#fff" opacity="0" class="hr-dot" style="transition:opacity 0.3s ${i*80}ms"/>`;
+    if (showLabel) {
+      html += `<text x="${x}" y="${y - 8}" text-anchor="middle" font-family="Arial Black,Arial" font-weight="900" font-size="11" fill="rgba(255,255,255,0.9)" opacity="0" class="hr-lbl" style="transition:opacity 0.3s ${i*80}ms">${Math.round(vals[i])}</text>`;
+      html += `<text x="${x}" y="${padT+cH+16}" text-anchor="middle" font-family="Arial,sans-serif" font-size="9" fill="rgba(255,255,255,0.45)">${lapLabel}</text>`;
+    }
+  });
+
+  svg.innerHTML = html;
+
+  const line = document.getElementById('hr-line');
+  if (line) {
+    const len = line.getTotalLength ? line.getTotalLength() : 400;
+    line.style.strokeDasharray = len;
+    line.style.strokeDashoffset = len;
+  }
+}
+
+function animateHRChart() {
+  const line = document.getElementById('hr-line');
+  if (line) {
+    const len = parseFloat(line.style.strokeDasharray) || 400;
+    line.style.transition = 'stroke-dashoffset 1.2s cubic-bezier(0.4,0,0.2,1)';
+    line.style.strokeDashoffset = '0';
+  }
+  document.querySelectorAll('.hr-dot, .hr-lbl').forEach(el => { el.style.opacity = '1'; });
+}
+
+// ── CADENCE CHART ─────────────────────────────────────────────────────────
+function buildCadChart(stats) {
+  const svg = document.getElementById('cad-chart-svg');
+  if (!svg) return;
+  const pts = stats.tableRows.filter(r => !isDash(r.cad) && parseFloat(r.cad) > 0);
+  if (pts.length < 2) { svg.innerHTML = ''; return; }
+
+  const W = 400, H = 190;
+  const padL = 8, padR = 8, padT = 52, padB = 28;
+  const cW = W - padL - padR, cH = H - padT - padB;
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+
+  const vals = pts.map(r => parseFloat(r.cad));
+  const minV = Math.min(...vals), maxV = Math.max(...vals);
+  const range = maxV - minV || 1;
+
+  const xOf = i => padL + (i / (pts.length - 1)) * cW;
+  const yOf = v => padT + ((maxV - v) / range) * cH;
+
+  const areaPath = `M${xOf(0)},${yOf(vals[0])} ` +
+    vals.slice(1).map((v, i) => `L${xOf(i+1)},${yOf(v)}`).join(' ') +
+    ` L${xOf(pts.length-1)},${padT+cH} L${xOf(0)},${padT+cH} Z`;
+
+  const lineD = `M${xOf(0)},${yOf(vals[0])} ` +
+    vals.slice(1).map((v, i) => `L${xOf(i+1)},${yOf(v)}`).join(' ');
+
+  let html = `
+    <defs>
+      <linearGradient id="cadg" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="rgba(255,255,255,0.18)"/>
+        <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+      </linearGradient>
+    </defs>
+    <path d="${areaPath}" fill="url(#cadg)"/>
+    <path id="cad-line" d="${lineD}" fill="none" stroke="rgba(255,255,255,0.85)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  `;
+
+  const MIN_SPACING = 32;
+  let lastLabelX = -Infinity;
+  pts.forEach((r, i) => {
+    const x = xOf(i), y = yOf(vals[i]);
+    const isFirst = i === 0, isLast = i === pts.length - 1;
+    const showLabel = isFirst || isLast || (x - lastLabelX) >= MIN_SPACING;
+    if (showLabel) lastLabelX = x;
+    const lapLabel = r.n !== undefined ? r.n : (i + 1);
+    html += `<circle cx="${x}" cy="${y}" r="3.5" fill="#fff" opacity="0" class="cad-dot" style="transition:opacity 0.3s ${i*80}ms"/>`;
+    if (showLabel) {
+      html += `<text x="${x}" y="${y - 8}" text-anchor="middle" font-family="Arial Black,Arial" font-weight="900" font-size="11" fill="rgba(255,255,255,0.9)" opacity="0" class="cad-lbl" style="transition:opacity 0.3s ${i*80}ms">${Math.round(vals[i])}</text>`;
+      html += `<text x="${x}" y="${padT+cH+16}" text-anchor="middle" font-family="Arial,sans-serif" font-size="9" fill="rgba(255,255,255,0.45)">${lapLabel}</text>`;
+    }
+  });
+
+  svg.innerHTML = html;
+
+  const line = document.getElementById('cad-line');
+  if (line) {
+    const len = line.getTotalLength ? line.getTotalLength() : 400;
+    line.style.strokeDasharray = len;
+    line.style.strokeDashoffset = len;
+  }
+}
+
+function animateCadChart() {
+  const line = document.getElementById('cad-line');
+  if (line) {
+    const len = parseFloat(line.style.strokeDasharray) || 400;
+    line.style.transition = 'stroke-dashoffset 1.2s cubic-bezier(0.4,0,0.2,1)';
+    line.style.strokeDashoffset = '0';
+  }
+  document.querySelectorAll('.cad-dot, .cad-lbl').forEach(el => { el.style.opacity = '1'; });
+}
+
+// ── POWER CHART ───────────────────────────────────────────────────────────
+function buildPowChart(stats) {
+  const svg = document.getElementById('pow-chart-svg');
+  if (!svg) return;
+  const pts = stats.tableRows.filter(r => !isDash(r.pow) && parseFloat(r.pow) > 0);
+  if (pts.length < 2) { svg.innerHTML = ''; return; }
+
+  const W = 400, H = 190;
+  const padL = 8, padR = 8, padT = 52, padB = 28;
+  const cW = W - padL - padR, cH = H - padT - padB;
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+
+  const vals = pts.map(r => parseFloat(r.pow));
+  const minV = Math.min(...vals), maxV = Math.max(...vals);
+  const range = maxV - minV || 1;
+
+  const xOf = i => padL + (i / (pts.length - 1)) * cW;
+  const yOf = v => padT + ((maxV - v) / range) * cH;
+
+  const areaPath = `M${xOf(0)},${yOf(vals[0])} ` +
+    vals.slice(1).map((v, i) => `L${xOf(i+1)},${yOf(v)}`).join(' ') +
+    ` L${xOf(pts.length-1)},${padT+cH} L${xOf(0)},${padT+cH} Z`;
+
+  const lineD = `M${xOf(0)},${yOf(vals[0])} ` +
+    vals.slice(1).map((v, i) => `L${xOf(i+1)},${yOf(v)}`).join(' ');
+
+  let html = `
+    <defs>
+      <linearGradient id="powg" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="rgba(255,255,255,0.18)"/>
+        <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+      </linearGradient>
+    </defs>
+    <path d="${areaPath}" fill="url(#powg)"/>
+    <path id="pow-line" d="${lineD}" fill="none" stroke="rgba(255,255,255,0.85)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  `;
+
+  const MIN_SPACING = 32;
+  let lastLabelX = -Infinity;
+  pts.forEach((r, i) => {
+    const x = xOf(i), y = yOf(vals[i]);
+    const isFirst = i === 0, isLast = i === pts.length - 1;
+    const showLabel = isFirst || isLast || (x - lastLabelX) >= MIN_SPACING;
+    if (showLabel) lastLabelX = x;
+    const lapLabel = r.n !== undefined ? r.n : (i + 1);
+    html += `<circle cx="${x}" cy="${y}" r="3.5" fill="#fff" opacity="0" class="pow-dot" style="transition:opacity 0.3s ${i*80}ms"/>`;
+    if (showLabel) {
+      html += `<text x="${x}" y="${y - 8}" text-anchor="middle" font-family="Arial Black,Arial" font-weight="900" font-size="11" fill="rgba(255,255,255,0.9)" opacity="0" class="pow-lbl" style="transition:opacity 0.3s ${i*80}ms">${Math.round(vals[i])}</text>`;
+      html += `<text x="${x}" y="${padT+cH+16}" text-anchor="middle" font-family="Arial,sans-serif" font-size="9" fill="rgba(255,255,255,0.45)">${lapLabel}</text>`;
+    }
+  });
+
+  svg.innerHTML = html;
+
+  const line = document.getElementById('pow-line');
+  if (line) {
+    const len = line.getTotalLength ? line.getTotalLength() : 400;
+    line.style.strokeDasharray = len;
+    line.style.strokeDashoffset = len;
+  }
+}
+
+function animatePowChart() {
+  const line = document.getElementById('pow-line');
+  if (line) {
+    const len = parseFloat(line.style.strokeDasharray) || 400;
+    line.style.transition = 'stroke-dashoffset 1.2s cubic-bezier(0.4,0,0.2,1)';
+    line.style.strokeDashoffset = '0';
+  }
+  document.querySelectorAll('.pow-dot, .pow-lbl').forEach(el => { el.style.opacity = '1'; });
+}
+
+// ── STRIDE CHART ──────────────────────────────────────────────────────────
+function buildStrideChart(stats) {
+  const svg = document.getElementById('stride-chart-svg');
+  if (!svg) return;
+  const pts = stats.tableRows.filter(r => !isDash(r.stride) && parseFloat(r.stride) > 0);
+  if (pts.length < 2) { svg.innerHTML = ''; return; }
+
+  const W = 400, H = 190;
+  const padL = 8, padR = 8, padT = 52, padB = 28;
+  const cW = W - padL - padR, cH = H - padT - padB;
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+
+  const vals = pts.map(r => parseFloat(r.stride));
+  const minV = Math.min(...vals), maxV = Math.max(...vals);
+  const range = maxV - minV || 1;
+
+  const xOf = i => padL + (i / (pts.length - 1)) * cW;
+  const yOf = v => padT + ((maxV - v) / range) * cH;
+
+  const areaPath = `M${xOf(0)},${yOf(vals[0])} ` +
+    vals.slice(1).map((v, i) => `L${xOf(i+1)},${yOf(v)}`).join(' ') +
+    ` L${xOf(pts.length-1)},${padT+cH} L${xOf(0)},${padT+cH} Z`;
+
+  const lineD = `M${xOf(0)},${yOf(vals[0])} ` +
+    vals.slice(1).map((v, i) => `L${xOf(i+1)},${yOf(v)}`).join(' ');
+
+  let html = `
+    <defs>
+      <linearGradient id="strideg" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="rgba(255,255,255,0.18)"/>
+        <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+      </linearGradient>
+    </defs>
+    <path d="${areaPath}" fill="url(#strideg)"/>
+    <path id="stride-line" d="${lineD}" fill="none" stroke="rgba(255,255,255,0.85)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  `;
+
+  const MIN_SPACING = 32;
+  let lastLabelX = -Infinity;
+  pts.forEach((r, i) => {
+    const x = xOf(i), y = yOf(vals[i]);
+    const isFirst = i === 0, isLast = i === pts.length - 1;
+    const showLabel = isFirst || isLast || (x - lastLabelX) >= MIN_SPACING;
+    if (showLabel) lastLabelX = x;
+    const lapLabel = r.n !== undefined ? r.n : (i + 1);
+    html += `<circle cx="${x}" cy="${y}" r="3.5" fill="#fff" opacity="0" class="stride-dot" style="transition:opacity 0.3s ${i*80}ms"/>`;
+    if (showLabel) {
+      html += `<text x="${x}" y="${y - 8}" text-anchor="middle" font-family="Arial Black,Arial" font-weight="900" font-size="11" fill="rgba(255,255,255,0.9)" opacity="0" class="stride-lbl" style="transition:opacity 0.3s ${i*80}ms">${parseFloat(vals[i]).toFixed(2)}</text>`;
+      html += `<text x="${x}" y="${padT+cH+16}" text-anchor="middle" font-family="Arial,sans-serif" font-size="9" fill="rgba(255,255,255,0.45)">${lapLabel}</text>`;
+    }
+  });
+
+  svg.innerHTML = html;
+
+  const line = document.getElementById('stride-line');
+  if (line) {
+    const len = line.getTotalLength ? line.getTotalLength() : 400;
+    line.style.strokeDasharray = len;
+    line.style.strokeDashoffset = len;
+  }
+}
+
+function animateStrideChart() {
+  const line = document.getElementById('stride-line');
+  if (line) {
+    const len = parseFloat(line.style.strokeDasharray) || 400;
+    line.style.transition = 'stroke-dashoffset 1.2s cubic-bezier(0.4,0,0.2,1)';
+    line.style.strokeDashoffset = '0';
+  }
+  document.querySelectorAll('.stride-dot, .stride-lbl').forEach(el => { el.style.opacity = '1'; });
+}
+
 // ── BUILD RECAP ───────────────────────────────────────────────────────────
 function buildRecap(stats) {
   _stats = stats;
@@ -1569,8 +2255,201 @@ function buildRecap(stats) {
     document.getElementById('rows-body').innerHTML = `<div class="laps-bars">${header}${rows}</div>`;
   }
 
+  // HR rows table
+  {
+    const hrRows = stats.tableRows.filter(r => !isDash(r.hr) && parseFloat(r.hr) > 0);
+    document.getElementById('hr-rows-label').textContent = stats.type === 'intervals' ? 'Intervalos · FC' : 'Vueltas · FC';
+    if (hrRows.length >= 2) {
+      const hrVals = hrRows.map(r => parseFloat(r.hr));
+      const minHR = Math.min(...hrVals), maxHR = Math.max(...hrVals);
+      const hrRange = maxHR - minHR || 1;
+      const labelKey = stats.type === 'intervals' ? 'INT' : 'KM';
+      let cumSecHR = 0;
+      const rows = stats.tableRows.map((r, i) => {
+        const hrNum = parseFloat(r.hr);
+        if (!hrNum || hrNum <= 0) return '';
+        const pct = Math.round(((hrNum - minHR) / hrRange) * 70 + 15);
+        const lapDist = parseFloat(r.dist) || 1;
+        const lapSec = isDash(r.pace) ? 0 : paceToSec(r.pace) * lapDist;
+        cumSecHR += lapSec;
+        const cumH = Math.floor(cumSecHR/3600), cumM = Math.floor((cumSecHR%3600)/60), cumS = Math.round(cumSecHR%60);
+        const cumVal = cumH > 0
+          ? `${cumH}:${String(cumM).padStart(2,'0')}:${String(cumS).padStart(2,'0')}`
+          : `${String(cumM).padStart(2,'0')}:${String(cumS).padStart(2,'0')}`;
+        const distVal = (() => {
+          const d = parseFloat(r.dist) || 0;
+          if (stats.type === 'intervals') return r.n;
+          if (d === 0) return r.n;
+          if (d >= 0.95) {
+            const cum = stats.tableRows.slice(0, i + 1).reduce((s, row) => s + (parseFloat(row.dist) || 0), 0);
+            return Math.round(cum);
+          }
+          return parseFloat(d.toFixed(2));
+        })();
+        return `<div class="hr-row">
+          <div class="hr-row-n">${distVal}</div>
+          <div class="hr-row-val">${Math.round(hrNum)}</div>
+          <div class="hr-bar-wrap"><div class="hr-bar" data-pct="${pct}"></div></div>
+          <div class="hr-row-cum">${cumVal}</div>
+        </div>`;
+      }).join('');
+      const header = `<div class="hr-row hr-row-header">
+        <div class="hr-row-n">${labelKey}</div>
+        <div class="hr-row-val">FC</div>
+        <div class="hr-bar-wrap"></div>
+        <div class="hr-row-cum">TOTAL</div>
+      </div>`;
+      document.getElementById('hr-rows-body').innerHTML = `<div class="laps-bars">${header}${rows}</div>`;
+    }
+  }
+
+  // Stride rows table
+  {
+    const strideRows = stats.tableRows.filter(r => !isDash(r.stride) && parseFloat(r.stride) > 0);
+    document.getElementById('stride-rows-label').textContent = stats.type === 'intervals' ? 'Intervalos · Zancada' : 'Vueltas · Zancada';
+    if (strideRows.length >= 2) {
+      const strideVals = strideRows.map(r => parseFloat(r.stride));
+      const minStride = Math.min(...strideVals), maxStride = Math.max(...strideVals);
+      const strideRange = maxStride - minStride || 1;
+      const labelKey = stats.type === 'intervals' ? 'INT' : 'KM';
+      let cumSecStride = 0;
+      const rows = stats.tableRows.map((r, i) => {
+        const strideNum = parseFloat(r.stride);
+        if (!strideNum || strideNum <= 0) return '';
+        const pct = Math.round(((strideNum - minStride) / strideRange) * 70 + 15);
+        const lapDist = parseFloat(r.dist) || 1;
+        cumSecStride += isDash(r.pace) ? 0 : paceToSec(r.pace) * lapDist;
+        const cumH = Math.floor(cumSecStride/3600), cumM = Math.floor((cumSecStride%3600)/60), cumS = Math.round(cumSecStride%60);
+        const cumVal = cumH > 0
+          ? `${cumH}:${String(cumM).padStart(2,'0')}:${String(cumS).padStart(2,'0')}`
+          : `${String(cumM).padStart(2,'0')}:${String(cumS).padStart(2,'0')}`;
+        const distVal = (() => {
+          const d = parseFloat(r.dist) || 0;
+          if (stats.type === 'intervals') return r.n;
+          if (d === 0) return r.n;
+          if (d >= 0.95) {
+            const cum = stats.tableRows.slice(0, i + 1).reduce((s, row) => s + (parseFloat(row.dist) || 0), 0);
+            return Math.round(cum);
+          }
+          return parseFloat(d.toFixed(2));
+        })();
+        return `<div class="stride-row">
+          <div class="stride-row-n">${distVal}</div>
+          <div class="stride-row-val">${strideNum.toFixed(2)}</div>
+          <div class="stride-bar-wrap"><div class="stride-bar" data-pct="${pct}"></div></div>
+          <div class="stride-row-cum">${cumVal}</div>
+        </div>`;
+      }).join('');
+      const header = `<div class="stride-row stride-row-header">
+        <div class="stride-row-n">${labelKey}</div>
+        <div class="stride-row-val">ZAN</div>
+        <div class="stride-bar-wrap"></div>
+        <div class="stride-row-cum">TOTAL</div>
+      </div>`;
+      document.getElementById('stride-rows-body').innerHTML = `<div class="laps-bars">${header}${rows}</div>`;
+    }
+  }
+
+  // Power rows table
+  {
+    const powRows = stats.tableRows.filter(r => !isDash(r.pow) && parseFloat(r.pow) > 0);
+    document.getElementById('pow-rows-label').textContent = stats.type === 'intervals' ? 'Intervalos · Potencia' : 'Vueltas · Potencia';
+    if (powRows.length >= 2) {
+      const powVals = powRows.map(r => parseFloat(r.pow));
+      const minPow = Math.min(...powVals), maxPow = Math.max(...powVals);
+      const powRange = maxPow - minPow || 1;
+      const labelKey = stats.type === 'intervals' ? 'INT' : 'KM';
+      let cumSecPow = 0;
+      const rows = stats.tableRows.map((r, i) => {
+        const powNum = parseFloat(r.pow);
+        if (!powNum || powNum <= 0) return '';
+        const pct = Math.round(((powNum - minPow) / powRange) * 70 + 15);
+        const lapDist = parseFloat(r.dist) || 1;
+        cumSecPow += isDash(r.pace) ? 0 : paceToSec(r.pace) * lapDist;
+        const cumH = Math.floor(cumSecPow/3600), cumM = Math.floor((cumSecPow%3600)/60), cumS = Math.round(cumSecPow%60);
+        const cumVal = cumH > 0
+          ? `${cumH}:${String(cumM).padStart(2,'0')}:${String(cumS).padStart(2,'0')}`
+          : `${String(cumM).padStart(2,'0')}:${String(cumS).padStart(2,'0')}`;
+        const distVal = (() => {
+          const d = parseFloat(r.dist) || 0;
+          if (stats.type === 'intervals') return r.n;
+          if (d === 0) return r.n;
+          if (d >= 0.95) {
+            const cum = stats.tableRows.slice(0, i + 1).reduce((s, row) => s + (parseFloat(row.dist) || 0), 0);
+            return Math.round(cum);
+          }
+          return parseFloat(d.toFixed(2));
+        })();
+        return `<div class="pow-row">
+          <div class="pow-row-n">${distVal}</div>
+          <div class="pow-row-val">${Math.round(powNum)}</div>
+          <div class="pow-bar-wrap"><div class="pow-bar" data-pct="${pct}"></div></div>
+          <div class="pow-row-cum">${cumVal}</div>
+        </div>`;
+      }).join('');
+      const header = `<div class="pow-row pow-row-header">
+        <div class="pow-row-n">${labelKey}</div>
+        <div class="pow-row-val">W</div>
+        <div class="pow-bar-wrap"></div>
+        <div class="pow-row-cum">TOTAL</div>
+      </div>`;
+      document.getElementById('pow-rows-body').innerHTML = `<div class="laps-bars">${header}${rows}</div>`;
+    }
+  }
+
+  // Cadence rows table
+  {
+    const cadRows = stats.tableRows.filter(r => !isDash(r.cad) && parseFloat(r.cad) > 0);
+    document.getElementById('cad-rows-label').textContent = stats.type === 'intervals' ? 'Intervalos · Cadencia' : 'Vueltas · Cadencia';
+    if (cadRows.length >= 2) {
+      const cadVals = cadRows.map(r => parseFloat(r.cad));
+      const minCad = Math.min(...cadVals), maxCad = Math.max(...cadVals);
+      const cadRange = maxCad - minCad || 1;
+      const labelKey = stats.type === 'intervals' ? 'INT' : 'KM';
+      let cumSecCad = 0;
+      const rows = stats.tableRows.map((r, i) => {
+        const cadNum = parseFloat(r.cad);
+        if (!cadNum || cadNum <= 0) return '';
+        const pct = Math.round(((cadNum - minCad) / cadRange) * 70 + 15);
+        const lapDist = parseFloat(r.dist) || 1;
+        cumSecCad += isDash(r.pace) ? 0 : paceToSec(r.pace) * lapDist;
+        const cumH = Math.floor(cumSecCad/3600), cumM = Math.floor((cumSecCad%3600)/60), cumS = Math.round(cumSecCad%60);
+        const cumVal = cumH > 0
+          ? `${cumH}:${String(cumM).padStart(2,'0')}:${String(cumS).padStart(2,'0')}`
+          : `${String(cumM).padStart(2,'0')}:${String(cumS).padStart(2,'0')}`;
+        const distVal = (() => {
+          const d = parseFloat(r.dist) || 0;
+          if (stats.type === 'intervals') return r.n;
+          if (d === 0) return r.n;
+          if (d >= 0.95) {
+            const cum = stats.tableRows.slice(0, i + 1).reduce((s, row) => s + (parseFloat(row.dist) || 0), 0);
+            return Math.round(cum);
+          }
+          return parseFloat(d.toFixed(2));
+        })();
+        return `<div class="cad-row">
+          <div class="cad-row-n">${distVal}</div>
+          <div class="cad-row-val">${Math.round(cadNum)}</div>
+          <div class="cad-bar-wrap"><div class="cad-bar" data-pct="${pct}"></div></div>
+          <div class="cad-row-cum">${cumVal}</div>
+        </div>`;
+      }).join('');
+      const header = `<div class="cad-row cad-row-header">
+        <div class="cad-row-n">${labelKey}</div>
+        <div class="cad-row-val">CAD</div>
+        <div class="cad-bar-wrap"></div>
+        <div class="cad-row-cum">TOTAL</div>
+      </div>`;
+      document.getElementById('cad-rows-body').innerHTML = `<div class="laps-bars">${header}${rows}</div>`;
+    }
+  }
+
   // Pace chart
   buildPaceChart(stats);
+  buildHRChart(stats);
+  buildCadChart(stats);
+  buildPowChart(stats);
+  buildStrideChart(stats);
   buildElevProfile();
 
   // Summary
