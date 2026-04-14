@@ -541,6 +541,156 @@ body {
   text-align: right;
 }
 
+/* Elev rows table */
+#elev-rows-slide {
+  display: none; flex-direction: column;
+  align-items: center; width: 92%; max-width: 640px;
+  max-height: 100vh; overflow: hidden;
+  animation: fadeIn 0.35s ease;
+}
+#elev-rows-slide.active { display: flex; }
+#elev-rows-body { width: 100%; }
+.elev-row {
+  display: grid;
+  grid-template-columns: 3em 5em 1fr 4em;
+  align-items: center;
+  gap: 10px;
+  padding: 5px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.18);
+}
+.elev-row:last-child { border-bottom: none; }
+.elev-row-header { border-bottom: 1px solid rgba(255,255,255,0.25) !important; margin-bottom: 2px; }
+.elev-row-header .elev-row-n,
+.elev-row-header .elev-row-val {
+  font-size: clamp(8px,1.5vw,11px) !important;
+  font-weight: 700; letter-spacing: 0.2em; color: rgba(255,255,255,0.70) !important;
+}
+.elev-row-n { font-size: clamp(13px,2.5vw,20px); font-weight: 900; color: rgba(255,255,255,1); text-align: right; }
+.elev-row-val { font-size: clamp(11px,2vw,16px); font-weight: 900; color: rgba(255,255,255,1); text-align: right; }
+.elev-bar-wrap { position: relative; height: clamp(20px,3.5vw,32px); }
+.elev-bar { position: absolute; left: 0; top: 0; height: 100%; background: rgba(255,255,255,1); border-radius: 6px; width: 0%; }
+.elev-row-cum { font-size: clamp(11px,2vw,16px); font-weight: 700; color: rgba(255,255,255,1); text-align: right; }
+
+/* GCT rows table */
+#gct-rows-slide {
+  display: none; flex-direction: column;
+  align-items: center; width: 92%; max-width: 640px;
+  max-height: 100vh; overflow: hidden;
+  animation: fadeIn 0.35s ease;
+}
+#gct-rows-slide.active { display: flex; }
+#gct-rows-body { width: 100%; }
+.gct-row {
+  display: grid;
+  grid-template-columns: 3em 4em 1fr 4em;
+  align-items: center;
+  gap: 10px;
+  padding: 5px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.18);
+}
+.gct-row:last-child { border-bottom: none; }
+.gct-row-header { border-bottom: 1px solid rgba(255,255,255,0.25) !important; margin-bottom: 2px; }
+.gct-row-header .gct-row-n,
+.gct-row-header .gct-row-val {
+  font-size: clamp(8px,1.5vw,11px) !important;
+  font-weight: 700; letter-spacing: 0.2em; color: rgba(255,255,255,0.70) !important;
+}
+.gct-row-n { font-size: clamp(13px,2.5vw,20px); font-weight: 900; color: rgba(255,255,255,1); text-align: right; }
+.gct-row-val { font-size: clamp(13px,2.5vw,20px); font-weight: 900; color: rgba(255,255,255,1); text-align: right; }
+.gct-bar-wrap { position: relative; height: clamp(20px,3.5vw,32px); }
+.gct-bar { position: absolute; left: 0; top: 0; height: 100%; background: rgba(255,255,255,1); border-radius: 6px; width: 0%; }
+.gct-row-cum { font-size: clamp(11px,2vw,16px); font-weight: 700; color: rgba(255,255,255,1); text-align: right; }
+
+/* Temp rows table */
+#temp-rows-slide {
+  display: none; flex-direction: column;
+  align-items: center; width: 92%; max-width: 640px;
+  max-height: 100vh; overflow: hidden;
+  animation: fadeIn 0.35s ease;
+}
+#temp-rows-slide.active { display: flex; }
+#temp-rows-body { width: 100%; }
+.temp-row {
+  display: grid;
+  grid-template-columns: 3em 4em 1fr 4em;
+  align-items: center;
+  gap: 10px;
+  padding: 5px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.18);
+}
+.temp-row:last-child { border-bottom: none; }
+.temp-row-header { border-bottom: 1px solid rgba(255,255,255,0.25) !important; margin-bottom: 2px; }
+.temp-row-header .temp-row-n,
+.temp-row-header .temp-row-val {
+  font-size: clamp(8px,1.5vw,11px) !important;
+  font-weight: 700; letter-spacing: 0.2em; color: rgba(255,255,255,0.70) !important;
+}
+.temp-row-n { font-size: clamp(13px,2.5vw,20px); font-weight: 900; color: rgba(255,255,255,1); text-align: right; }
+.temp-row-val { font-size: clamp(13px,2.5vw,20px); font-weight: 900; color: rgba(255,255,255,1); text-align: right; }
+.temp-bar-wrap { position: relative; height: clamp(20px,3.5vw,32px); }
+.temp-bar { position: absolute; left: 0; top: 0; height: 100%; background: rgba(255,255,255,1); border-radius: 6px; width: 0%; }
+.temp-row-cum { font-size: clamp(11px,2vw,16px); font-weight: 700; color: rgba(255,255,255,1); text-align: right; }
+
+/* VR rows table */
+#vr-rows-slide {
+  display: none; flex-direction: column;
+  align-items: center; width: 92%; max-width: 640px;
+  max-height: 100vh; overflow: hidden;
+  animation: fadeIn 0.35s ease;
+}
+#vr-rows-slide.active { display: flex; }
+#vr-rows-body { width: 100%; }
+.vr-row {
+  display: grid;
+  grid-template-columns: 3em 4em 1fr 4em;
+  align-items: center;
+  gap: 10px;
+  padding: 5px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.18);
+}
+.vr-row:last-child { border-bottom: none; }
+.vr-row-header { border-bottom: 1px solid rgba(255,255,255,0.25) !important; margin-bottom: 2px; }
+.vr-row-header .vr-row-n,
+.vr-row-header .vr-row-val {
+  font-size: clamp(8px,1.5vw,11px) !important;
+  font-weight: 700; letter-spacing: 0.2em; color: rgba(255,255,255,0.70) !important;
+}
+.vr-row-n { font-size: clamp(13px,2.5vw,20px); font-weight: 900; color: rgba(255,255,255,1); text-align: right; }
+.vr-row-val { font-size: clamp(13px,2.5vw,20px); font-weight: 900; color: rgba(255,255,255,1); text-align: right; }
+.vr-bar-wrap { position: relative; height: clamp(20px,3.5vw,32px); }
+.vr-bar { position: absolute; left: 0; top: 0; height: 100%; background: rgba(255,255,255,1); border-radius: 6px; width: 0%; }
+.vr-row-cum { font-size: clamp(11px,2vw,16px); font-weight: 700; color: rgba(255,255,255,1); text-align: right; }
+
+/* VO rows table */
+#vo-rows-slide {
+  display: none; flex-direction: column;
+  align-items: center; width: 92%; max-width: 640px;
+  max-height: 100vh; overflow: hidden;
+  animation: fadeIn 0.35s ease;
+}
+#vo-rows-slide.active { display: flex; }
+#vo-rows-body { width: 100%; }
+.vo-row {
+  display: grid;
+  grid-template-columns: 3em 4em 1fr 4em;
+  align-items: center;
+  gap: 10px;
+  padding: 5px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.18);
+}
+.vo-row:last-child { border-bottom: none; }
+.vo-row-header { border-bottom: 1px solid rgba(255,255,255,0.25) !important; margin-bottom: 2px; }
+.vo-row-header .vo-row-n,
+.vo-row-header .vo-row-val {
+  font-size: clamp(8px,1.5vw,11px) !important;
+  font-weight: 700; letter-spacing: 0.2em; color: rgba(255,255,255,0.70) !important;
+}
+.vo-row-n { font-size: clamp(13px,2.5vw,20px); font-weight: 900; color: rgba(255,255,255,1); text-align: right; }
+.vo-row-val { font-size: clamp(13px,2.5vw,20px); font-weight: 900; color: rgba(255,255,255,1); text-align: right; }
+.vo-bar-wrap { position: relative; height: clamp(20px,3.5vw,32px); }
+.vo-bar { position: absolute; left: 0; top: 0; height: 100%; background: rgba(255,255,255,1); border-radius: 6px; width: 0%; }
+.vo-row-cum { font-size: clamp(11px,2vw,16px); font-weight: 700; color: rgba(255,255,255,1); text-align: right; }
+
 /* Summary */
 #summary-slide {
   display: none; flex-direction: column;
@@ -776,6 +926,18 @@ body {
       <div class="unit">ms</div>
     </div>
 
+    <div id="gct-rows-slide">
+      <div class="rows-label" id="gct-rows-label"></div>
+      <div id="gct-rows-body"></div>
+    </div>
+
+    <div class="slide" id="gct-chart-slide">
+      <div class="label">Contacto con el suelo por vuelta</div>
+      <div id="gct-chart-wrap" style="width:88%;max-width:580px;margin-top:12px;">
+        <svg id="gct-chart-svg" width="100%" style="overflow:visible;"></svg>
+      </div>
+    </div>
+
     <div class="slide" id="s8">
       <div class="label">Potencia media</div>
       <div class="value" id="v-pow">0</div>
@@ -806,6 +968,11 @@ body {
       <div class="unit">metros</div>
     </div>
 
+    <div id="elev-rows-slide">
+      <div class="rows-label" id="elev-rows-label"></div>
+      <div id="elev-rows-body"></div>
+    </div>
+
     <div class="slide" id="elev-profile-slide">
       <div class="label">Perfil de elevación</div>
       <div id="elev-profile-wrap" style="width:90%;max-width:600px;margin-top:14px;">
@@ -817,6 +984,18 @@ body {
       <div class="label">Temperatura</div>
       <div class="value" id="v-temp">0</div>
       <div class="unit">°C</div>
+    </div>
+
+    <div id="temp-rows-slide">
+      <div class="rows-label" id="temp-rows-label"></div>
+      <div id="temp-rows-body"></div>
+    </div>
+
+    <div class="slide" id="temp-chart-slide">
+      <div class="label">Temperatura por vuelta</div>
+      <div id="temp-chart-wrap" style="width:88%;max-width:580px;margin-top:12px;">
+        <svg id="temp-chart-svg" width="100%" style="overflow:visible;"></svg>
+      </div>
     </div>
 
     <div class="slide" id="s12">
@@ -843,10 +1022,34 @@ body {
       <div class="unit">%</div>
     </div>
 
+    <div id="vr-rows-slide">
+      <div class="rows-label" id="vr-rows-label"></div>
+      <div id="vr-rows-body"></div>
+    </div>
+
+    <div class="slide" id="vr-chart-slide">
+      <div class="label">Relación vertical por vuelta</div>
+      <div id="vr-chart-wrap" style="width:88%;max-width:580px;margin-top:12px;">
+        <svg id="vr-chart-svg" width="100%" style="overflow:visible;"></svg>
+      </div>
+    </div>
+
     <div class="slide" id="s14">
       <div class="label">Oscilación vertical</div>
       <div class="value" id="v-vo">0</div>
       <div class="unit">cm</div>
+    </div>
+
+    <div id="vo-rows-slide">
+      <div class="rows-label" id="vo-rows-label"></div>
+      <div id="vo-rows-body"></div>
+    </div>
+
+    <div class="slide" id="vo-chart-slide">
+      <div class="label">Oscilación vertical por vuelta</div>
+      <div id="vo-chart-wrap" style="width:88%;max-width:580px;margin-top:12px;">
+        <svg id="vo-chart-svg" width="100%" style="overflow:visible;"></svg>
+      </div>
     </div>
 
     <div id="summary-slide">
@@ -1282,6 +1485,12 @@ function processData(data, customName) {
     dist: r['Distancia'],
     cad:    r['Cadencia de carrera media'] || r['Cadencia media'] || r['Cadencia'],
     stride: r['Longitud media de zancada'] || r['Longitud de zancada media'] || r['Longitud de zancada'],
+    elev:     r['Ascenso total'] || r['Desnivel positivo total'] || r['Desnivel positivo'] || r['Subida total'],
+    elevDesc: r['Descenso total'] || r['Desnivel negativo total'] || r['Desnivel negativo'] || r['Bajada total'],
+    gct:  r['Tiempo medio de contacto con el suelo'] || r['Tiempo de contacto con el suelo'] || r['TCS media'],
+    temp: r['Temperatura media'] || r['Temperatura promedio'] || r['Temperatura'],
+    vr:   r['Relación vertical media'] || r['% de relación vertical'] || r['Relación vertical'],
+    vo:   r['Oscilación vertical media'] || r['Oscilación vertical'],
   }));
 
   // Compacidad según número de filas
@@ -1312,6 +1521,10 @@ function initSlides(stats) {
   if (stats.tableRows && stats.tableRows.filter(r => !isDash(r.hr) && parseFloat(r.hr) > 0).length >= 2) add('hr-rows-slide', 3000);
   if (stats.tableRows && stats.tableRows.filter(r => !isDash(r.hr) && parseFloat(r.hr) > 0).length >= 2) add('hr-chart-slide', 3000);
   if (stats.elevation > 0 || stats.descent > 0)          add('s10', 1800);
+  if (stats.elevation > 0 || stats.descent > 0) {
+    const elevLaps = stats.tableRows && stats.tableRows.filter(r => (parseFloat(r.elev) > 0 || parseFloat(r.elevDesc) > 0));
+    if (elevLaps && elevLaps.length >= 2) add('elev-rows-slide', 3000);
+  }
   if (_gpsPoints && _gpsPoints.length > 1 && _gpsPoints.some(p => p.ele !== null)) add('elev-profile-slide', 2800);
   if (stats.avgCad > 0)                                 add('s6',  1800);
   if (stats.tableRows && stats.tableRows.filter(r => !isDash(r.cad) && parseFloat(r.cad) > 0).length >= 2) add('cad-rows-slide', 3000);
@@ -1319,13 +1532,21 @@ function initSlides(stats) {
   if (stats.strideLen > 0)                              add('s12', 1800);
   if (stats.strideLen > 0 && stats.tableRows && stats.tableRows.filter(r => !isDash(r.stride) && parseFloat(r.stride) > 0).length >= 2) add('stride-rows-slide', 3000);
   if (stats.strideLen > 0 && stats.tableRows && stats.tableRows.filter(r => !isDash(r.stride) && parseFloat(r.stride) > 0).length >= 2) add('stride-chart-slide', 3000);
-  if (stats.vertRatio > 0)                              add('s13', 1800);
-  if (stats.vertOsc > 0)                                add('s14', 1800);
   if (stats.avgGCT > 0)                                 add('s7',  1800);
+  if (stats.avgGCT > 0 && stats.tableRows && stats.tableRows.filter(r => !isDash(r.gct) && parseFloat(r.gct) > 0).length >= 2) add('gct-rows-slide', 3000);
+  if (stats.avgGCT > 0 && stats.tableRows && stats.tableRows.filter(r => !isDash(r.gct) && parseFloat(r.gct) > 0).length >= 2) add('gct-chart-slide', 3000);
   if (stats.avgPow > 0)                                 add('s8',  1800);
   if (stats.avgPow > 0 && stats.tableRows && stats.tableRows.filter(r => !isDash(r.pow) && parseFloat(r.pow) > 0).length >= 2) add('pow-rows-slide', 3000);
   if (stats.avgPow > 0 && stats.tableRows && stats.tableRows.filter(r => !isDash(r.pow) && parseFloat(r.pow) > 0).length >= 2) add('pow-chart-slide', 3000);
   if (stats.avgTemp !== 0)                              add('s11', 1800);
+  if (stats.avgTemp !== 0 && stats.tableRows && stats.tableRows.filter(r => !isDash(r.temp) && parseFloat(r.temp) !== 0).length >= 2) add('temp-rows-slide', 3000);
+  if (stats.avgTemp !== 0 && stats.tableRows && stats.tableRows.filter(r => !isDash(r.temp) && parseFloat(r.temp) !== 0).length >= 2) add('temp-chart-slide', 3000);
+  if (stats.vertRatio > 0)                              add('s13', 1800);
+  if (stats.vertRatio > 0 && stats.tableRows && stats.tableRows.filter(r => !isDash(r.vr) && parseFloat(r.vr) > 0).length >= 2) add('vr-rows-slide', 3000);
+  if (stats.vertRatio > 0 && stats.tableRows && stats.tableRows.filter(r => !isDash(r.vr) && parseFloat(r.vr) > 0).length >= 2) add('vr-chart-slide', 3000);
+  if (stats.vertOsc > 0)                                add('s14', 1800);
+  if (stats.vertOsc > 0 && stats.tableRows && stats.tableRows.filter(r => !isDash(r.vo) && parseFloat(r.vo) > 0).length >= 2) add('vo-rows-slide', 3000);
+  if (stats.vertOsc > 0 && stats.tableRows && stats.tableRows.filter(r => !isDash(r.vo) && parseFloat(r.vo) > 0).length >= 2) add('vo-chart-slide', 3000);
 
   add('summary-slide', 0);
   TOTAL = SLIDE_IDS.length;
@@ -1511,6 +1732,151 @@ function showSlide(n) {
   // Animar gráfica de zancada
   if (n === idx('stride-chart-slide')) {
     requestAnimationFrame(() => requestAnimationFrame(() => animateStrideChart()));
+  }
+
+  // Animar tabla de desnivel por vuelta
+  if (n === idx('elev-rows-slide')) {
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      const body  = document.getElementById('elev-rows-body');
+      const label = document.getElementById('elev-rows-label');
+      body.style.zoom = '';
+      const labelH = label ? label.offsetHeight + 18 : 0;
+      const bodyH  = body.scrollHeight;
+      const availH = window.innerHeight * 0.94 - labelH;
+      if (bodyH > availH) body.style.zoom = String(availH / bodyH);
+    }));
+    const bars = document.querySelectorAll('.elev-bar');
+    bars.forEach(el => { el.style.width = '0%'; });
+    const dur = 900;
+    let t0elev = null;
+    function animElevBars(now) {
+      if (t0elev === null) t0elev = now;
+      const p = Math.min((now - t0elev) / dur, 1);
+      const e = p < .5 ? 2*p*p : -1+(4-2*p)*p;
+      bars.forEach(el => { el.style.width = (parseFloat(el.dataset.pct) * e) + '%'; });
+      if (p < 1) requestAnimationFrame(animElevBars);
+    }
+    requestAnimationFrame(animElevBars);
+  }
+
+  // Animar tabla de contacto con el suelo por vuelta
+  if (n === idx('gct-rows-slide')) {
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      const body  = document.getElementById('gct-rows-body');
+      const label = document.getElementById('gct-rows-label');
+      body.style.zoom = '';
+      const labelH = label ? label.offsetHeight + 18 : 0;
+      const bodyH  = body.scrollHeight;
+      const availH = window.innerHeight * 0.94 - labelH;
+      if (bodyH > availH) body.style.zoom = String(availH / bodyH);
+    }));
+    const bars = document.querySelectorAll('.gct-bar');
+    bars.forEach(el => { el.style.width = '0%'; });
+    const dur = 900;
+    let t0gct = null;
+    function animGctBars(now) {
+      if (t0gct === null) t0gct = now;
+      const p = Math.min((now - t0gct) / dur, 1);
+      const e = p < .5 ? 2*p*p : -1+(4-2*p)*p;
+      bars.forEach(el => { el.style.width = (parseFloat(el.dataset.pct) * e) + '%'; });
+      if (p < 1) requestAnimationFrame(animGctBars);
+    }
+    requestAnimationFrame(animGctBars);
+  }
+
+  // Animar gráfica de contacto con el suelo
+  if (n === idx('gct-chart-slide')) {
+    requestAnimationFrame(() => requestAnimationFrame(() => animateGctChart()));
+  }
+
+  // Animar tabla de temperatura por vuelta
+  if (n === idx('temp-rows-slide')) {
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      const body  = document.getElementById('temp-rows-body');
+      const label = document.getElementById('temp-rows-label');
+      body.style.zoom = '';
+      const labelH = label ? label.offsetHeight + 18 : 0;
+      const bodyH  = body.scrollHeight;
+      const availH = window.innerHeight * 0.94 - labelH;
+      if (bodyH > availH) body.style.zoom = String(availH / bodyH);
+    }));
+    const bars = document.querySelectorAll('.temp-bar');
+    bars.forEach(el => { el.style.width = '0%'; });
+    const dur = 900;
+    let t0temp = null;
+    function animTempBars(now) {
+      if (t0temp === null) t0temp = now;
+      const p = Math.min((now - t0temp) / dur, 1);
+      const e = p < .5 ? 2*p*p : -1+(4-2*p)*p;
+      bars.forEach(el => { el.style.width = (parseFloat(el.dataset.pct) * e) + '%'; });
+      if (p < 1) requestAnimationFrame(animTempBars);
+    }
+    requestAnimationFrame(animTempBars);
+  }
+
+  // Animar gráfica de temperatura
+  if (n === idx('temp-chart-slide')) {
+    requestAnimationFrame(() => requestAnimationFrame(() => animateTempChart()));
+  }
+
+  // Animar tabla de relación vertical por vuelta
+  if (n === idx('vr-rows-slide')) {
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      const body  = document.getElementById('vr-rows-body');
+      const label = document.getElementById('vr-rows-label');
+      body.style.zoom = '';
+      const labelH = label ? label.offsetHeight + 18 : 0;
+      const bodyH  = body.scrollHeight;
+      const availH = window.innerHeight * 0.94 - labelH;
+      if (bodyH > availH) body.style.zoom = String(availH / bodyH);
+    }));
+    const bars = document.querySelectorAll('.vr-bar');
+    bars.forEach(el => { el.style.width = '0%'; });
+    const dur = 900;
+    let t0vr = null;
+    function animVrBars(now) {
+      if (t0vr === null) t0vr = now;
+      const p = Math.min((now - t0vr) / dur, 1);
+      const e = p < .5 ? 2*p*p : -1+(4-2*p)*p;
+      bars.forEach(el => { el.style.width = (parseFloat(el.dataset.pct) * e) + '%'; });
+      if (p < 1) requestAnimationFrame(animVrBars);
+    }
+    requestAnimationFrame(animVrBars);
+  }
+
+  // Animar gráfica de relación vertical
+  if (n === idx('vr-chart-slide')) {
+    requestAnimationFrame(() => requestAnimationFrame(() => animateVrChart()));
+  }
+
+  // Animar tabla de oscilación vertical por vuelta
+  if (n === idx('vo-rows-slide')) {
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      const body  = document.getElementById('vo-rows-body');
+      const label = document.getElementById('vo-rows-label');
+      body.style.zoom = '';
+      const labelH = label ? label.offsetHeight + 18 : 0;
+      const bodyH  = body.scrollHeight;
+      const availH = window.innerHeight * 0.94 - labelH;
+      if (bodyH > availH) body.style.zoom = String(availH / bodyH);
+    }));
+    const bars = document.querySelectorAll('.vo-bar');
+    bars.forEach(el => { el.style.width = '0%'; });
+    const dur = 900;
+    let t0vo = null;
+    function animVoBars(now) {
+      if (t0vo === null) t0vo = now;
+      const p = Math.min((now - t0vo) / dur, 1);
+      const e = p < .5 ? 2*p*p : -1+(4-2*p)*p;
+      bars.forEach(el => { el.style.width = (parseFloat(el.dataset.pct) * e) + '%'; });
+      if (p < 1) requestAnimationFrame(animVoBars);
+    }
+    requestAnimationFrame(animVoBars);
+  }
+
+  // Animar gráfica de oscilación vertical
+  if (n === idx('vo-chart-slide')) {
+    requestAnimationFrame(() => requestAnimationFrame(() => animateVoChart()));
   }
 
   // Animar perfil de elevación
@@ -2143,6 +2509,290 @@ function animateStrideChart() {
   document.querySelectorAll('.stride-dot, .stride-lbl').forEach(el => { el.style.opacity = '1'; });
 }
 
+// ── GCT CHART ─────────────────────────────────────────────────────────────
+function buildGctChart(stats) {
+  const svg = document.getElementById('gct-chart-svg');
+  if (!svg) return;
+  const pts = stats.tableRows.filter(r => !isDash(r.gct) && parseFloat(r.gct) > 0);
+  if (pts.length < 2) { svg.innerHTML = ''; return; }
+
+  const W = 400, H = 190;
+  const padL = 8, padR = 8, padT = 52, padB = 28;
+  const cW = W - padL - padR, cH = H - padT - padB;
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+
+  const vals = pts.map(r => parseFloat(r.gct));
+  const minV = Math.min(...vals), maxV = Math.max(...vals);
+  const range = maxV - minV || 1;
+
+  const xOf = i => padL + (i / (pts.length - 1)) * cW;
+  const yOf = v => padT + ((maxV - v) / range) * cH;
+
+  const areaPath = `M${xOf(0)},${yOf(vals[0])} ` +
+    vals.slice(1).map((v, i) => `L${xOf(i+1)},${yOf(v)}`).join(' ') +
+    ` L${xOf(pts.length-1)},${padT+cH} L${xOf(0)},${padT+cH} Z`;
+  const lineD = `M${xOf(0)},${yOf(vals[0])} ` +
+    vals.slice(1).map((v, i) => `L${xOf(i+1)},${yOf(v)}`).join(' ');
+
+  let html = `
+    <defs>
+      <linearGradient id="gctg" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="rgba(255,255,255,0.18)"/>
+        <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+      </linearGradient>
+    </defs>
+    <path d="${areaPath}" fill="url(#gctg)"/>
+    <path id="gct-line" d="${lineD}" fill="none" stroke="rgba(255,255,255,0.85)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  `;
+
+  const MIN_SPACING = 32;
+  let lastLabelX = -Infinity;
+  pts.forEach((r, i) => {
+    const x = xOf(i), y = yOf(vals[i]);
+    const isFirst = i === 0, isLast = i === pts.length - 1;
+    const showLabel = isFirst || isLast || (x - lastLabelX) >= MIN_SPACING;
+    if (showLabel) lastLabelX = x;
+    const lapLabel = r.n !== undefined ? r.n : (i + 1);
+    html += `<circle cx="${x}" cy="${y}" r="3.5" fill="#fff" opacity="0" class="gct-dot" style="transition:opacity 0.3s ${i*80}ms"/>`;
+    if (showLabel) {
+      html += `<text x="${x}" y="${y - 8}" text-anchor="middle" font-family="Arial Black,Arial" font-weight="900" font-size="11" fill="rgba(255,255,255,0.9)" opacity="0" class="gct-lbl" style="transition:opacity 0.3s ${i*80}ms">${Math.round(vals[i])}</text>`;
+      html += `<text x="${x}" y="${padT+cH+16}" text-anchor="middle" font-family="Arial,sans-serif" font-size="9" fill="rgba(255,255,255,0.45)">${lapLabel}</text>`;
+    }
+  });
+
+  svg.innerHTML = html;
+
+  const line = document.getElementById('gct-line');
+  if (line) {
+    const len = line.getTotalLength ? line.getTotalLength() : 400;
+    line.style.strokeDasharray = len;
+    line.style.strokeDashoffset = len;
+  }
+}
+
+function animateGctChart() {
+  const line = document.getElementById('gct-line');
+  if (line) {
+    const len = parseFloat(line.style.strokeDasharray) || 400;
+    line.style.transition = 'stroke-dashoffset 1.2s cubic-bezier(0.4,0,0.2,1)';
+    line.style.strokeDashoffset = '0';
+  }
+  document.querySelectorAll('.gct-dot, .gct-lbl').forEach(el => { el.style.opacity = '1'; });
+}
+
+// ── TEMP CHART ────────────────────────────────────────────────────────────
+function buildTempChart(stats) {
+  const svg = document.getElementById('temp-chart-svg');
+  if (!svg) return;
+  const pts = stats.tableRows.filter(r => !isDash(r.temp) && parseFloat(r.temp) !== 0);
+  if (pts.length < 2) { svg.innerHTML = ''; return; }
+
+  const W = 400, H = 190;
+  const padL = 8, padR = 8, padT = 52, padB = 28;
+  const cW = W - padL - padR, cH = H - padT - padB;
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+
+  const vals = pts.map(r => parseFloat(r.temp));
+  const minV = Math.min(...vals), maxV = Math.max(...vals);
+  const range = maxV - minV || 1;
+
+  const xOf = i => padL + (i / (pts.length - 1)) * cW;
+  const yOf = v => padT + ((maxV - v) / range) * cH;
+
+  const areaPath = `M${xOf(0)},${yOf(vals[0])} ` +
+    vals.slice(1).map((v, i) => `L${xOf(i+1)},${yOf(v)}`).join(' ') +
+    ` L${xOf(pts.length-1)},${padT+cH} L${xOf(0)},${padT+cH} Z`;
+  const lineD = `M${xOf(0)},${yOf(vals[0])} ` +
+    vals.slice(1).map((v, i) => `L${xOf(i+1)},${yOf(v)}`).join(' ');
+
+  let html = `
+    <defs>
+      <linearGradient id="tempg" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="rgba(255,255,255,0.18)"/>
+        <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+      </linearGradient>
+    </defs>
+    <path d="${areaPath}" fill="url(#tempg)"/>
+    <path id="temp-line" d="${lineD}" fill="none" stroke="rgba(255,255,255,0.85)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  `;
+
+  const MIN_SPACING = 32;
+  let lastLabelX = -Infinity;
+  pts.forEach((r, i) => {
+    const x = xOf(i), y = yOf(vals[i]);
+    const isFirst = i === 0, isLast = i === pts.length - 1;
+    const showLabel = isFirst || isLast || (x - lastLabelX) >= MIN_SPACING;
+    if (showLabel) lastLabelX = x;
+    const lapLabel = r.n !== undefined ? r.n : (i + 1);
+    html += `<circle cx="${x}" cy="${y}" r="3.5" fill="#fff" opacity="0" class="temp-dot" style="transition:opacity 0.3s ${i*80}ms"/>`;
+    if (showLabel) {
+      html += `<text x="${x}" y="${y - 8}" text-anchor="middle" font-family="Arial Black,Arial" font-weight="900" font-size="11" fill="rgba(255,255,255,0.9)" opacity="0" class="temp-lbl" style="transition:opacity 0.3s ${i*80}ms">${vals[i].toFixed(1)}</text>`;
+      html += `<text x="${x}" y="${padT+cH+16}" text-anchor="middle" font-family="Arial,sans-serif" font-size="9" fill="rgba(255,255,255,0.45)">${lapLabel}</text>`;
+    }
+  });
+
+  svg.innerHTML = html;
+
+  const line = document.getElementById('temp-line');
+  if (line) {
+    const len = line.getTotalLength ? line.getTotalLength() : 400;
+    line.style.strokeDasharray = len;
+    line.style.strokeDashoffset = len;
+  }
+}
+
+function animateTempChart() {
+  const line = document.getElementById('temp-line');
+  if (line) {
+    const len = parseFloat(line.style.strokeDasharray) || 400;
+    line.style.transition = 'stroke-dashoffset 1.2s cubic-bezier(0.4,0,0.2,1)';
+    line.style.strokeDashoffset = '0';
+  }
+  document.querySelectorAll('.temp-dot, .temp-lbl').forEach(el => { el.style.opacity = '1'; });
+}
+
+// ── VR CHART ──────────────────────────────────────────────────────────────
+function buildVrChart(stats) {
+  const svg = document.getElementById('vr-chart-svg');
+  if (!svg) return;
+  const pts = stats.tableRows.filter(r => !isDash(r.vr) && parseFloat(r.vr) > 0);
+  if (pts.length < 2) { svg.innerHTML = ''; return; }
+
+  const W = 400, H = 190;
+  const padL = 8, padR = 8, padT = 52, padB = 28;
+  const cW = W - padL - padR, cH = H - padT - padB;
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+
+  const vals = pts.map(r => parseFloat(r.vr));
+  const minV = Math.min(...vals), maxV = Math.max(...vals);
+  const range = maxV - minV || 1;
+
+  const xOf = i => padL + (i / (pts.length - 1)) * cW;
+  const yOf = v => padT + ((maxV - v) / range) * cH;
+
+  const areaPath = `M${xOf(0)},${yOf(vals[0])} ` +
+    vals.slice(1).map((v, i) => `L${xOf(i+1)},${yOf(v)}`).join(' ') +
+    ` L${xOf(pts.length-1)},${padT+cH} L${xOf(0)},${padT+cH} Z`;
+  const lineD = `M${xOf(0)},${yOf(vals[0])} ` +
+    vals.slice(1).map((v, i) => `L${xOf(i+1)},${yOf(v)}`).join(' ');
+
+  let html = `
+    <defs>
+      <linearGradient id="vrg" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="rgba(255,255,255,0.18)"/>
+        <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+      </linearGradient>
+    </defs>
+    <path d="${areaPath}" fill="url(#vrg)"/>
+    <path id="vr-line" d="${lineD}" fill="none" stroke="rgba(255,255,255,0.85)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  `;
+
+  const MIN_SPACING = 32;
+  let lastLabelX = -Infinity;
+  pts.forEach((r, i) => {
+    const x = xOf(i), y = yOf(vals[i]);
+    const isFirst = i === 0, isLast = i === pts.length - 1;
+    const showLabel = isFirst || isLast || (x - lastLabelX) >= MIN_SPACING;
+    if (showLabel) lastLabelX = x;
+    const lapLabel = r.n !== undefined ? r.n : (i + 1);
+    html += `<circle cx="${x}" cy="${y}" r="3.5" fill="#fff" opacity="0" class="vr-dot" style="transition:opacity 0.3s ${i*80}ms"/>`;
+    if (showLabel) {
+      html += `<text x="${x}" y="${y - 8}" text-anchor="middle" font-family="Arial Black,Arial" font-weight="900" font-size="11" fill="rgba(255,255,255,0.9)" opacity="0" class="vr-lbl" style="transition:opacity 0.3s ${i*80}ms">${vals[i].toFixed(1)}</text>`;
+      html += `<text x="${x}" y="${padT+cH+16}" text-anchor="middle" font-family="Arial,sans-serif" font-size="9" fill="rgba(255,255,255,0.45)">${lapLabel}</text>`;
+    }
+  });
+
+  svg.innerHTML = html;
+
+  const line = document.getElementById('vr-line');
+  if (line) {
+    const len = line.getTotalLength ? line.getTotalLength() : 400;
+    line.style.strokeDasharray = len;
+    line.style.strokeDashoffset = len;
+  }
+}
+
+function animateVrChart() {
+  const line = document.getElementById('vr-line');
+  if (line) {
+    const len = parseFloat(line.style.strokeDasharray) || 400;
+    line.style.transition = 'stroke-dashoffset 1.2s cubic-bezier(0.4,0,0.2,1)';
+    line.style.strokeDashoffset = '0';
+  }
+  document.querySelectorAll('.vr-dot, .vr-lbl').forEach(el => { el.style.opacity = '1'; });
+}
+
+// ── VO CHART ──────────────────────────────────────────────────────────────
+function buildVoChart(stats) {
+  const svg = document.getElementById('vo-chart-svg');
+  if (!svg) return;
+  const pts = stats.tableRows.filter(r => !isDash(r.vo) && parseFloat(r.vo) > 0);
+  if (pts.length < 2) { svg.innerHTML = ''; return; }
+
+  const W = 400, H = 190;
+  const padL = 8, padR = 8, padT = 52, padB = 28;
+  const cW = W - padL - padR, cH = H - padT - padB;
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+
+  const vals = pts.map(r => parseFloat(r.vo));
+  const minV = Math.min(...vals), maxV = Math.max(...vals);
+  const range = maxV - minV || 1;
+
+  const xOf = i => padL + (i / (pts.length - 1)) * cW;
+  const yOf = v => padT + ((maxV - v) / range) * cH;
+
+  const areaPath = `M${xOf(0)},${yOf(vals[0])} ` +
+    vals.slice(1).map((v, i) => `L${xOf(i+1)},${yOf(v)}`).join(' ') +
+    ` L${xOf(pts.length-1)},${padT+cH} L${xOf(0)},${padT+cH} Z`;
+  const lineD = `M${xOf(0)},${yOf(vals[0])} ` +
+    vals.slice(1).map((v, i) => `L${xOf(i+1)},${yOf(v)}`).join(' ');
+
+  let html = `
+    <defs>
+      <linearGradient id="vog" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="rgba(255,255,255,0.18)"/>
+        <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+      </linearGradient>
+    </defs>
+    <path d="${areaPath}" fill="url(#vog)"/>
+    <path id="vo-line" d="${lineD}" fill="none" stroke="rgba(255,255,255,0.85)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  `;
+
+  const MIN_SPACING = 32;
+  let lastLabelX = -Infinity;
+  pts.forEach((r, i) => {
+    const x = xOf(i), y = yOf(vals[i]);
+    const isFirst = i === 0, isLast = i === pts.length - 1;
+    const showLabel = isFirst || isLast || (x - lastLabelX) >= MIN_SPACING;
+    if (showLabel) lastLabelX = x;
+    const lapLabel = r.n !== undefined ? r.n : (i + 1);
+    html += `<circle cx="${x}" cy="${y}" r="3.5" fill="#fff" opacity="0" class="vo-dot" style="transition:opacity 0.3s ${i*80}ms"/>`;
+    if (showLabel) {
+      html += `<text x="${x}" y="${y - 8}" text-anchor="middle" font-family="Arial Black,Arial" font-weight="900" font-size="11" fill="rgba(255,255,255,0.9)" opacity="0" class="vo-lbl" style="transition:opacity 0.3s ${i*80}ms">${vals[i].toFixed(1)}</text>`;
+      html += `<text x="${x}" y="${padT+cH+16}" text-anchor="middle" font-family="Arial,sans-serif" font-size="9" fill="rgba(255,255,255,0.45)">${lapLabel}</text>`;
+    }
+  });
+
+  svg.innerHTML = html;
+
+  const line = document.getElementById('vo-line');
+  if (line) {
+    const len = line.getTotalLength ? line.getTotalLength() : 400;
+    line.style.strokeDasharray = len;
+    line.style.strokeDashoffset = len;
+  }
+}
+
+function animateVoChart() {
+  const line = document.getElementById('vo-line');
+  if (line) {
+    const len = parseFloat(line.style.strokeDasharray) || 400;
+    line.style.transition = 'stroke-dashoffset 1.2s cubic-bezier(0.4,0,0.2,1)';
+    line.style.strokeDashoffset = '0';
+  }
+  document.querySelectorAll('.vo-dot, .vo-lbl').forEach(el => { el.style.opacity = '1'; });
+}
+
 // ── BUILD RECAP ───────────────────────────────────────────────────────────
 function buildRecap(stats) {
   _stats = stats;
@@ -2444,12 +3094,252 @@ function buildRecap(stats) {
     }
   }
 
+  // Elev rows table
+  {
+    const elevRows = stats.tableRows.filter(r => parseFloat(r.elev) > 0 || parseFloat(r.elevDesc) > 0);
+    document.getElementById('elev-rows-label').textContent = stats.type === 'intervals' ? 'Intervalos · Desnivel' : 'Vueltas · Desnivel';
+    if (elevRows.length >= 2) {
+      const elevVals = elevRows.map(r => parseFloat(r.elev) || 0);
+      const maxElev = Math.max(...elevVals, 1);
+      const labelKey = stats.type === 'intervals' ? 'INT' : 'KM';
+      let cumSecElev = 0;
+      const rows = stats.tableRows.map((r, i) => {
+        const up   = parseFloat(r.elev)     || 0;
+        const down = parseFloat(r.elevDesc) || 0;
+        if (up === 0 && down === 0) return '';
+        const pct = Math.round((up / maxElev) * 70 + 15);
+        const lapDist = parseFloat(r.dist) || 1;
+        cumSecElev += isDash(r.pace) ? 0 : paceToSec(r.pace) * lapDist;
+        const cumH = Math.floor(cumSecElev/3600), cumM = Math.floor((cumSecElev%3600)/60), cumS = Math.round(cumSecElev%60);
+        const cumVal = cumH > 0
+          ? `${cumH}:${String(cumM).padStart(2,'0')}:${String(cumS).padStart(2,'0')}`
+          : `${String(cumM).padStart(2,'0')}:${String(cumS).padStart(2,'0')}`;
+        const distVal = (() => {
+          const d = parseFloat(r.dist) || 0;
+          if (stats.type === 'intervals') return r.n;
+          if (d === 0) return r.n;
+          if (d >= 0.95) {
+            const cum = stats.tableRows.slice(0, i + 1).reduce((s, row) => s + (parseFloat(row.dist) || 0), 0);
+            return Math.round(cum);
+          }
+          return parseFloat(d.toFixed(2));
+        })();
+        const valText = up > 0 && down > 0 ? `+${up}/${down}` : up > 0 ? `+${up}` : `-${down}`;
+        return `<div class="elev-row">
+          <div class="elev-row-n">${distVal}</div>
+          <div class="elev-row-val">${valText}</div>
+          <div class="elev-bar-wrap"><div class="elev-bar" data-pct="${pct}"></div></div>
+          <div class="elev-row-cum">${cumVal}</div>
+        </div>`;
+      }).join('');
+      const header = `<div class="elev-row elev-row-header">
+        <div class="elev-row-n">${labelKey}</div>
+        <div class="elev-row-val">↑↓ m</div>
+        <div class="elev-bar-wrap"></div>
+        <div class="elev-row-cum">TOTAL</div>
+      </div>`;
+      document.getElementById('elev-rows-body').innerHTML = `<div class="laps-bars">${header}${rows}</div>`;
+    }
+  }
+
+  // GCT rows table
+  {
+    const gctRows = stats.tableRows.filter(r => !isDash(r.gct) && parseFloat(r.gct) > 0);
+    document.getElementById('gct-rows-label').textContent = stats.type === 'intervals' ? 'Intervalos · TCS' : 'Vueltas · TCS';
+    if (gctRows.length >= 2) {
+      const gctVals = gctRows.map(r => parseFloat(r.gct));
+      const minGct = Math.min(...gctVals), maxGct = Math.max(...gctVals);
+      const gctRange = maxGct - minGct || 1;
+      const labelKey = stats.type === 'intervals' ? 'INT' : 'KM';
+      let cumSecGct = 0;
+      const rows = stats.tableRows.map((r, i) => {
+        const gctNum = parseFloat(r.gct);
+        if (!gctNum || gctNum <= 0) return '';
+        const pct = Math.round(((gctNum - minGct) / gctRange) * 70 + 15);
+        const lapDist = parseFloat(r.dist) || 1;
+        cumSecGct += isDash(r.pace) ? 0 : paceToSec(r.pace) * lapDist;
+        const cumH = Math.floor(cumSecGct/3600), cumM = Math.floor((cumSecGct%3600)/60), cumS = Math.round(cumSecGct%60);
+        const cumVal = cumH > 0
+          ? `${cumH}:${String(cumM).padStart(2,'0')}:${String(cumS).padStart(2,'0')}`
+          : `${String(cumM).padStart(2,'0')}:${String(cumS).padStart(2,'0')}`;
+        const distVal = (() => {
+          const d = parseFloat(r.dist) || 0;
+          if (stats.type === 'intervals') return r.n;
+          if (d === 0) return r.n;
+          if (d >= 0.95) {
+            const cum = stats.tableRows.slice(0, i + 1).reduce((s, row) => s + (parseFloat(row.dist) || 0), 0);
+            return Math.round(cum);
+          }
+          return parseFloat(d.toFixed(2));
+        })();
+        return `<div class="gct-row">
+          <div class="gct-row-n">${distVal}</div>
+          <div class="gct-row-val">${Math.round(gctNum)}</div>
+          <div class="gct-bar-wrap"><div class="gct-bar" data-pct="${pct}"></div></div>
+          <div class="gct-row-cum">${cumVal}</div>
+        </div>`;
+      }).join('');
+      const header = `<div class="gct-row gct-row-header">
+        <div class="gct-row-n">${labelKey}</div>
+        <div class="gct-row-val">TCS</div>
+        <div class="gct-bar-wrap"></div>
+        <div class="gct-row-cum">TOTAL</div>
+      </div>`;
+      document.getElementById('gct-rows-body').innerHTML = `<div class="laps-bars">${header}${rows}</div>`;
+    }
+  }
+
+  // Temp rows table
+  {
+    const tempRows = stats.tableRows.filter(r => !isDash(r.temp) && parseFloat(r.temp) !== 0);
+    document.getElementById('temp-rows-label').textContent = stats.type === 'intervals' ? 'Intervalos · Temperatura' : 'Vueltas · Temperatura';
+    if (tempRows.length >= 2) {
+      const tempVals = tempRows.map(r => parseFloat(r.temp));
+      const minTemp = Math.min(...tempVals), maxTemp = Math.max(...tempVals);
+      const tempRange = maxTemp - minTemp || 1;
+      const labelKey = stats.type === 'intervals' ? 'INT' : 'KM';
+      let cumSecTemp = 0;
+      const rows = stats.tableRows.map((r, i) => {
+        const tempNum = parseFloat(r.temp);
+        if (isNaN(tempNum) || isDash(r.temp)) return '';
+        const pct = Math.round(((tempNum - minTemp) / tempRange) * 70 + 15);
+        const lapDist = parseFloat(r.dist) || 1;
+        cumSecTemp += isDash(r.pace) ? 0 : paceToSec(r.pace) * lapDist;
+        const cumH = Math.floor(cumSecTemp/3600), cumM = Math.floor((cumSecTemp%3600)/60), cumS = Math.round(cumSecTemp%60);
+        const cumVal = cumH > 0
+          ? `${cumH}:${String(cumM).padStart(2,'0')}:${String(cumS).padStart(2,'0')}`
+          : `${String(cumM).padStart(2,'0')}:${String(cumS).padStart(2,'0')}`;
+        const distVal = (() => {
+          const d = parseFloat(r.dist) || 0;
+          if (stats.type === 'intervals') return r.n;
+          if (d === 0) return r.n;
+          if (d >= 0.95) {
+            const cum = stats.tableRows.slice(0, i + 1).reduce((s, row) => s + (parseFloat(row.dist) || 0), 0);
+            return Math.round(cum);
+          }
+          return parseFloat(d.toFixed(2));
+        })();
+        return `<div class="temp-row">
+          <div class="temp-row-n">${distVal}</div>
+          <div class="temp-row-val">${tempNum.toFixed(1)}</div>
+          <div class="temp-bar-wrap"><div class="temp-bar" data-pct="${pct}"></div></div>
+          <div class="temp-row-cum">${cumVal}</div>
+        </div>`;
+      }).join('');
+      const header = `<div class="temp-row temp-row-header">
+        <div class="temp-row-n">${labelKey}</div>
+        <div class="temp-row-val">°C</div>
+        <div class="temp-bar-wrap"></div>
+        <div class="temp-row-cum">TOTAL</div>
+      </div>`;
+      document.getElementById('temp-rows-body').innerHTML = `<div class="laps-bars">${header}${rows}</div>`;
+    }
+  }
+
+  // VR rows table
+  {
+    const vrRows = stats.tableRows.filter(r => !isDash(r.vr) && parseFloat(r.vr) > 0);
+    document.getElementById('vr-rows-label').textContent = stats.type === 'intervals' ? 'Intervalos · Relación Vertical' : 'Vueltas · Relación Vertical';
+    if (vrRows.length >= 2) {
+      const vrVals = vrRows.map(r => parseFloat(r.vr));
+      const minVr = Math.min(...vrVals), maxVr = Math.max(...vrVals);
+      const vrRange = maxVr - minVr || 1;
+      const labelKey = stats.type === 'intervals' ? 'INT' : 'KM';
+      let cumSecVr = 0;
+      const rows = stats.tableRows.map((r, i) => {
+        const vrNum = parseFloat(r.vr);
+        if (!vrNum || vrNum <= 0) return '';
+        const pct = Math.round(((vrNum - minVr) / vrRange) * 70 + 15);
+        const lapDist = parseFloat(r.dist) || 1;
+        cumSecVr += isDash(r.pace) ? 0 : paceToSec(r.pace) * lapDist;
+        const cumH = Math.floor(cumSecVr/3600), cumM = Math.floor((cumSecVr%3600)/60), cumS = Math.round(cumSecVr%60);
+        const cumVal = cumH > 0
+          ? `${cumH}:${String(cumM).padStart(2,'0')}:${String(cumS).padStart(2,'0')}`
+          : `${String(cumM).padStart(2,'0')}:${String(cumS).padStart(2,'0')}`;
+        const distVal = (() => {
+          const d = parseFloat(r.dist) || 0;
+          if (stats.type === 'intervals') return r.n;
+          if (d === 0) return r.n;
+          if (d >= 0.95) {
+            const cum = stats.tableRows.slice(0, i + 1).reduce((s, row) => s + (parseFloat(row.dist) || 0), 0);
+            return Math.round(cum);
+          }
+          return parseFloat(d.toFixed(2));
+        })();
+        return `<div class="vr-row">
+          <div class="vr-row-n">${distVal}</div>
+          <div class="vr-row-val">${vrNum.toFixed(1)}</div>
+          <div class="vr-bar-wrap"><div class="vr-bar" data-pct="${pct}"></div></div>
+          <div class="vr-row-cum">${cumVal}</div>
+        </div>`;
+      }).join('');
+      const header = `<div class="vr-row vr-row-header">
+        <div class="vr-row-n">${labelKey}</div>
+        <div class="vr-row-val">VR%</div>
+        <div class="vr-bar-wrap"></div>
+        <div class="vr-row-cum">TOTAL</div>
+      </div>`;
+      document.getElementById('vr-rows-body').innerHTML = `<div class="laps-bars">${header}${rows}</div>`;
+    }
+  }
+
+  // VO rows table
+  {
+    const voRows = stats.tableRows.filter(r => !isDash(r.vo) && parseFloat(r.vo) > 0);
+    document.getElementById('vo-rows-label').textContent = stats.type === 'intervals' ? 'Intervalos · Oscilación Vertical' : 'Vueltas · Oscilación Vertical';
+    if (voRows.length >= 2) {
+      const voVals = voRows.map(r => parseFloat(r.vo));
+      const minVo = Math.min(...voVals), maxVo = Math.max(...voVals);
+      const voRange = maxVo - minVo || 1;
+      const labelKey = stats.type === 'intervals' ? 'INT' : 'KM';
+      let cumSecVo = 0;
+      const rows = stats.tableRows.map((r, i) => {
+        const voNum = parseFloat(r.vo);
+        if (!voNum || voNum <= 0) return '';
+        const pct = Math.round(((voNum - minVo) / voRange) * 70 + 15);
+        const lapDist = parseFloat(r.dist) || 1;
+        cumSecVo += isDash(r.pace) ? 0 : paceToSec(r.pace) * lapDist;
+        const cumH = Math.floor(cumSecVo/3600), cumM = Math.floor((cumSecVo%3600)/60), cumS = Math.round(cumSecVo%60);
+        const cumVal = cumH > 0
+          ? `${cumH}:${String(cumM).padStart(2,'0')}:${String(cumS).padStart(2,'0')}`
+          : `${String(cumM).padStart(2,'0')}:${String(cumS).padStart(2,'0')}`;
+        const distVal = (() => {
+          const d = parseFloat(r.dist) || 0;
+          if (stats.type === 'intervals') return r.n;
+          if (d === 0) return r.n;
+          if (d >= 0.95) {
+            const cum = stats.tableRows.slice(0, i + 1).reduce((s, row) => s + (parseFloat(row.dist) || 0), 0);
+            return Math.round(cum);
+          }
+          return parseFloat(d.toFixed(2));
+        })();
+        return `<div class="vo-row">
+          <div class="vo-row-n">${distVal}</div>
+          <div class="vo-row-val">${voNum.toFixed(1)}</div>
+          <div class="vo-bar-wrap"><div class="vo-bar" data-pct="${pct}"></div></div>
+          <div class="vo-row-cum">${cumVal}</div>
+        </div>`;
+      }).join('');
+      const header = `<div class="vo-row vo-row-header">
+        <div class="vo-row-n">${labelKey}</div>
+        <div class="vo-row-val">OV</div>
+        <div class="vo-bar-wrap"></div>
+        <div class="vo-row-cum">TOTAL</div>
+      </div>`;
+      document.getElementById('vo-rows-body').innerHTML = `<div class="laps-bars">${header}${rows}</div>`;
+    }
+  }
+
   // Pace chart
   buildPaceChart(stats);
   buildHRChart(stats);
   buildCadChart(stats);
   buildPowChart(stats);
   buildStrideChart(stats);
+  buildGctChart(stats);
+  buildTempChart(stats);
+  buildVrChart(stats);
+  buildVoChart(stats);
   buildElevProfile();
 
   // Summary
@@ -2474,7 +3364,7 @@ function buildRecap(stats) {
     <div class="stat-u">${c.u}</div>
   </div>`;
 
-  // Orden igual al de los slides: Dist → Tiempo → Ritmo → FC → Desnivel → Cad → Zancada → VR → VO → GCT → Potencia → Temp
+  // Orden igual al de los slides: Dist → Tiempo → Ritmo → FC → Desnivel → Cad → Zancada → GCT → Potencia → Temp → VR → VO
   const topCells = [
     { label: 'Distancia',   val: stats.dist.toFixed(2),       u: 'km' },
     { label: 'Tiempo',      val: (() => { const t=timeToSec(stats.time); const h=Math.floor(t/3600),m=Math.floor((t%3600)/60),s=t%60; return h>0?`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`:`${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`; })(), u: 'h:m:s' },
@@ -2483,11 +3373,11 @@ function buildRecap(stats) {
     ...(showElev   ? [{ label:'Desnivel',          val:`+${stats.elevation} / −${stats.descent}`, u:'metros' }] : []),
     { label: 'Cadencia',    val: stats.avgCad,                u: 'spm' },
     ...(showStride ? [{ label:'Long. zancada',       val:stats.strideLen.toFixed(2), u:'m'   }] : []),
-    ...(showVR     ? [{ label:'Relación vertical',   val:stats.vertRatio.toFixed(1), u:'%'   }] : []),
-    ...(showVO     ? [{ label:'Oscilación vertical', val:stats.vertOsc.toFixed(1),   u:'cm'  }] : []),
     ...(showGCT    ? [{ label:'GCT',                 val:stats.avgGCT,               u:'ms'  }] : []),
     ...(showPow    ? [{ label:'Potencia',             val:stats.avgPow, u:`W · ${stats.wkg.toFixed(2)} W/kg` }] : []),
     ...(showTemp   ? [{ label:'Temperatura',          val:stats.avgTemp.toFixed(1),  u:'°C'  }] : []),
+    ...(showVR     ? [{ label:'Relación vertical',   val:stats.vertRatio.toFixed(1), u:'%'   }] : []),
+    ...(showVO     ? [{ label:'Oscilación vertical', val:stats.vertOsc.toFixed(1),   u:'cm'  }] : []),
   ];
   document.getElementById('stats-grid-top').innerHTML = topCells.map(cellHTML).join('');
 
