@@ -18,7 +18,23 @@
       "Bash(ls /mingw64/bin/*.exe)",
       "Bash(xargs -I{} basename {})",
       "Bash(where.exe dotnet:*)",
-      "Bash(perl -v)"
+      "Bash(perl -v)",
+      "Bash(gh repo:*)",
+      "Bash(where gh:*)",
+      "Skill(update-config)",
+      "Skill(update-config:*)",
+      "WebFetch(domain:claude-mem.ai)",
+      "Bash(powershell -NoProfile -ExecutionPolicy Bypass -File serve.ps1)",
+      "Bash(curl:*)",
+      "Bash(python -m http.server 8000)",
+      "Bash(python -m http.server 8080)",
+      "Bash(start cmd:*)",
+      "Bash(npx serve:*)",
+      "Bash(cmd:*)",
+      "Bash(node -e ':*)",
+      "Bash(node -e ' *)",
+      "Bash(ls .git/rebase-merge/)",
+      "Bash(ls .git/rebase-apply/)"
     ]
   }
 }
