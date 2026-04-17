@@ -1068,7 +1068,6 @@ body {
   </div>
   <div id="bottom-btns">
     <button id="pause-btn" class="action-btn" onclick="togglePause()">⏸</button>
-    <button id="download-btn" class="action-btn" onclick="downloadSlide()">⬇ Descargar</button>
   </div>
   <div id="dots"></div>
   <div id="bar"></div>
@@ -3424,21 +3423,6 @@ async function captureSlide() {
 }
 function slideName() {
   return (_stats ? _stats.sessionName.replace(/[^a-z0-9áéíóúñ]/gi, '_') : 'recap') + '.png';
-}
-
-async function downloadSlide() {
-  const btn = document.getElementById('download-btn');
-  btn.style.opacity = '0.4'; btn.disabled = true;
-  try {
-    const canvas = await captureSlide();
-    canvas.toBlob(blob => {
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url; a.download = slideName(); a.click();
-      URL.revokeObjectURL(url);
-      btn.style.opacity = ''; btn.disabled = false;
-    }, 'image/png');
-  } catch (e) { btn.style.opacity = ''; btn.disabled = false; }
 }
 
 async function shareSlide() {
