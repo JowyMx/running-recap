@@ -12,8 +12,6 @@
 <meta name="apple-mobile-web-app-title" content="Recap Running">
 <link rel="apple-touch-icon" href="icon.svg">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body {
@@ -176,50 +174,6 @@ body {
   border-radius: 4px;
 }
 
-/* ── MAP REPLAY SLIDE ── */
-#map-replay-slide {
-  display: none;
-  position: absolute;
-  inset: 0;
-  z-index: 5;
-  animation: fadeIn 0.35s ease;
-}
-#map-replay-slide.active { display: block; }
-#map-replay-container {
-  width: 100%;
-  height: 100%;
-}
-#map-replay-container .leaflet-container {
-  background: #111;
-}
-#map-stats-overlay {
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  z-index: 1000;
-  padding: 18px 20px 32px;
-  background: linear-gradient(to bottom, rgba(0,0,0,0.84) 0%, rgba(0,0,0,0.5) 65%, transparent 100%);
-  pointer-events: none;
-}
-.map-stats-row {
-  display: flex;
-  justify-content: space-around;
-  align-items: flex-end;
-  gap: 8px;
-}
-.map-stat { text-align: center; color: white; text-shadow: 0 1px 4px rgba(0,0,0,0.9); min-width: 0; }
-.map-stat-label {
-  font-size: clamp(9px, 2vw, 12px);
-  font-weight: 700; letter-spacing: 0.18em;
-  text-transform: uppercase; opacity: 0.85; margin-bottom: 2px;
-}
-.map-stat-value {
-  font-size: clamp(26px, 7vw, 46px);
-  font-weight: 900; line-height: 1; letter-spacing: -0.02em;
-}
-.map-stat-unit {
-  font-size: clamp(9px, 2vw, 12px);
-  font-weight: 700; opacity: 0.75; letter-spacing: 0.08em; margin-top: 1px;
-}
 
 /* ── RECAP ── */
 #recap-view { display: none; width: 100vw; height: 100vh; position: relative; overflow: hidden; }
@@ -913,34 +867,6 @@ body {
       <div class="unit">hr : min : seg</div>
     </div>
 
-    <div id="map-replay-slide">
-      <div id="map-replay-container"></div>
-      <div id="map-stats-overlay">
-        <div class="map-stats-row">
-          <div class="map-stat">
-            <div class="map-stat-label">Ritmo</div>
-            <div class="map-stat-value" id="map-stat-pace">--:--</div>
-            <div class="map-stat-unit">min/km</div>
-          </div>
-          <div class="map-stat">
-            <div class="map-stat-label">Distancia</div>
-            <div class="map-stat-value" id="map-stat-dist">0.00</div>
-            <div class="map-stat-unit">km</div>
-          </div>
-          <div class="map-stat">
-            <div class="map-stat-label">FC</div>
-            <div class="map-stat-value" id="map-stat-hr">--</div>
-            <div class="map-stat-unit">ppm</div>
-          </div>
-          <div class="map-stat">
-            <div class="map-stat-label">Desnivel</div>
-            <div class="map-stat-value" id="map-stat-elev">0</div>
-            <div class="map-stat-unit">m ↑</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
     <div id="rows-slide">
       <div class="rows-label" id="rows-label"></div>
       <div id="rows-body"></div>
@@ -1126,6 +1052,7 @@ body {
         <svg id="vo-chart-svg" width="100%" style="overflow:visible;"></svg>
       </div>
     </div>
+
 
     <div id="summary-slide">
       <div class="sum-title" id="sum-title"></div>
@@ -1579,102 +1506,6 @@ function processData(data, customName) {
   };
 }
 
-// ── MAP REPLAY ────────────────────────────────────────────────────────────
-let _leafletMap = null, _mapAnimTimer = null;
-
-function startMapReplay() {
-  if (_leafletMap) { _leafletMap.remove(); _leafletMap = null; }
-  const pts = _gpsPoints;
-  if (!pts || pts.length < 2) return;
-
-  // Subsample to max 600 points for smooth animation
-  const maxPts = 600;
-  const step = Math.max(1, Math.floor(pts.length / maxPts));
-  const sampled = pts.filter((_, i) => i % step === 0);
-  const latlngs = sampled.map(p => [p.lat, p.lon]);
-
-  // Precompute cumulative distances
-  const cumDist = [0];
-  for (let i = 1; i < sampled.length; i++)
-    cumDist.push(cumDist[i-1] + haversine(sampled[i-1], sampled[i]));
-
-  // Precompute cumulative elevation gain
-  const cumElev = [0];
-  for (let i = 1; i < sampled.length; i++) {
-    const gain = (sampled[i].ele != null && sampled[i-1].ele != null)
-      ? Math.max(0, sampled[i].ele - sampled[i-1].ele) : 0;
-    cumElev.push(cumElev[i-1] + gain);
-  }
-
-  // Init Leaflet map
-  const container = document.getElementById('map-replay-container');
-  container.innerHTML = '';
-  const map = L.map('map-replay-container', {
-    zoomControl: false, attributionControl: false,
-    dragging: false, touchZoom: false, scrollWheelZoom: false,
-    doubleClickZoom: false, keyboard: false, zoomAnimation: false,
-  });
-  _leafletMap = map;
-
-  // Satellite tiles (ESRI, free, no API key)
-  L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-    maxZoom: 19, opacity: 0.9,
-  }).addTo(map);
-
-  map.fitBounds(L.latLngBounds(latlngs), { padding: [55, 55] });
-
-  // Faint ghost route
-  L.polyline(latlngs, { color: 'rgba(255,255,255,0.18)', weight: 4, interactive: false }).addTo(map);
-
-  // Animated route (orange)
-  const routeLine = L.polyline([], {
-    color: '#FF5A00', weight: 5, lineCap: 'round', lineJoin: 'round', interactive: false,
-  }).addTo(map);
-
-  // Moving dot marker
-  const markerIcon = L.divIcon({
-    className: '',
-    html: '<div style="width:14px;height:14px;background:white;border-radius:50%;border:3px solid #FF5A00;box-shadow:0 0 10px rgba(255,90,0,0.9),0 0 0 4px rgba(255,90,0,0.25);"></div>',
-    iconSize: [14, 14], iconAnchor: [7, 7],
-  });
-  const marker = L.marker(latlngs[0], { icon: markerIcon, interactive: false }).addTo(map);
-
-  const ANIM_DUR = 9000;
-  let t0 = null, lastIdx = -1;
-
-  function animFrame(now) {
-    if (t0 === null) t0 = now;
-    const progress = Math.min((now - t0) / ANIM_DUR, 1);
-    // Ease-in-out
-    const eased = progress < 0.5 ? 2*progress*progress : 1 - Math.pow(-2*progress+2, 2)/2;
-    const idx = Math.min(Math.floor(eased * (sampled.length - 1)), sampled.length - 1);
-
-    if (idx !== lastIdx) {
-      routeLine.setLatLngs(latlngs.slice(0, idx + 1));
-      marker.setLatLng(latlngs[idx]);
-      lastIdx = idx;
-
-      document.getElementById('map-stat-dist').textContent = (cumDist[idx]/1000).toFixed(2);
-      document.getElementById('map-stat-elev').textContent = Math.round(cumElev[idx]);
-      const hrVal = sampled[idx].hr;
-      document.getElementById('map-stat-hr').textContent = hrVal ? Math.round(hrVal) : '--';
-
-      // Pace: smoothed over last 30 samples
-      const lb = Math.min(30, idx);
-      if (lb > 3) {
-        const segDist = (cumDist[idx] - cumDist[idx-lb]) / 1000;
-        const p0 = sampled[idx-lb], p1 = sampled[idx];
-        if (p0.time && p1.time && segDist > 0.02) {
-          const paceSec = (p1.time - p0.time) / 1000 / segDist;
-          if (paceSec > 60 && paceSec < 1800)
-            document.getElementById('map-stat-pace').textContent = secToMMSS(paceSec);
-        }
-      }
-    }
-    _mapAnimTimer = progress < 1 ? requestAnimationFrame(animFrame) : null;
-  }
-  _mapAnimTimer = requestAnimationFrame(animFrame);
-}
 
 // ── SLIDESHOW ─────────────────────────────────────────────────────────────
 let SLIDE_IDS, TOTAL, DUR;
@@ -1720,7 +1551,6 @@ function initSlides(stats) {
   if (stats.vertOsc > 0 && stats.tableRows && stats.tableRows.filter(r => !isDash(r.vo) && parseFloat(r.vo) > 0).length >= 2) add('vo-rows-slide', 3000);
   if (stats.vertOsc > 0 && stats.tableRows && stats.tableRows.filter(r => !isDash(r.vo) && parseFloat(r.vo) > 0).length >= 2) add('vo-chart-slide', 3000);
 
-  if (_gpsPoints && _gpsPoints.length > 10)             add('map-replay-slide', 11000);
   add('summary-slide', 0);
   TOTAL = SLIDE_IDS.length;
 }
@@ -1745,9 +1575,6 @@ function countPace(el, sec, dur) {
 }
 
 function showSlide(n) {
-  // Cancel map animation when leaving that slide
-  if (_mapAnimTimer) { cancelAnimationFrame(_mapAnimTimer); _mapAnimTimer = null; }
-
   SLIDE_IDS.forEach(id => { const el=document.getElementById(id); if(el) el.classList.remove('active'); });
   document.querySelectorAll('.dot').forEach((d,i) => d.classList.toggle('on', i===n));
 
@@ -1784,14 +1611,6 @@ function showSlide(n) {
   const s = _stats;
 
   const idx = id => SLIDE_IDS.indexOf(id);
-
-  // Animar mapa de ruta
-  if (n === idx('map-replay-slide')) {
-    requestAnimationFrame(() => requestAnimationFrame(() => {
-      if (_leafletMap) _leafletMap.invalidateSize();
-      startMapReplay();
-    }));
-  }
 
   // Animar gráfica de ritmo
   if (n === idx('pace-chart-slide')) {
