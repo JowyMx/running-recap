@@ -770,6 +770,94 @@ body {
 }
 .action-btn:hover { border-color: rgba(255,255,255,0.55); color: rgba(255,255,255,0.8); }
 #pause-btn { padding: 0 9px; font-size: 13px; }
+#story-btn { font-size: 13px; }
+
+/* Story frame (off-screen capture canvas) */
+#story-frame {
+  visibility: hidden;
+  position: fixed;
+  left: -9999px;
+  top: 0;
+  width: 390px;
+  height: 693px;
+  background: #0a0a0a;
+  display: flex;
+  flex-direction: column;
+  font-family: 'Arial Black', Arial, sans-serif;
+  color: #fff;
+  overflow: hidden;
+}
+#story-slide-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0 32px;
+  min-height: 0;
+  overflow: hidden;
+}
+#story-slide-area .slide,
+#story-slide-area #rows-slide,
+#story-slide-area #hr-rows-slide,
+#story-slide-area #cad-rows-slide,
+#story-slide-area #pow-rows-slide,
+#story-slide-area #stride-rows-slide,
+#story-slide-area #gct-rows-slide,
+#story-slide-area #temp-rows-slide,
+#story-slide-area #vr-rows-slide,
+#story-slide-area #vo-rows-slide,
+#story-slide-area #summary-slide,
+#story-slide-area > * {
+  display: flex !important;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  animation: none !important;
+  zoom: normal !important;
+  max-height: 580px;
+  overflow: hidden;
+}
+#story-slide-area .value {
+  font-size: clamp(64px, 24vw, 110px) !important;
+  line-height: 1 !important;
+}
+#story-slide-area .label {
+  font-size: 15px !important;
+  letter-spacing: 0.28em !important;
+}
+#story-slide-area .unit {
+  font-size: 18px !important;
+  margin-top: 10px !important;
+}
+#story-slide-area .sub {
+  font-size: 13px !important;
+}
+#story-slide-area svg { max-width: 100%; }
+#story-slide-area .rows-label { font-size: 12px !important; margin-bottom: 12px !important; }
+#story-slide-area .int-n  { font-size: 26px !important; }
+#story-slide-area .int-val { font-size: 20px !important; }
+#story-slide-area .int-u  { font-size: 9px  !important; }
+#story-slide-area .lap-row-n,
+#story-slide-area .lap-row-pace,
+#story-slide-area .lap-row-cum { font-size: 13px !important; }
+#story-slide-area .hr-row-n,
+#story-slide-area .hr-row-val,
+#story-slide-area .hr-row-cum  { font-size: 13px !important; }
+#story-slide-area .cad-row-n,
+#story-slide-area .cad-row-val,
+#story-slide-area .cad-row-cum { font-size: 13px !important; }
+#story-slide-area .sum-title { font-size: 14px !important; margin-bottom: 8px !important; }
+#story-slide-area .stats-grid { gap: 10px !important; margin-bottom: 8px !important; }
+#story-slide-area .stat-val  { font-size: 15px !important; }
+#story-slide-area .stat-u    { font-size: 8px  !important; }
+#story-slide-area .stat-lbl  { font-size: 8px  !important; }
+#story-slide-area .verdict   { font-size: 10px !important; line-height: 1.6 !important; margin-top: 8px !important; }
+#story-slide-area #route-canvas-wrap { margin-top: 4px !important; }
+#story-slide-area #route-canvas { height: 110px !important; }
+#story-slide-area #replay,
+#story-slide-area #new-session { display: none !important; }
 
 /* Nav */
 #dots {
@@ -1068,10 +1156,23 @@ body {
   </div>
   <div id="bottom-btns">
     <button id="pause-btn" class="action-btn" onclick="togglePause()">⏸</button>
+    <button id="story-btn" class="action-btn" onclick="shareStory()" title="Compartir como Story 9:16">📱</button>
   </div>
   <div id="dots"></div>
   <div id="bar"></div>
   <div id="tap-hint">toca para avanzar</div>
+</div>
+
+<!-- Story frame: off-screen 9:16 capture canvas -->
+<div id="story-frame">
+  <div style="padding:28px 28px 0 28px; flex-shrink:0;">
+    <div style="font-size:10px;font-weight:700;letter-spacing:0.35em;color:rgba(255,255,255,0.3);text-transform:uppercase;">Running Recap</div>
+  </div>
+  <div id="story-slide-area"></div>
+  <div style="padding:0 28px 30px 28px;flex-shrink:0;text-align:center;">
+    <div id="story-session-name" style="font-size:14px;font-weight:900;letter-spacing:0.1em;color:rgba(255,255,255,0.85);text-transform:uppercase;"></div>
+    <div id="story-session-date" style="font-size:10px;letter-spacing:0.22em;color:rgba(255,255,255,0.3);margin-top:4px;text-transform:uppercase;"></div>
+  </div>
 </div>
 
 <script>
@@ -3444,6 +3545,79 @@ async function shareSlide() {
       btn.style.opacity = ''; btn.disabled = false;
     }, 'image/png');
   } catch (e) { btn.style.opacity = ''; btn.disabled = false; }
+}
+
+// ── STORY 9:16 ────────────────────────────────────────────────────────────
+async function shareStory() {
+  const btn = document.getElementById('story-btn');
+  btn.style.opacity = '0.4'; btn.disabled = true;
+  try {
+    const selectors = [
+      '.slide.active','#rows-slide.active','#hr-rows-slide.active',
+      '#cad-rows-slide.active','#pow-rows-slide.active','#stride-rows-slide.active',
+      '#gct-rows-slide.active','#temp-rows-slide.active','#vr-rows-slide.active',
+      '#vo-rows-slide.active','#elev-rows-slide.active','#summary-slide.active'
+    ];
+    const active = document.querySelector(selectors.join(','));
+    if (!active) { btn.style.opacity=''; btn.disabled=false; return; }
+
+    const frame     = document.getElementById('story-frame');
+    const slideArea = document.getElementById('story-slide-area');
+
+    const clone = active.cloneNode(true);
+    clone.style.cssText = '';
+    clone.style.animation = 'none';
+    // Restore bar widths that animate from 0
+    clone.querySelectorAll('[data-pct]').forEach(el => {
+      el.style.width = el.dataset.pct + '%';
+    });
+    // Remove replay/new-session buttons from summary clone
+    clone.querySelectorAll('#replay,#new-session').forEach(el => el.remove());
+
+    slideArea.innerHTML = '';
+    slideArea.appendChild(clone);
+
+    if (_stats) {
+      document.getElementById('story-session-name').textContent = _stats.sessionName || '';
+      document.getElementById('story-session-date').textContent = _stats.dateStr || '';
+    }
+
+    // Redraw route canvas if present in clone
+    const clonedCanvas = clone.querySelector('#route-canvas');
+    if (clonedCanvas && _gpsPoints && _gpsPoints.length > 1) {
+      clonedCanvas.width  = 326;
+      clonedCanvas.height = 110;
+      drawRoute(clonedCanvas, _gpsPoints);
+    }
+
+    frame.style.visibility = 'visible';
+    await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+
+    const canvas = await html2canvas(frame, {
+      backgroundColor: '#0a0a0a',
+      scale: 2.77,
+      useCORS: true,
+      logging: false,
+      width: 390,
+      height: 693,
+    });
+
+    frame.style.visibility = 'hidden';
+    slideArea.innerHTML = '';
+
+    const name = (_stats ? _stats.sessionName.replace(/[^a-z0-9áéíóúñ]/gi,'_') : 'recap') + '_story.png';
+    canvas.toBlob(async blob => {
+      const file = new File([blob], name, { type: 'image/png' });
+      if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+        await navigator.share({ files: [file], title: 'Running Recap' });
+      } else {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a'); a.href = url; a.download = name; a.click();
+        URL.revokeObjectURL(url);
+      }
+      btn.style.opacity = ''; btn.disabled = false;
+    }, 'image/png');
+  } catch(e) { console.error(e); btn.style.opacity = ''; btn.disabled = false; }
 }
 
 // ── MOSTRAR / OCULTAR BOTON ───────────────────────────────────────────────
