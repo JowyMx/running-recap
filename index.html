@@ -3701,13 +3701,8 @@ function buildRecap(stats, sel) {
     document.getElementById('v-elev').textContent = `+${stats.elevation} / −${stats.descent}`;
   }
 
-  const showGCT    = stats.avgGCT > 0;
-  const showPow    = stats.avgPow > 0;
-  const showElev   = stats.elevation > 0 || stats.descent > 0;
-  const showTemp   = stats.avgTemp !== 0;
-  const showStride = stats.strideLen > 0;
-  const showVR     = stats.vertRatio > 0;
-  const showVO     = stats.vertOsc > 0;
+  // sel = Set de métricas seleccionadas (o null = todas)
+  const okSum = key => !sel || sel.has(key);
 
   const cellHTML = c => `<div class="stat-cell">
     <div class="stat-label">${c.label}</div>
@@ -3715,21 +3710,21 @@ function buildRecap(stats, sel) {
     <div class="stat-u">${c.u}</div>
   </div>`;
 
-  // Orden igual al de los slides: Dist → Tiempo → Ritmo → FC → Desnivel → Cad → Zancada → GCT → Potencia → Temp → VR → VO
+  // Solo incluir celdas cuya métrica esté seleccionada
   const topCells = [
-    { label: 'Distancia',   val: stats.dist.toFixed(2),       u: 'km' },
-    { label: 'Tiempo',      val: (() => { const t=timeToSec(stats.time); const h=Math.floor(t/3600),m=Math.floor((t%3600)/60),s=t%60; return h>0?`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`:`${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`; })(), u: 'h:m:s' },
-    { label: 'Ritmo medio', val: secToMMSS(stats.avgPaceSec), u: 'min/km' },
-    { label: 'FC media',    val: stats.avgHR,                 u: 'ppm' },
-    ...(showElev   ? [{ label:'Desnivel',          val:`+${stats.elevation} / −${stats.descent}`, u:'metros' }] : []),
-    { label: 'Cadencia',    val: stats.avgCad,                u: 'spm' },
-    ...(showStride ? [{ label:'Long. zancada',       val:stats.strideLen.toFixed(2), u:'m'   }] : []),
-    ...(showGCT    ? [{ label:'GCT',                 val:stats.avgGCT,               u:'ms'  }] : []),
-    ...(showPow    ? [{ label:'Potencia',             val:stats.avgPow, u:`W · ${stats.wkg.toFixed(2)} W/kg` }] : []),
-    ...(showTemp   ? [{ label:'Temperatura',          val:stats.avgTemp.toFixed(1),  u:'°C'  }] : []),
-    ...(showVR     ? [{ label:'Relación vertical',   val:stats.vertRatio.toFixed(1), u:'%'   }] : []),
-    ...(showVO     ? [{ label:'Oscilación vertical', val:stats.vertOsc.toFixed(1),   u:'cm'  }] : []),
-  ];
+    okSum('dist')   && stats.dist > 0            ? { label:'Distancia',          val:stats.dist.toFixed(2),        u:'km'    } : null,
+    okSum('time')   && timeToSec(stats.time) > 0 ? { label:'Tiempo',             val:(() => { const t=timeToSec(stats.time); const h=Math.floor(t/3600),m=Math.floor((t%3600)/60),s=t%60; return h>0?`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`:`${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`; })(), u:'h:m:s' } : null,
+    okSum('pace')   && stats.avgPaceSec > 0      ? { label:'Ritmo medio',        val:secToMMSS(stats.avgPaceSec),  u:'min/km'} : null,
+    okSum('hr')     && stats.avgHR > 0           ? { label:'FC media',           val:stats.avgHR,                  u:'ppm'   } : null,
+    okSum('elev')   && (stats.elevation > 0 || stats.descent > 0) ? { label:'Desnivel', val:`+${stats.elevation} / −${stats.descent}`, u:'metros' } : null,
+    okSum('cad')    && stats.avgCad > 0          ? { label:'Cadencia',           val:stats.avgCad,                 u:'spm'   } : null,
+    okSum('stride') && stats.strideLen > 0       ? { label:'Long. zancada',      val:stats.strideLen.toFixed(2),   u:'m'     } : null,
+    okSum('gct')    && stats.avgGCT > 0          ? { label:'GCT',                val:stats.avgGCT,                 u:'ms'    } : null,
+    okSum('power')  && stats.avgPow > 0          ? { label:'Potencia',           val:stats.avgPow, u:`W · ${stats.wkg.toFixed(2)} W/kg` } : null,
+    okSum('temp')   && stats.avgTemp !== 0       ? { label:'Temperatura',        val:stats.avgTemp.toFixed(1),     u:'°C'    } : null,
+    okSum('vr')     && stats.vertRatio > 0       ? { label:'Relación vertical',  val:stats.vertRatio.toFixed(1),   u:'%'     } : null,
+    okSum('vo')     && stats.vertOsc > 0         ? { label:'Oscilación vertical',val:stats.vertOsc.toFixed(1),     u:'cm'    } : null,
+  ].filter(Boolean);
   document.getElementById('stats-grid-top').innerHTML = topCells.map(cellHTML).join('');
 
   document.getElementById('verdict-text').innerHTML = '';
