@@ -1,4 +1,4 @@
-const CACHE = 'recap-running-v9';
+const CACHE = 'recap-running-v10';
 const ASSETS = ['./', './index.html', './manifest.json', './icon.svg'];
 
 self.addEventListener('install', e => {
