@@ -151,6 +151,51 @@ body {
   border-color: rgba(255,255,255,0.35);
   background: rgba(255,255,255,0.02);
 }
+
+/* Photo zone */
+#photo-zone {
+  border: 1px dashed rgba(255,255,255,0.18);
+  border-radius: 8px;
+  padding: 14px 24px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 8px;
+  transition: border-color 0.2s, background 0.2s;
+}
+#photo-zone:hover, #photo-zone.drag-over {
+  border-color: rgba(255,255,255,0.35);
+  background: rgba(255,255,255,0.02);
+}
+#photo-zone-text {
+  font-size: 11px;
+  color: rgba(255,255,255,0.25);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+#photo-zone-text.loaded { color: rgba(127,255,212,0.7); }
+
+/* Background photo layer in recap */
+#bg-photo {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  z-index: 0;
+}
+#bg-photo::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+}
+#recap-view #screen { z-index: 1; }
+#recap-view #bottom-btns,
+#recap-view #dots,
+#recap-view #bar,
+#recap-view #tap-hint { z-index: 2; }
 #gps-zone-text {
   font-size: 11px;
   color: rgba(255,255,255,0.25);
@@ -1059,6 +1104,11 @@ body {
       <span id="gps-zone-text">GPX / TCX / KML</span>
     </div>
     <input type="file" id="gps-input" accept=".gpx,.tcx,.kml" style="display:none">
+    <div id="photo-zone" onclick="document.getElementById('photo-input').click()">
+      <span style="font-size:14px;color:rgba(255,255,255,0.2)">🖼</span>
+      <span id="photo-zone-text">Foto de fondo · opcional</span>
+    </div>
+    <input type="file" id="photo-input" accept="image/*" style="display:none">
     <div id="drop-zone" onclick="document.getElementById('file-input').click()">
       <div class="drop-icon">↑</div>
       <div class="drop-text" style="color:rgba(255,255,255,0.45)">CSV</div>
@@ -1074,6 +1124,7 @@ body {
 
 <!-- ── RECAP ── -->
 <div id="recap-view">
+  <div id="bg-photo"></div>
   <div id="screen">
 
     <div class="slide" id="s0">
@@ -2222,6 +2273,11 @@ function newSession() {
   _dt.textContent = 'CSV'; _dt.style.color = '';
   _ds.textContent = 'Arrastra o haz clic para seleccionar'; _ds.style.color = '';
   updateRecapBtn();
+  _bgPhotoURL = null;
+  document.getElementById('bg-photo').style.backgroundImage = 'none';
+  document.getElementById('photo-zone-text').textContent = 'Foto de fondo · opcional';
+  document.getElementById('photo-zone-text').classList.remove('loaded');
+  document.getElementById('photo-input').value = '';
   document.getElementById('recap-view').style.display   = 'none';
   document.getElementById('metrics-view').style.display = 'none';
   document.getElementById('upload-view').style.display  = 'flex';
@@ -3738,6 +3794,7 @@ function buildRecap(stats, sel) {
     d.className='dot'; d.id='dot'+i; dotsEl.appendChild(d);
   }
 
+  applyBgPhoto();
   document.getElementById('upload-view').style.display = 'none';
   document.getElementById('recap-view').style.display  = 'block';
   startShow();
@@ -3891,6 +3948,29 @@ function handleFile(file) {
   updateRecapBtn();
 }
 
+let _bgPhotoURL = null;
+
+function handlePhoto(file) {
+  if (!file || !file.type.startsWith('image/')) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    _bgPhotoURL = e.target.result;
+    const zt = document.getElementById('photo-zone-text');
+    zt.textContent = '✓ ' + file.name;
+    zt.classList.add('loaded');
+  };
+  reader.readAsDataURL(file);
+}
+
+function applyBgPhoto() {
+  const el = document.getElementById('bg-photo');
+  if (_bgPhotoURL) {
+    el.style.backgroundImage = `url(${_bgPhotoURL})`;
+  } else {
+    el.style.backgroundImage = 'none';
+  }
+}
+
 function showError(msg) {
   const el = document.getElementById('upload-error');
   el.textContent = msg; el.style.display = 'block';
@@ -3935,6 +4015,17 @@ dz.addEventListener('dragleave', ()  => dz.classList.remove('drag-over'));
 dz.addEventListener('drop', e => {
   e.preventDefault(); dz.classList.remove('drag-over');
   if (e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
+});
+
+document.getElementById('photo-input').addEventListener('change', function() {
+  if (this.files && this.files[0]) handlePhoto(this.files[0]);
+});
+const pz = document.getElementById('photo-zone');
+pz.addEventListener('dragover',  e => { e.preventDefault(); pz.classList.add('drag-over'); });
+pz.addEventListener('dragleave', ()  => pz.classList.remove('drag-over'));
+pz.addEventListener('drop', e => {
+  e.preventDefault(); pz.classList.remove('drag-over');
+  if (e.dataTransfer.files[0]) handlePhoto(e.dataTransfer.files[0]);
 });
 
 document.getElementById('screen').addEventListener('click', () => {
