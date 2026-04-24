@@ -1104,17 +1104,17 @@ body {
       <span id="gps-zone-text">GPX / TCX / KML</span>
     </div>
     <input type="file" id="gps-input" accept=".gpx,.tcx,.kml" style="display:none">
-    <div id="photo-zone" onclick="document.getElementById('photo-input').click()">
-      <span style="font-size:14px;color:rgba(255,255,255,0.2)">🖼</span>
-      <span id="photo-zone-text">Foto de fondo · opcional</span>
-    </div>
-    <input type="file" id="photo-input" accept="image/*" style="display:none">
     <div id="drop-zone" onclick="document.getElementById('file-input').click()">
       <div class="drop-icon">↑</div>
       <div class="drop-text" style="color:rgba(255,255,255,0.45)">CSV</div>
       <div class="drop-sub" style="color:rgba(255,255,255,0.18)">Arrastra o haz clic para seleccionar</div>
     </div>
     <input type="file" id="file-input" accept=".csv" style="display:none">
+    <div id="photo-zone" onclick="document.getElementById('photo-input').click()">
+      <span style="font-size:14px;color:rgba(255,255,255,0.2)">🖼</span>
+      <span id="photo-zone-text">Foto de fondo · opcional</span>
+    </div>
+    <input type="file" id="photo-input" accept="image/*" style="display:none">
     <div id="upload-error" class="error-msg" style="display:none"></div>
     <button id="gps-only-btn" onclick="startRecap()" style="display:none;margin-top:16px;width:100%;padding:12px;background:transparent;border:1px solid rgba(255,255,255,0.3);color:rgba(255,255,255,0.7);font-size:12px;letter-spacing:0.2em;text-transform:uppercase;cursor:pointer;border-radius:4px;font-family:inherit;transition:border-color 0.2s,color 0.2s;">
       Ver Recap
