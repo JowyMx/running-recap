@@ -175,6 +175,145 @@ body {
 }
 
 
+/* ── METRICS SELECTOR ── */
+#metrics-view {
+  display: none;
+  min-height: 100vh;
+  flex-direction: column;
+  align-items: center;
+  padding: 28px 20px 40px;
+  overflow-y: auto;
+}
+.metrics-back {
+  align-self: flex-start;
+  background: transparent;
+  border: none;
+  color: rgba(255,255,255,0.3);
+  font-size: 11px;
+  font-family: inherit;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  cursor: pointer;
+  padding: 0;
+  margin-bottom: 24px;
+  transition: color 0.15s;
+}
+.metrics-back:hover { color: rgba(255,255,255,0.7); }
+.metrics-session {
+  font-size: clamp(20px, 6vw, 32px);
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  color: rgba(255,255,255,0.9);
+  text-align: center;
+  margin-bottom: 4px;
+  width: 100%; max-width: 440px;
+}
+.metrics-subtitle {
+  font-size: 11px;
+  letter-spacing: 0.28em;
+  color: rgba(255,255,255,0.28);
+  text-transform: uppercase;
+  text-align: center;
+  margin-bottom: 28px;
+}
+.metrics-list {
+  width: 100%;
+  max-width: 440px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-bottom: 24px;
+}
+.metric-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 13px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.12s;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.metric-row:hover { background: rgba(255,255,255,0.04); }
+.metric-row.checked { background: rgba(255,255,255,0.05); }
+.metric-check {
+  width: 20px; height: 20px;
+  border: 1.5px solid rgba(255,255,255,0.18);
+  border-radius: 5px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  color: transparent;
+  font-size: 12px;
+  line-height: 1;
+  transition: border-color 0.12s, background 0.12s, color 0.12s;
+}
+.metric-row.checked .metric-check {
+  border-color: rgba(255,255,255,0.65);
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+}
+.metric-icon { font-size: 17px; flex-shrink: 0; width: 22px; text-align: center; }
+.metric-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: rgba(255,255,255,0.4);
+  letter-spacing: 0.06em;
+  flex: 1;
+  transition: color 0.12s;
+  text-transform: uppercase;
+}
+.metric-row.checked .metric-label { color: rgba(255,255,255,0.88); }
+.metric-val-preview {
+  font-size: 11px;
+  color: rgba(255,255,255,0.22);
+  letter-spacing: 0.08em;
+  text-align: right;
+  white-space: nowrap;
+  transition: color 0.12s;
+}
+.metric-row.checked .metric-val-preview { color: rgba(255,255,255,0.42); }
+.metrics-footer {
+  width: 100%;
+  max-width: 440px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.metrics-go-btn {
+  background: #fff;
+  color: #0a0a0a;
+  border: none;
+  border-radius: 6px;
+  padding: 14px;
+  font-size: 13px;
+  font-family: inherit;
+  font-weight: 900;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: opacity 0.15s;
+  width: 100%;
+}
+.metrics-go-btn:hover { opacity: 0.88; }
+.metrics-toggle-all {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.14);
+  color: rgba(255,255,255,0.35);
+  border-radius: 6px;
+  padding: 10px;
+  font-size: 10px;
+  font-family: inherit;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+  width: 100%;
+}
+.metrics-toggle-all:hover { border-color: rgba(255,255,255,0.35); color: rgba(255,255,255,0.7); }
+
 /* ── RECAP ── */
 #recap-view { display: none; width: 100vw; height: 100vh; position: relative; overflow: hidden; }
 #screen {
@@ -1163,6 +1302,18 @@ body {
   <div id="tap-hint">toca para avanzar</div>
 </div>
 
+<!-- ── METRICS SELECTOR VIEW ── -->
+<div id="metrics-view">
+  <button class="metrics-back" onclick="backToUpload()">← Volver</button>
+  <div class="metrics-session" id="mv-session-name"></div>
+  <div class="metrics-subtitle">Elige las métricas del recap</div>
+  <div class="metrics-list" id="mv-list"></div>
+  <div class="metrics-footer">
+    <button class="metrics-go-btn" onclick="launchRecap()">Ver Recap →</button>
+    <button class="metrics-toggle-all" id="mv-toggle-btn" onclick="metricsToggleAll()">Desmarcar todo</button>
+  </div>
+</div>
+
 <!-- Story frame: off-screen 9:16 capture canvas -->
 <div id="story-frame">
   <div style="padding:28px 28px 0 28px; flex-shrink:0;">
@@ -1611,45 +1762,37 @@ function processData(data, customName) {
 let SLIDE_IDS, TOTAL, DUR;
 let cur=0, timer=null, barTimer=null, barStart=null, _stats=null, _gpsPoints=null, _csvStats=null, _csvFile=null;
 
-function initSlides(stats) {
+function initSlides(stats, sel) {
+  // sel = Set<key> de métricas seleccionadas, o null = mostrar todo
+  const ok  = key => !sel || sel.has(key);
   const add = (id, dur) => { SLIDE_IDS.push(id); DUR.push(dur); };
+  const laps = f => (stats.tableRows || []).filter(f);
   SLIDE_IDS = ['s0']; DUR = [2500];
 
-  if (stats.dist > 0)                                   add('s1',  2000);
-  if (timeToSec(stats.time) > 0)                        add('s2',  2000);
-  if (stats.avgPaceSec > 0)                             add('s5',  2000);
-  if (stats.tableRows && stats.tableRows.length > 0)    add('rows-slide', 3000);
-  if (stats.tableRows && stats.tableRows.filter(r => !isDash(r.pace)).length >= 2) add('pace-chart-slide', 3000);
-  if (stats.avgHR > 0)                                  add('s4',  2000);
-  if (stats.tableRows && stats.tableRows.filter(r => !isDash(r.hr) && parseFloat(r.hr) > 0).length >= 2) add('hr-rows-slide', 3000);
-  if (stats.tableRows && stats.tableRows.filter(r => !isDash(r.hr) && parseFloat(r.hr) > 0).length >= 2) add('hr-chart-slide', 3000);
-  if (stats.elevation > 0 || stats.descent > 0)          add('s10', 1800);
-  if (stats.elevation > 0 || stats.descent > 0) {
-    const elevLaps = stats.tableRows && stats.tableRows.filter(r => (parseFloat(r.elev) > 0 || parseFloat(r.elevDesc) > 0));
-    if (elevLaps && elevLaps.length >= 2) add('elev-rows-slide', 3000);
-  }
-  if (_gpsPoints && _gpsPoints.length > 1 && _gpsPoints.some(p => p.ele !== null)) add('elev-profile-slide', 2800);
-  if (stats.avgCad > 0)                                 add('s6',  1800);
-  if (stats.tableRows && stats.tableRows.filter(r => !isDash(r.cad) && parseFloat(r.cad) > 0).length >= 2) add('cad-rows-slide', 3000);
-  if (stats.tableRows && stats.tableRows.filter(r => !isDash(r.cad) && parseFloat(r.cad) > 0).length >= 2) add('cad-chart-slide', 3000);
-  if (stats.strideLen > 0)                              add('s12', 1800);
-  if (stats.strideLen > 0 && stats.tableRows && stats.tableRows.filter(r => !isDash(r.stride) && parseFloat(r.stride) > 0).length >= 2) add('stride-rows-slide', 3000);
-  if (stats.strideLen > 0 && stats.tableRows && stats.tableRows.filter(r => !isDash(r.stride) && parseFloat(r.stride) > 0).length >= 2) add('stride-chart-slide', 3000);
-  if (stats.avgGCT > 0)                                 add('s7',  1800);
-  if (stats.avgGCT > 0 && stats.tableRows && stats.tableRows.filter(r => !isDash(r.gct) && parseFloat(r.gct) > 0).length >= 2) add('gct-rows-slide', 3000);
-  if (stats.avgGCT > 0 && stats.tableRows && stats.tableRows.filter(r => !isDash(r.gct) && parseFloat(r.gct) > 0).length >= 2) add('gct-chart-slide', 3000);
-  if (stats.avgPow > 0)                                 add('s8',  1800);
-  if (stats.avgPow > 0 && stats.tableRows && stats.tableRows.filter(r => !isDash(r.pow) && parseFloat(r.pow) > 0).length >= 2) add('pow-rows-slide', 3000);
-  if (stats.avgPow > 0 && stats.tableRows && stats.tableRows.filter(r => !isDash(r.pow) && parseFloat(r.pow) > 0).length >= 2) add('pow-chart-slide', 3000);
-  if (stats.avgTemp !== 0)                              add('s11', 1800);
-  if (stats.avgTemp !== 0 && stats.tableRows && stats.tableRows.filter(r => !isDash(r.temp) && parseFloat(r.temp) !== 0).length >= 2) add('temp-rows-slide', 3000);
-  if (stats.avgTemp !== 0 && stats.tableRows && stats.tableRows.filter(r => !isDash(r.temp) && parseFloat(r.temp) !== 0).length >= 2) add('temp-chart-slide', 3000);
-  if (stats.vertRatio > 0)                              add('s13', 1800);
-  if (stats.vertRatio > 0 && stats.tableRows && stats.tableRows.filter(r => !isDash(r.vr) && parseFloat(r.vr) > 0).length >= 2) add('vr-rows-slide', 3000);
-  if (stats.vertRatio > 0 && stats.tableRows && stats.tableRows.filter(r => !isDash(r.vr) && parseFloat(r.vr) > 0).length >= 2) add('vr-chart-slide', 3000);
-  if (stats.vertOsc > 0)                                add('s14', 1800);
-  if (stats.vertOsc > 0 && stats.tableRows && stats.tableRows.filter(r => !isDash(r.vo) && parseFloat(r.vo) > 0).length >= 2) add('vo-rows-slide', 3000);
-  if (stats.vertOsc > 0 && stats.tableRows && stats.tableRows.filter(r => !isDash(r.vo) && parseFloat(r.vo) > 0).length >= 2) add('vo-chart-slide', 3000);
+  if (ok('dist')   && stats.dist > 0)                              add('s1',  2000);
+  if (ok('time')   && timeToSec(stats.time) > 0)                   add('s2',  2000);
+  if (ok('pace')   && stats.avgPaceSec > 0)                        add('s5',  2000);
+  if (ok('pace')   && stats.tableRows && stats.tableRows.length > 0) add('rows-slide', 3000);
+  if (ok('pace')   && laps(r => !isDash(r.pace)).length >= 2)      add('pace-chart-slide', 3000);
+  if (ok('hr')     && stats.avgHR > 0)                             add('s4',  2000);
+  if (ok('hr')     && laps(r => !isDash(r.hr) && parseFloat(r.hr) > 0).length >= 2) { add('hr-rows-slide', 3000); add('hr-chart-slide', 3000); }
+  if (ok('elev')   && (stats.elevation > 0 || stats.descent > 0)) add('s10', 1800);
+  if (ok('elev')   && (stats.elevation > 0 || stats.descent > 0) && laps(r => parseFloat(r.elev) > 0 || parseFloat(r.elevDesc) > 0).length >= 2) add('elev-rows-slide', 3000);
+  if (ok('gps')    && _gpsPoints && _gpsPoints.length > 1 && _gpsPoints.some(p => p.ele !== null)) add('elev-profile-slide', 2800);
+  if (ok('cad')    && stats.avgCad > 0)                            add('s6',  1800);
+  if (ok('cad')    && laps(r => !isDash(r.cad) && parseFloat(r.cad) > 0).length >= 2) { add('cad-rows-slide', 3000); add('cad-chart-slide', 3000); }
+  if (ok('stride') && stats.strideLen > 0)                         add('s12', 1800);
+  if (ok('stride') && stats.strideLen > 0 && laps(r => !isDash(r.stride) && parseFloat(r.stride) > 0).length >= 2) { add('stride-rows-slide', 3000); add('stride-chart-slide', 3000); }
+  if (ok('gct')    && stats.avgGCT > 0)                            add('s7',  1800);
+  if (ok('gct')    && stats.avgGCT > 0 && laps(r => !isDash(r.gct) && parseFloat(r.gct) > 0).length >= 2) { add('gct-rows-slide', 3000); add('gct-chart-slide', 3000); }
+  if (ok('power')  && stats.avgPow > 0)                            add('s8',  1800);
+  if (ok('power')  && stats.avgPow > 0 && laps(r => !isDash(r.pow) && parseFloat(r.pow) > 0).length >= 2) { add('pow-rows-slide', 3000); add('pow-chart-slide', 3000); }
+  if (ok('temp')   && stats.avgTemp !== 0)                         add('s11', 1800);
+  if (ok('temp')   && stats.avgTemp !== 0 && laps(r => !isDash(r.temp) && parseFloat(r.temp) !== 0).length >= 2) { add('temp-rows-slide', 3000); add('temp-chart-slide', 3000); }
+  if (ok('vr')     && stats.vertRatio > 0)                         add('s13', 1800);
+  if (ok('vr')     && stats.vertRatio > 0 && laps(r => !isDash(r.vr) && parseFloat(r.vr) > 0).length >= 2) { add('vr-rows-slide', 3000); add('vr-chart-slide', 3000); }
+  if (ok('vo')     && stats.vertOsc > 0)                           add('s14', 1800);
+  if (ok('vo')     && stats.vertOsc > 0 && laps(r => !isDash(r.vo) && parseFloat(r.vo) > 0).length >= 2) { add('vo-rows-slide', 3000); add('vo-chart-slide', 3000); }
 
   add('summary-slide', 0);
   TOTAL = SLIDE_IDS.length;
@@ -2080,8 +2223,113 @@ function newSession() {
   _dt.textContent = 'CSV'; _dt.style.color = '';
   _ds.textContent = 'Arrastra o haz clic para seleccionar'; _ds.style.color = '';
   updateRecapBtn();
-  document.getElementById('recap-view').style.display = 'none';
-  document.getElementById('upload-view').style.display = 'flex';
+  document.getElementById('recap-view').style.display   = 'none';
+  document.getElementById('metrics-view').style.display = 'none';
+  document.getElementById('upload-view').style.display  = 'flex';
+}
+
+// ── METRICS SELECTOR ──────────────────────────────────────────────────────
+const METRIC_DEFS = [
+  { key:'dist',   label:'Distancia',           icon:'📏', avail: s => s.dist > 0,
+    preview: s => `${s.dist.toFixed(2)} km` },
+  { key:'time',   label:'Tiempo',               icon:'⏱', avail: s => timeToSec(s.time) > 0,
+    preview: s => s.time },
+  { key:'pace',   label:'Ritmo & Vueltas',      icon:'🏃', avail: s => s.avgPaceSec > 0,
+    preview: s => `${secToMMSS(s.avgPaceSec)} /km` },
+  { key:'hr',     label:'Frec. cardíaca',       icon:'❤️', avail: s => s.avgHR > 0,
+    preview: s => `${s.avgHR} ppm` },
+  { key:'elev',   label:'Desnivel',             icon:'⛰', avail: s => s.elevation > 0 || s.descent > 0,
+    preview: s => `+${s.elevation} / −${s.descent} m` },
+  { key:'gps',    label:'Perfil de elevación',  icon:'🗺', avail: () => !!(_gpsPoints && _gpsPoints.length > 1 && _gpsPoints.some(p => p.ele !== null)),
+    preview: () => 'GPS disponible' },
+  { key:'cad',    label:'Cadencia',             icon:'🔄', avail: s => s.avgCad > 0,
+    preview: s => `${s.avgCad} spm` },
+  { key:'stride', label:'Long. de zancada',     icon:'👟', avail: s => s.strideLen > 0,
+    preview: s => `${s.strideLen.toFixed(2)} m` },
+  { key:'gct',    label:'Contacto con suelo',   icon:'⚡', avail: s => s.avgGCT > 0,
+    preview: s => `${s.avgGCT} ms` },
+  { key:'power',  label:'Potencia',             icon:'💪', avail: s => s.avgPow > 0,
+    preview: s => `${s.avgPow} W` },
+  { key:'temp',   label:'Temperatura',          icon:'🌡', avail: s => s.avgTemp !== 0,
+    preview: s => `${s.avgTemp.toFixed(1)} °C` },
+  { key:'vr',     label:'Relación vertical',    icon:'📐', avail: s => s.vertRatio > 0,
+    preview: s => `${s.vertRatio.toFixed(1)} %` },
+  { key:'vo',     label:'Oscilación vertical',  icon:'〰️', avail: s => s.vertOsc > 0,
+    preview: s => `${s.vertOsc.toFixed(1)} cm` },
+];
+
+let _pendingStats = null;   // stats esperando confirmación en el selector
+
+function showMetricsSelector(stats) {
+  _pendingStats = stats;
+
+  // Cargar preferencias guardadas
+  let savedSel;
+  try { savedSel = JSON.parse(localStorage.getItem('selectedMetrics')); } catch(e) {}
+
+  document.getElementById('mv-session-name').textContent = stats.sessionName;
+
+  const available = METRIC_DEFS.filter(m => m.avail(stats));
+  const list = document.getElementById('mv-list');
+  list.innerHTML = '';
+
+  available.forEach(m => {
+    const isChecked = !savedSel || savedSel.includes(m.key);
+    const row = document.createElement('div');
+    row.className = 'metric-row' + (isChecked ? ' checked' : '');
+    row.dataset.key = m.key;
+    row.innerHTML = `
+      <div class="metric-check">${isChecked ? '✓' : ''}</div>
+      <div class="metric-icon">${m.icon}</div>
+      <div class="metric-label">${m.label}</div>
+      <div class="metric-val-preview">${m.preview(stats)}</div>`;
+    row.addEventListener('click', () => toggleMetricRow(row));
+    list.appendChild(row);
+  });
+
+  updateToggleBtn();
+  document.getElementById('upload-view').style.display  = 'none';
+  document.getElementById('recap-view').style.display   = 'none';
+  document.getElementById('metrics-view').style.display = 'flex';
+}
+
+function toggleMetricRow(row) {
+  row.classList.toggle('checked');
+  const chk = row.querySelector('.metric-check');
+  chk.textContent = row.classList.contains('checked') ? '✓' : '';
+  updateToggleBtn();
+}
+
+function updateToggleBtn() {
+  const rows   = document.querySelectorAll('#mv-list .metric-row');
+  const allOn  = [...rows].every(r => r.classList.contains('checked'));
+  const btn    = document.getElementById('mv-toggle-btn');
+  btn.textContent = allOn ? 'Desmarcar todo' : 'Seleccionar todo';
+}
+
+function metricsToggleAll() {
+  const rows  = document.querySelectorAll('#mv-list .metric-row');
+  const allOn = [...rows].every(r => r.classList.contains('checked'));
+  rows.forEach(r => {
+    r.classList.toggle('checked', !allOn);
+    r.querySelector('.metric-check').textContent = allOn ? '' : '✓';
+  });
+  updateToggleBtn();
+}
+
+function launchRecap() {
+  if (!_pendingStats) return;
+  const rows = document.querySelectorAll('#mv-list .metric-row');
+  const sel  = new Set([...rows].filter(r => r.classList.contains('checked')).map(r => r.dataset.key));
+  // Guardar preferencias
+  try { localStorage.setItem('selectedMetrics', JSON.stringify([...sel])); } catch(e) {}
+  document.getElementById('metrics-view').style.display = 'none';
+  buildRecap(_pendingStats, sel);
+}
+
+function backToUpload() {
+  document.getElementById('metrics-view').style.display = 'none';
+  document.getElementById('upload-view').style.display  = 'flex';
 }
 
 function startRecap() {
@@ -2094,7 +2342,7 @@ function startRecap() {
         const data = parseGarminCSV(text);
         const name = document.getElementById('session-name').value.trim();
         _csvStats = processData(data, name);
-        buildRecap(_csvStats);
+        showMetricsSelector(_csvStats);
       } catch (err1) {
         // Reintentar con Latin-1
         const r2 = new FileReader();
@@ -2104,7 +2352,7 @@ function startRecap() {
             const data2 = parseGarminCSV(text2);
             const name = document.getElementById('session-name').value.trim();
             _csvStats = processData(data2, name);
-            buildRecap(_csvStats);
+            showMetricsSelector(_csvStats);
           } catch (err2) {
             showError('Error al procesar CSV: ' + err2.message);
           }
@@ -2119,7 +2367,7 @@ function startRecap() {
   if (_csvStats) {
     const name = document.getElementById('session-name').value.trim();
     if (name) _csvStats.sessionName = name;
-    buildRecap(_csvStats);
+    showMetricsSelector(_csvStats);
     return;
   }
   // Solo GPS
@@ -2149,7 +2397,7 @@ function startRecap() {
     tableRows:  [],
     rowPad:     '0'
   };
-  buildRecap(stats);
+  showMetricsSelector(stats);
 }
 // Alias por compatibilidad
 function startGPSOnly() { startRecap(); }
@@ -2897,7 +3145,7 @@ function animateVoChart() {
 }
 
 // ── BUILD RECAP ───────────────────────────────────────────────────────────
-function buildRecap(stats) {
+function buildRecap(stats, sel) {
   _stats = stats;
   const nameInput = document.getElementById('session-name');
   try { if (nameInput.value.trim()) localStorage.setItem('lastSessionName', nameInput.value.trim()); } catch(e) {}
@@ -3486,7 +3734,7 @@ function buildRecap(stats) {
 
   document.getElementById('verdict-text').innerHTML = '';
 
-  initSlides(stats);
+  initSlides(stats, sel || null);
 
   // Dots
   const dotsEl = document.getElementById('dots');
