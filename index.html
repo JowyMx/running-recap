@@ -1112,9 +1112,9 @@ body {
     <input type="file" id="file-input" accept=".csv" style="display:none">
     <div id="photo-zone" onclick="document.getElementById('photo-input').click()">
       <span style="font-size:14px;color:rgba(255,255,255,0.2)">🖼</span>
-      <span id="photo-zone-text">Foto de fondo · opcional</span>
+      <span id="photo-zone-text">Foto o video de fondo · opcional</span>
     </div>
-    <input type="file" id="photo-input" accept="image/*" style="display:none">
+    <input type="file" id="photo-input" accept="image/*,video/*" style="display:none">
     <div id="upload-error" class="error-msg" style="display:none"></div>
     <button id="gps-only-btn" onclick="startRecap()" style="display:none;margin-top:16px;width:100%;padding:12px;background:transparent;border:1px solid rgba(255,255,255,0.3);color:rgba(255,255,255,0.7);font-size:12px;letter-spacing:0.2em;text-transform:uppercase;cursor:pointer;border-radius:4px;font-family:inherit;transition:border-color 0.2s,color 0.2s;">
       Seleccionar métricas
@@ -2274,8 +2274,13 @@ function newSession() {
   _ds.textContent = 'Arrastra o haz clic para seleccionar'; _ds.style.color = '';
   updateRecapBtn();
   _bgPhotoURL = null;
-  document.getElementById('bg-photo').style.backgroundImage = 'none';
-  document.getElementById('photo-zone-text').textContent = 'Foto de fondo · opcional';
+  _bgVideoURL = null;
+  _bgIsVideo  = false;
+  const bgEl = document.getElementById('bg-photo');
+  bgEl.style.backgroundImage = 'none';
+  const oldVid = bgEl.querySelector('video');
+  if (oldVid) oldVid.remove();
+  document.getElementById('photo-zone-text').textContent = 'Foto o video de fondo · opcional';
   document.getElementById('photo-zone-text').classList.remove('loaded');
   document.getElementById('photo-input').value = '';
   document.getElementById('recap-view').style.display   = 'none';
@@ -3949,12 +3954,25 @@ function handleFile(file) {
 }
 
 let _bgPhotoURL = null;
+let _bgVideoURL = null;
+let _bgIsVideo  = false;
 
 function handlePhoto(file) {
-  if (!file || !file.type.startsWith('image/')) return;
+  if (!file) return;
+  const isVideo = file.type.startsWith('video/');
+  const isImage = file.type.startsWith('image/');
+  if (!isVideo && !isImage) return;
   const reader = new FileReader();
   reader.onload = e => {
-    _bgPhotoURL = e.target.result;
+    if (isVideo) {
+      _bgVideoURL = e.target.result;
+      _bgPhotoURL = null;
+      _bgIsVideo  = true;
+    } else {
+      _bgPhotoURL = e.target.result;
+      _bgVideoURL = null;
+      _bgIsVideo  = false;
+    }
     const zt = document.getElementById('photo-zone-text');
     zt.textContent = '✓ ' + file.name;
     zt.classList.add('loaded');
@@ -3964,7 +3982,20 @@ function handlePhoto(file) {
 
 function applyBgPhoto() {
   const el = document.getElementById('bg-photo');
-  if (_bgPhotoURL) {
+  // remove any existing video element
+  const existing = el.querySelector('video');
+  if (existing) existing.remove();
+  if (_bgIsVideo && _bgVideoURL) {
+    el.style.backgroundImage = 'none';
+    const vid = document.createElement('video');
+    vid.src = _bgVideoURL;
+    vid.autoplay = true;
+    vid.loop     = true;
+    vid.muted    = true;
+    vid.playsInline = true;
+    vid.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;';
+    el.appendChild(vid);
+  } else if (_bgPhotoURL) {
     el.style.backgroundImage = `url(${_bgPhotoURL})`;
   } else {
     el.style.backgroundImage = 'none';
