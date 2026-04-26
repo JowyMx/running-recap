@@ -998,7 +998,6 @@ body {
 }
 .action-btn:hover { border-color: rgba(255,255,255,0.55); color: rgba(255,255,255,0.8); }
 #pause-btn { padding: 0 9px; font-size: 13px; }
-#story-btn { font-size: 13px; }
 
 /* Story frame (off-screen capture canvas) */
 #story-frame {
@@ -1411,7 +1410,6 @@ body {
 
   </div>
   <div id="bottom-btns">
-<button id="story-btn" class="action-btn" onclick="shareStory()" title="Compartir como Story 9:16">📱</button>
   </div>
   <div id="dots"></div>
   <div id="bar"></div>
@@ -3926,77 +3924,6 @@ async function shareSlide() {
 }
 
 // ── STORY 9:16 ────────────────────────────────────────────────────────────
-async function shareStory() {
-  const btn = document.getElementById('story-btn');
-  btn.style.opacity = '0.4'; btn.disabled = true;
-  try {
-    const selectors = [
-      '.slide.active','#rows-slide.active','#hr-rows-slide.active',
-      '#cad-rows-slide.active','#pow-rows-slide.active','#stride-rows-slide.active',
-      '#gct-rows-slide.active','#temp-rows-slide.active','#vr-rows-slide.active',
-      '#vo-rows-slide.active','#elev-rows-slide.active','#summary-slide.active'
-    ];
-    const active = document.querySelector(selectors.join(','));
-    if (!active) { btn.style.opacity=''; btn.disabled=false; return; }
-
-    const frame     = document.getElementById('story-frame');
-    const slideArea = document.getElementById('story-slide-area');
-
-    const clone = active.cloneNode(true);
-    clone.style.cssText = '';
-    clone.style.animation = 'none';
-    // Restore bar widths that animate from 0
-    clone.querySelectorAll('[data-pct]').forEach(el => {
-      el.style.width = el.dataset.pct + '%';
-    });
-    // Remove replay/new-session buttons from summary clone
-    clone.querySelectorAll('#replay,#new-session').forEach(el => el.remove());
-
-    slideArea.innerHTML = '';
-    slideArea.appendChild(clone);
-
-    if (_stats) {
-      document.getElementById('story-session-name').textContent = _stats.sessionName || '';
-      document.getElementById('story-session-date').textContent = _stats.dateStr || '';
-    }
-
-    // Redraw route canvas if present in clone
-    const clonedCanvas = clone.querySelector('#route-canvas');
-    if (clonedCanvas && _gpsPoints && _gpsPoints.length > 1) {
-      clonedCanvas.width  = 326;
-      clonedCanvas.height = 110;
-      drawRoute(clonedCanvas, _gpsPoints);
-    }
-
-    frame.style.visibility = 'visible';
-    await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
-
-    const canvas = await html2canvas(frame, {
-      backgroundColor: '#0a0a0a',
-      scale: 2.77,
-      useCORS: true,
-      logging: false,
-      width: 390,
-      height: 693,
-    });
-
-    frame.style.visibility = 'hidden';
-    slideArea.innerHTML = '';
-
-    const name = (_stats ? _stats.sessionName.replace(/[^a-z0-9áéíóúñ]/gi,'_') : 'recap') + '_story.png';
-    canvas.toBlob(async blob => {
-      const file = new File([blob], name, { type: 'image/png' });
-      if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
-        await navigator.share({ files: [file], title: 'Running Recap' });
-      } else {
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a'); a.href = url; a.download = name; a.click();
-        URL.revokeObjectURL(url);
-      }
-      btn.style.opacity = ''; btn.disabled = false;
-    }, 'image/png');
-  } catch(e) { console.error(e); btn.style.opacity = ''; btn.disabled = false; }
-}
 
 // ── MOSTRAR / OCULTAR BOTON ───────────────────────────────────────────────
 function updateRecapBtn() {
