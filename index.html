@@ -4163,8 +4163,15 @@ customColorInput.addEventListener('input', () => {
   applyRecapTextColor(customColorInput.value);
 });
 
-document.getElementById('screen').addEventListener('click', () => {
-  if (cur<TOTAL-1) { if(timer) clearTimeout(timer); advance(); }
+document.getElementById('screen').addEventListener('click', (e) => {
+  const half = e.currentTarget.offsetWidth / 2;
+  if (e.clientX < half) {
+    // Mitad izquierda → slide anterior
+    if (cur > 0) { if(timer) clearTimeout(timer); cur--; showSlide(cur); }
+  } else {
+    // Mitad derecha → slide siguiente
+    if (cur < TOTAL-1) { if(timer) clearTimeout(timer); advance(); }
+  }
 });
 document.addEventListener('keydown', e => {
   if (e.key==='ArrowRight'||e.key===' ') { if(timer) clearTimeout(timer); advance(); }
