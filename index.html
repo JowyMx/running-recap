@@ -4143,6 +4143,8 @@ function applyRecapTextColor(color) {
     #screen svg line { stroke: ${color} !important; }
     #screen svg path[stroke] { stroke: ${color} !important; }
     #screen svg path[id$="-line"] { stroke: ${color} !important; }
+    #screen svg stop:first-child { stop-color: ${color} !important; stop-opacity: 0.22 !important; }
+    #screen svg stop:last-child  { stop-color: ${color} !important; stop-opacity: 0   !important; }
   `;
 }
 applyRecapTextColor('#ffffff');
