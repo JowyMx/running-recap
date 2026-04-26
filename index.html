@@ -938,7 +938,9 @@ body {
   grid-template-columns: repeat(3, 1fr);
   gap: 1px; width: 90%; max-width: 700px;
 }
-.stat-cell { padding: 3px 6px; border: none; text-align: center; }
+.stat-cell { padding: 3px 6px; border: none; text-align: center; display: flex; align-items: center; gap: 0; }
+.stat-cell-icon { font-size: clamp(11px, 1.8vw, 16px); flex-shrink: 0; line-height: 1; }
+.stat-cell-body { flex: 1; text-align: center; min-width: 0; }
 .stat-label {
   font-size: clamp(8px, 1.3vw, 11px);
   letter-spacing: 0.15em; color: rgba(255,255,255,1);
@@ -3834,25 +3836,28 @@ function buildRecap(stats, sel) {
   const okSum = key => !sel || sel.has(key);
 
   const cellHTML = c => `<div class="stat-cell">
-    <div class="stat-label">${c.label}</div>
-    <div class="stat-val">${c.val}</div>
-    <div class="stat-u">${c.u}</div>
+    ${c.icon ? `<div class="stat-cell-icon">${c.icon}</div>` : ''}
+    <div class="stat-cell-body">
+      <div class="stat-label">${c.label}</div>
+      <div class="stat-val">${c.val}</div>
+      <div class="stat-u">${c.u}</div>
+    </div>
   </div>`;
 
   // Solo incluir celdas cuya métrica esté seleccionada
   const topCells = [
-    okSum('dist')   && stats.dist > 0            ? { label:'Distancia',          val:stats.dist.toFixed(2),        u:'km'    } : null,
-    okSum('time')   && timeToSec(stats.time) > 0 ? { label:'Tiempo',             val:(() => { const t=timeToSec(stats.time); const h=Math.floor(t/3600),m=Math.floor((t%3600)/60),s=t%60; return h>0?`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`:`${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`; })(), u:'h:m:s' } : null,
-    okSum('pace')   && stats.avgPaceSec > 0      ? { label:'Ritmo medio',        val:secToMMSS(stats.avgPaceSec),  u:'min/km'} : null,
-    okSum('hr')     && stats.avgHR > 0           ? { label:'FC media',           val:stats.avgHR,                  u:'ppm'   } : null,
-    okSum('elev')   && (stats.elevation > 0 || stats.descent > 0) ? { label:'Desnivel', val:`+${stats.elevation} / −${stats.descent}`, u:'metros' } : null,
-    okSum('cad')    && stats.avgCad > 0          ? { label:'Cadencia',           val:stats.avgCad,                 u:'spm'   } : null,
-    okSum('stride') && stats.strideLen > 0       ? { label:'Long. zancada',      val:stats.strideLen.toFixed(2),   u:'m'     } : null,
-    okSum('gct')    && stats.avgGCT > 0          ? { label:'GCT',                val:stats.avgGCT,                 u:'ms'    } : null,
-    okSum('power')  && stats.avgPow > 0          ? { label:'Potencia',           val:stats.avgPow, u:`W · ${stats.wkg.toFixed(2)} W/kg` } : null,
-    okSum('temp')   && stats.avgTemp !== 0       ? { label:'Temperatura',        val:stats.avgTemp.toFixed(1),     u:'°C'    } : null,
-    okSum('vr')     && stats.vertRatio > 0       ? { label:'Relación vertical',  val:stats.vertRatio.toFixed(1),   u:'%'     } : null,
-    okSum('vo')     && stats.vertOsc > 0         ? { label:'Oscilación vertical',val:stats.vertOsc.toFixed(1),     u:'cm'    } : null,
+    okSum('dist')   && stats.dist > 0            ? { icon:'📏', label:'Distancia',          val:stats.dist.toFixed(2),        u:'km'    } : null,
+    okSum('time')   && timeToSec(stats.time) > 0 ? { icon:'⏱',  label:'Tiempo',             val:(() => { const t=timeToSec(stats.time); const h=Math.floor(t/3600),m=Math.floor((t%3600)/60),s=t%60; return h>0?`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`:`${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`; })(), u:'h:m:s' } : null,
+    okSum('pace')   && stats.avgPaceSec > 0      ? { icon:'🏃',  label:'Ritmo medio',        val:secToMMSS(stats.avgPaceSec),  u:'min/km'} : null,
+    okSum('hr')     && stats.avgHR > 0           ? { icon:'❤️', label:'FC media',           val:stats.avgHR,                  u:'ppm'   } : null,
+    okSum('elev')   && (stats.elevation > 0 || stats.descent > 0) ? { icon:'⛰', label:'Desnivel', val:`+${stats.elevation} / −${stats.descent}`, u:'metros' } : null,
+    okSum('cad')    && stats.avgCad > 0          ? { icon:'🔄',  label:'Cadencia',           val:stats.avgCad,                 u:'spm'   } : null,
+    okSum('stride') && stats.strideLen > 0       ? { icon:'👟',  label:'Long. zancada',      val:stats.strideLen.toFixed(2),   u:'m'     } : null,
+    okSum('gct')    && stats.avgGCT > 0          ? { icon:'⚡',  label:'GCT',                val:stats.avgGCT,                 u:'ms'    } : null,
+    okSum('power')  && stats.avgPow > 0          ? { icon:'💪',  label:'Potencia',           val:stats.avgPow, u:`W · ${stats.wkg.toFixed(2)} W/kg` } : null,
+    okSum('temp')   && stats.avgTemp !== 0       ? { icon:'🌡',  label:'Temperatura',        val:stats.avgTemp.toFixed(1),     u:'°C'    } : null,
+    okSum('vr')     && stats.vertRatio > 0       ? { icon:'📐',  label:'Relación vertical',  val:stats.vertRatio.toFixed(1),   u:'%'     } : null,
+    okSum('vo')     && stats.vertOsc > 0         ? { icon:'〰️', label:'Oscilación vertical',val:stats.vertOsc.toFixed(1),     u:'cm'    } : null,
   ].filter(Boolean);
   document.getElementById('stats-grid-top').innerHTML = topCells.map(cellHTML).join('');
 
