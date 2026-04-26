@@ -177,6 +177,48 @@ body {
 }
 #photo-zone-text.loaded { color: rgba(127,255,212,0.7); }
 
+/* Text color picker */
+#text-color-zone {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border: 1px dashed rgba(255,255,255,0.12);
+  border-radius: 8px;
+  margin-top: 6px;
+  width: 100%;
+  box-sizing: border-box;
+}
+#text-color-label {
+  font-size: 11px;
+  color: rgba(255,255,255,0.25);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  flex: 1;
+}
+#color-swatches {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+}
+.color-swatch {
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255,255,255,0.15);
+  cursor: pointer;
+  padding: 0;
+  position: relative;
+  transition: border-color 0.15s, transform 0.1s;
+  flex-shrink: 0;
+}
+.color-swatch:hover { transform: scale(1.15); }
+.color-swatch.active { border-color: rgba(255,255,255,0.8); border-width: 2px; }
+.color-custom {
+  background: rgba(255,255,255,0.08);
+  display: flex; align-items: center; justify-content: center;
+  color: rgba(255,255,255,0.4);
+}
+
 /* Background photo layer in recap */
 #bg-photo {
   position: absolute;
@@ -1115,6 +1157,26 @@ body {
       <span id="photo-zone-text">Foto o video de fondo · opcional</span>
     </div>
     <input type="file" id="photo-input" accept="image/*,video/*" style="display:none">
+
+    <!-- Color de texto -->
+    <div id="text-color-zone">
+      <span style="font-size:13px;color:rgba(255,255,255,0.2)">🎨</span>
+      <span id="text-color-label">Color de texto</span>
+      <div id="color-swatches">
+        <button class="color-swatch active" data-color="#ffffff" style="background:#ffffff" title="Blanco"></button>
+        <button class="color-swatch" data-color="#000000" style="background:#000000" title="Negro"></button>
+        <button class="color-swatch" data-color="#ffe066" style="background:#ffe066" title="Amarillo"></button>
+        <button class="color-swatch" data-color="#7fffd4" style="background:#7fffd4" title="Aqua"></button>
+        <button class="color-swatch" data-color="#ff6b6b" style="background:#ff6b6b" title="Rojo"></button>
+        <button class="color-swatch" data-color="#FF4F00" style="background:#FF4F00" title="Naranja Internacional"></button>
+        <button class="color-swatch" data-color="#109AD7" style="background:#109AD7" title="Azul Garmin"></button>
+        <label class="color-swatch color-custom" title="Personalizado" style="cursor:pointer;">
+          <span style="font-size:10px;line-height:1;">+</span>
+          <input type="color" id="custom-color-input" value="#ffffff" style="opacity:0;position:absolute;width:0;height:0;">
+        </label>
+      </div>
+    </div>
+
     <div id="upload-error" class="error-msg" style="display:none"></div>
     <button id="gps-only-btn" onclick="startRecap()" style="display:none;margin-top:16px;width:100%;padding:12px;background:transparent;border:1px solid rgba(255,255,255,0.3);color:rgba(255,255,255,0.7);font-size:12px;letter-spacing:0.2em;text-transform:uppercase;cursor:pointer;border-radius:4px;font-family:inherit;transition:border-color 0.2s,color 0.2s;">
       Seleccionar métricas
@@ -2283,6 +2345,11 @@ function newSession() {
   document.getElementById('photo-zone-text').textContent = 'Foto o video de fondo · opcional';
   document.getElementById('photo-zone-text').classList.remove('loaded');
   document.getElementById('photo-input').value = '';
+  applyRecapTextColor('#ffffff');
+  document.querySelectorAll('.color-swatch').forEach(b => b.classList.remove('active'));
+  document.querySelector('.color-swatch[data-color="#ffffff"]').classList.add('active');
+  document.getElementById('custom-color-input').value = '#ffffff';
+  document.querySelector('.color-custom').style.background = '';
   document.getElementById('recap-view').style.display   = 'none';
   document.getElementById('metrics-view').style.display = 'none';
   document.getElementById('upload-view').style.display  = 'flex';
@@ -4057,6 +4124,39 @@ pz.addEventListener('dragleave', ()  => pz.classList.remove('drag-over'));
 pz.addEventListener('drop', e => {
   e.preventDefault(); pz.classList.remove('drag-over');
   if (e.dataTransfer.files[0]) handlePhoto(e.dataTransfer.files[0]);
+});
+
+// ── Text color picker ──
+let _recapTextColor = '#ffffff';
+
+function applyRecapTextColor(color) {
+  _recapTextColor = color;
+  let s = document.getElementById('rt-override');
+  if (!s) { s = document.createElement('style'); s.id = 'rt-override'; document.head.appendChild(s); }
+  s.textContent = `
+    .stat-label, .stat-val, .stat-u,
+    .verdict, .verdict span,
+    .int-n, .int-val, .int-u, .int-fc, .int-pace, .int-pow,
+    .lap-row-n, .lap-row-pace,
+    .slide-title, .slide-sub { color: ${color} !important; }
+  `;
+}
+applyRecapTextColor('#ffffff');
+
+document.querySelectorAll('.color-swatch[data-color]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.color-swatch').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    applyRecapTextColor(btn.dataset.color);
+  });
+});
+
+const customColorInput = document.getElementById('custom-color-input');
+customColorInput.addEventListener('input', () => {
+  document.querySelectorAll('.color-swatch').forEach(b => b.classList.remove('active'));
+  customColorInput.parentElement.classList.add('active');
+  customColorInput.parentElement.style.background = customColorInput.value;
+  applyRecapTextColor(customColorInput.value);
 });
 
 document.getElementById('screen').addEventListener('click', () => {
