@@ -1135,7 +1135,9 @@ body {
     <div class="upload-steps">
       <div class="step-row"><span class="step-n">1</span><span class="step-txt">Captura el nombre de la sesión</span></div>
       <div class="step-row"><span class="step-n">2</span><span class="step-txt">Sube un archivo <strong>GPX / TCX / KML</strong> (Ruta + Métricas básicas) o <strong>CSV</strong> (Sin ruta + Métricas avanzadas), también puedes subir ambos archivos para Ruta + Métricas avanzadas</span></div>
-      <div class="step-row"><span class="step-n">3</span><span class="step-txt">Click en <strong>VER RECAP</strong></span></div>
+      <div class="step-row"><span class="step-n">3</span><span class="step-txt">Sube una <strong>foto o video</strong> de fondo (opcional)</span></div>
+      <div class="step-row"><span class="step-n">4</span><span class="step-txt">Elige el <strong>color del texto</strong> del recap (opcional)</span></div>
+      <div class="step-row"><span class="step-n">5</span><span class="step-txt">Click en <strong>SELECCIONAR MÉTRICAS</strong> para elegir qué mostrar en el recap</span></div>
     </div>
     <div class="opt-row" style="margin-bottom:14px;">
       <label>Nombre de la sesión</label>
@@ -1712,14 +1714,14 @@ function drawRoute(canvas, points) {
   ctx.save();
   ctx.lineCap = ctx.lineJoin = 'round';
 
-  // Línea blanca simple
-  ctx.strokeStyle = 'rgba(255,255,255,0.85)';
+  // Línea con el color seleccionado
+  ctx.strokeStyle = _recapTextColor || 'rgba(255,255,255,0.85)';
   ctx.lineWidth = 1.8;
   drawPath();
 
   ctx.restore();
 
-  ctx.fillStyle = 'rgba(255,255,255,0.9)';
+  ctx.fillStyle = _recapTextColor || 'rgba(255,255,255,0.9)';
   ctx.font = 'bold 13px Arial';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
@@ -4134,11 +4136,13 @@ function applyRecapTextColor(color) {
   let s = document.getElementById('rt-override');
   if (!s) { s = document.createElement('style'); s.id = 'rt-override'; document.head.appendChild(s); }
   s.textContent = `
-    .stat-label, .stat-val, .stat-u,
-    .verdict, .verdict span,
-    .int-n, .int-val, .int-u, .int-fc, .int-pace, .int-pow,
-    .lap-row-n, .lap-row-pace,
-    .slide-title, .slide-sub { color: ${color} !important; }
+    #screen * { color: ${color} !important; }
+    #screen [class$="-bar"] { background: ${color} !important; }
+    #screen svg text { fill: ${color} !important; }
+    #screen svg circle { fill: ${color} !important; }
+    #screen svg line { stroke: ${color} !important; }
+    #screen svg path[stroke] { stroke: ${color} !important; }
+    #screen svg path[id$="-line"] { stroke: ${color} !important; }
   `;
 }
 applyRecapTextColor('#ffffff');
