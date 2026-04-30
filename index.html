@@ -400,6 +400,18 @@ body {
   width: 100%;
 }
 .metrics-toggle-all:hover { border-color: rgba(255,255,255,0.35); color: rgba(255,255,255,0.7); }
+.mv-duration {
+  text-align: center;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  color: rgba(255,255,255,0.32);
+  text-transform: uppercase;
+  padding: 2px 0 0;
+}
+.mv-duration span {
+  color: rgba(255,255,255,0.7);
+}
 
 /* ── RECAP ── */
 #recap-view { display: none; width: 100vw; height: 100vh; position: relative; overflow: hidden; }
@@ -1423,6 +1435,7 @@ body {
   <div class="metrics-subtitle">Elige las métricas del recap</div>
   <div class="metrics-list" id="mv-list"></div>
   <div class="metrics-footer">
+    <div class="mv-duration" id="mv-duration">Duración estimada: <span>—</span></div>
     <button class="metrics-go-btn" onclick="launchRecap()">Ver Recap →</button>
     <button class="metrics-toggle-all" id="mv-toggle-btn" onclick="metricsToggleAll()">Desmarcar todo</button>
   </div>
@@ -2417,9 +2430,58 @@ function showMetricsSelector(stats) {
   });
 
   updateToggleBtn();
+  updateDurationDisplay();
   document.getElementById('upload-view').style.display  = 'none';
   document.getElementById('recap-view').style.display   = 'none';
   document.getElementById('metrics-view').style.display = 'flex';
+}
+
+function calcRecapDuration(stats, sel) {
+  // Replica la lógica de initSlides para sumar durations sin construir los slides
+  const ok  = key => !sel || sel.has(key);
+  const laps = f => (stats.tableRows || []).filter(f);
+  let ms = 2500; // s0 título siempre presente
+
+  if (ok('dist')   && stats.dist > 0)                              ms += 2000;
+  if (ok('time')   && timeToSec(stats.time) > 0)                   ms += 2000;
+  if (ok('pace')   && stats.avgPaceSec > 0)                        ms += 2000;
+  if (ok('pace')   && stats.tableRows && stats.tableRows.length > 0) ms += 3000;
+  if (ok('pace')   && laps(r => !isDash(r.pace)).length >= 2)      ms += 3000;
+  if (ok('hr')     && stats.avgHR > 0)                             ms += 2000;
+  if (ok('hr')     && laps(r => !isDash(r.hr) && parseFloat(r.hr) > 0).length >= 2) ms += 3000 + 3000;
+  if (ok('elev')   && (stats.elevation > 0 || stats.descent > 0)) ms += 1800;
+  if (ok('elev')   && (stats.elevation > 0 || stats.descent > 0) && laps(r => parseFloat(r.elev) > 0 || parseFloat(r.elevDesc) > 0).length >= 2) ms += 3000;
+  if (ok('gps')    && _gpsPoints && _gpsPoints.length > 1 && _gpsPoints.some(p => p.ele !== null)) ms += 2800;
+  if (ok('cad')    && stats.avgCad > 0)                            ms += 1800;
+  if (ok('cad')    && laps(r => !isDash(r.cad) && parseFloat(r.cad) > 0).length >= 2) ms += 3000 + 3000;
+  if (ok('stride') && stats.strideLen > 0)                         ms += 1800;
+  if (ok('stride') && stats.strideLen > 0 && laps(r => !isDash(r.stride) && parseFloat(r.stride) > 0).length >= 2) ms += 3000 + 3000;
+  if (ok('gct')    && stats.avgGCT > 0)                            ms += 1800;
+  if (ok('gct')    && stats.avgGCT > 0 && laps(r => !isDash(r.gct) && parseFloat(r.gct) > 0).length >= 2) ms += 3000 + 3000;
+  if (ok('power')  && stats.avgPow > 0)                            ms += 1800;
+  if (ok('power')  && stats.avgPow > 0 && laps(r => !isDash(r.pow) && parseFloat(r.pow) > 0).length >= 2) ms += 3000 + 3000;
+  if (ok('temp')   && stats.avgTemp !== 0)                         ms += 1800;
+  if (ok('temp')   && stats.avgTemp !== 0 && laps(r => !isDash(r.temp) && parseFloat(r.temp) !== 0).length >= 2) ms += 3000 + 3000;
+  if (ok('vr')     && stats.vertRatio > 0)                         ms += 1800;
+  if (ok('vr')     && stats.vertRatio > 0 && laps(r => !isDash(r.vr) && parseFloat(r.vr) > 0).length >= 2) ms += 3000 + 3000;
+  if (ok('vo')     && stats.vertOsc > 0)                           ms += 1800;
+  if (ok('vo')     && stats.vertOsc > 0 && laps(r => !isDash(r.vo) && parseFloat(r.vo) > 0).length >= 2) ms += 3000 + 3000;
+  // summary-slide tiene DUR=0, no se suma
+
+  return ms;
+}
+
+function updateDurationDisplay() {
+  if (!_pendingStats) return;
+  const rows = document.querySelectorAll('#mv-list .metric-row');
+  const sel  = new Set([...rows].filter(r => r.classList.contains('checked')).map(r => r.dataset.key));
+  const ms   = calcRecapDuration(_pendingStats, sel);
+  const sec  = Math.round(ms / 1000);
+  const min  = Math.floor(sec / 60);
+  const s    = sec % 60;
+  const txt  = min > 0 ? `${min} min ${s > 0 ? s + ' seg' : ''}`.trim() : `${s} seg`;
+  const el   = document.getElementById('mv-duration');
+  if (el) el.querySelector('span').textContent = txt;
 }
 
 function toggleMetricRow(row) {
@@ -2427,6 +2489,7 @@ function toggleMetricRow(row) {
   const chk = row.querySelector('.metric-check');
   chk.textContent = row.classList.contains('checked') ? '✓' : '';
   updateToggleBtn();
+  updateDurationDisplay();
 }
 
 function updateToggleBtn() {
@@ -2444,6 +2507,7 @@ function metricsToggleAll() {
     r.querySelector('.metric-check').textContent = allOn ? '' : '✓';
   });
   updateToggleBtn();
+  updateDurationDisplay();
 }
 
 function launchRecap() {
