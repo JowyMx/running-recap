@@ -470,13 +470,6 @@ body {
 #recap-view.layout-bl #screen { bottom: 20px; left: 16px; }
 #recap-view.layout-br #screen { bottom: 20px; right: 16px; }
 
-/* Sin overlay en modo esquina — foto/video visible al 100% */
-#recap-view.layout-tl #bg-photo::after,
-#recap-view.layout-tr #bg-photo::after,
-#recap-view.layout-bl #bg-photo::after,
-#recap-view.layout-br #bg-photo::after {
-  background: transparent;
-}
 
 /* Ajustar fonts para el panel pequeño */
 #recap-view.layout-tl #screen .value,
@@ -1264,27 +1257,10 @@ body {
 #story-slide-area #replay,
 #story-slide-area #new-session { display: none !important; }
 
-/* Nav */
-#dots {
-  position: fixed; bottom: 28px; left: 50%;
-  transform: translateX(-50%); display: flex; gap: 8px;
-}
-.dot {
-  width: 6px; height: 6px; border-radius: 50%;
-  background: rgba(255,255,255,0.18); transition: background 0.3s;
-}
-.dot.on { background: rgba(255,255,255,0.9); }
-#bar {
-  position: fixed; bottom: 0; left: 0;
-  height: 2px; background: rgba(255,255,255,0.65);
-  width: 0%; transition: width 0.1s linear;
-}
-#tap-hint {
-  position: fixed; bottom: 48px; right: 28px;
-  font-size: 10px; color: rgba(255,255,255,0.18);
-  letter-spacing: 0.15em; text-transform: uppercase;
-  text-shadow: 0 1px 4px rgba(0,0,0,0.8);
-}
+/* Nav — ocultos */
+#dots { display: none !important; }
+#bar  { display: none !important; }
+#tap-hint { display: none !important; }
 #replay {
   display: none; margin-top: 8px;
   padding: 8px 20px; background: transparent;
@@ -4317,13 +4293,6 @@ function applyTheme(id) {
     // No toca el color de texto ni la foto
   } else {
     _themeBg = t.bg;
-    // Limpiar foto/video cargado
-    _bgPhotoURL = null;
-    _bgVideoURL = null;
-    _bgIsVideo  = false;
-    const zt = document.getElementById('photo-zone-text');
-    zt.textContent = 'Foto o video de fondo · opcional';
-    zt.classList.remove('loaded');
     // Aplicar color de texto y sincronizar swatch
     if (t.text) {
       applyRecapTextColor(t.text);
