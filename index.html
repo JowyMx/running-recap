@@ -400,6 +400,104 @@ body {
   width: 100%;
 }
 .metrics-toggle-all:hover { border-color: rgba(255,255,255,0.35); color: rgba(255,255,255,0.7); }
+/* ── LAYOUT POSITION PICKER ── */
+#layout-zone {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding: 10px 0 4px;
+  border-top: 1px solid rgba(255,255,255,0.07);
+}
+.layout-zone-label {
+  font-size: 11px;
+  color: rgba(255,255,255,0.25);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+#layout-btns {
+  display: flex;
+  gap: 8px;
+}
+.layout-btn {
+  background: transparent;
+  border: 1.5px solid rgba(255,255,255,0.1);
+  border-radius: 7px;
+  padding: 0;
+  cursor: pointer;
+  transition: border-color 0.2s, transform 0.15s;
+  width: 52px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.layout-btn:hover { transform: scale(1.06); }
+.layout-btn.active { border-color: rgba(255,255,255,0.75); }
+.lp {
+  width: 24px;
+  height: 34px;
+  border: 1.5px solid rgba(255,255,255,0.22);
+  border-radius: 3px;
+  position: relative;
+  overflow: hidden;
+}
+.lp-p {
+  position: absolute;
+  background: rgba(255,255,255,0.6);
+  border-radius: 1px;
+}
+
+/* ── RECAP CORNER MODES ── */
+#recap-view.layout-tl #screen,
+#recap-view.layout-tr #screen,
+#recap-view.layout-bl #screen,
+#recap-view.layout-br #screen {
+  position: absolute;
+  width: 58vw;
+  max-width: 300px;
+  height: 60vh;
+  background: transparent;
+  transform: translateZ(0); /* ancla los elementos fixed al panel sin efecto visual */
+  border-radius: 14px;
+  overflow: hidden;
+  justify-content: center;
+}
+#recap-view.layout-tl #screen { top: 20px; left: 16px; }
+#recap-view.layout-tr #screen { top: 20px; right: 16px; }
+#recap-view.layout-bl #screen { bottom: 20px; left: 16px; }
+#recap-view.layout-br #screen { bottom: 20px; right: 16px; }
+
+/* Sin overlay en modo esquina — foto/video visible al 100% */
+#recap-view.layout-tl #bg-photo::after,
+#recap-view.layout-tr #bg-photo::after,
+#recap-view.layout-bl #bg-photo::after,
+#recap-view.layout-br #bg-photo::after {
+  background: transparent;
+}
+
+/* Ajustar fonts para el panel pequeño */
+#recap-view.layout-tl #screen .value,
+#recap-view.layout-tr #screen .value,
+#recap-view.layout-bl #screen .value,
+#recap-view.layout-br #screen .value {
+  font-size: clamp(32px, 11vw, 72px) !important;
+}
+#recap-view.layout-tl #screen .label,
+#recap-view.layout-tr #screen .label,
+#recap-view.layout-bl #screen .label,
+#recap-view.layout-br #screen .label {
+  font-size: clamp(10px, 2vw, 14px) !important;
+}
+#recap-view.layout-tl #screen .unit,
+#recap-view.layout-tr #screen .unit,
+#recap-view.layout-bl #screen .unit,
+#recap-view.layout-br #screen .unit {
+  font-size: clamp(11px, 2.2vw, 16px) !important;
+}
+
 /* ── THEMES ── */
 #theme-zone {
   display: flex;
@@ -1217,7 +1315,7 @@ body {
       <div class="step-row"><span class="step-n">1</span><span class="step-txt">Captura el nombre de la sesión</span></div>
       <div class="step-row"><span class="step-n">2</span><span class="step-txt">Sube un archivo <strong>GPX / TCX / KML</strong> (Ruta + Métricas básicas) o <strong>CSV</strong> (Sin ruta + Métricas avanzadas), también puedes subir ambos archivos para Ruta + Métricas avanzadas</span></div>
       <div class="step-row"><span class="step-n">3</span><span class="step-txt">Elige un <strong>tema</strong> o sube una <strong>foto / video</strong> de fondo (opcional)</span></div>
-      <div class="step-row"><span class="step-n">4</span><span class="step-txt">Personaliza el <strong>color del texto</strong> del recap (opcional)</span></div>
+      <div class="step-row"><span class="step-n">4</span><span class="step-txt">Elige la <strong>posición</strong> del recap y el <strong>color del texto</strong> (opcional)</span></div>
       <div class="step-row"><span class="step-n">5</span><span class="step-txt">Click en <strong>SELECCIONAR MÉTRICAS</strong> para elegir qué mostrar en el recap</span></div>
     </div>
     <div class="opt-row" style="margin-bottom:14px;">
@@ -1268,6 +1366,28 @@ body {
         <button class="theme-card" data-theme="trail" title="Trail">
           <div class="theme-preview" style="background:linear-gradient(160deg,#1b2f12,#080c06);color:#ffe066">Aa</div>
           <div class="theme-name">Trail</div>
+        </button>
+      </div>
+    </div>
+
+    <!-- Posición del recap -->
+    <div id="layout-zone">
+      <div class="layout-zone-label"><span>📐</span> Posición del recap</div>
+      <div id="layout-btns">
+        <button class="layout-btn active" data-layout="full" title="Pantalla completa">
+          <div class="lp"><div class="lp-p" style="inset:0;border-radius:1px;"></div></div>
+        </button>
+        <button class="layout-btn" data-layout="tl" title="Arriba izquierda">
+          <div class="lp"><div class="lp-p" style="top:0;left:0;width:58%;height:58%;"></div></div>
+        </button>
+        <button class="layout-btn" data-layout="tr" title="Arriba derecha">
+          <div class="lp"><div class="lp-p" style="top:0;right:0;width:58%;height:58%;"></div></div>
+        </button>
+        <button class="layout-btn" data-layout="bl" title="Abajo izquierda">
+          <div class="lp"><div class="lp-p" style="bottom:0;left:0;width:58%;height:58%;"></div></div>
+        </button>
+        <button class="layout-btn" data-layout="br" title="Abajo derecha">
+          <div class="lp"><div class="lp-p" style="bottom:0;right:0;width:58%;height:58%;"></div></div>
         </button>
       </div>
     </div>
@@ -2476,6 +2596,15 @@ function newSession() {
   document.querySelector('.color-swatch[data-color="#ffffff"]').classList.add('active');
   document.getElementById('custom-color-input').value = '#ffffff';
   document.querySelector('.color-custom').style.background = '';
+  // Reset layout
+  setRecapLayout('full');
+  // Asegurar que nav elements estén fuera de #screen
+  const _rv = document.getElementById('recap-view');
+  const _sc = document.getElementById('screen');
+  ['dots','bar','tap-hint'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el && _sc.contains(el)) _rv.appendChild(el);
+  });
   document.getElementById('recap-view').style.display   = 'none';
   document.getElementById('metrics-view').style.display = 'none';
   document.getElementById('upload-view').style.display  = 'flex';
@@ -4047,6 +4176,7 @@ function buildRecap(stats, sel) {
   }
 
   applyBgPhoto();
+  applyRecapLayout();
   document.getElementById('upload-view').style.display = 'none';
   document.getElementById('recap-view').style.display  = 'block';
   startShow();
@@ -4129,10 +4259,44 @@ function handleFile(file) {
   updateRecapBtn();
 }
 
-let _bgPhotoURL = null;
-let _bgVideoURL = null;
-let _bgIsVideo  = false;
-let _themeBg    = null;  // CSS background string del tema activo
+let _bgPhotoURL  = null;
+let _bgVideoURL  = null;
+let _bgIsVideo   = false;
+let _themeBg     = null;
+let _recapLayout = 'full';
+
+function setRecapLayout(layout) {
+  _recapLayout = layout;
+  document.querySelectorAll('.layout-btn').forEach(b => b.classList.toggle('active', b.dataset.layout === layout));
+}
+
+function applyRecapLayout() {
+  const rv     = document.getElementById('recap-view');
+  const screen = document.getElementById('screen');
+  const dots   = document.getElementById('dots');
+  const bar    = document.getElementById('bar');
+  const hint   = document.getElementById('tap-hint');
+
+  rv.classList.remove('layout-tl','layout-tr','layout-bl','layout-br');
+
+  if (_recapLayout === 'full') {
+    // Restaurar elementos de nav en recap-view (fuera de #screen)
+    if (screen.contains(dots)) rv.appendChild(dots);
+    if (screen.contains(bar))  rv.appendChild(bar);
+    if (screen.contains(hint)) rv.appendChild(hint);
+  } else {
+    rv.classList.add('layout-' + _recapLayout);
+    // Mover nav dentro de #screen → backdrop-filter los ancla al panel
+    if (!screen.contains(dots)) screen.appendChild(dots);
+    if (!screen.contains(bar))  screen.appendChild(bar);
+    if (!screen.contains(hint)) screen.appendChild(hint);
+  }
+}
+
+// Wiring layout buttons
+document.querySelectorAll('.layout-btn').forEach(btn => {
+  btn.addEventListener('click', () => setRecapLayout(btn.dataset.layout));
+});  // CSS background string del tema activo
 
 const THEMES = {
   none:   { bg: null,                                                    text: null },
