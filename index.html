@@ -2162,7 +2162,8 @@ function _doShowSlide(n) {
 
   if (n === TOTAL-1) {
     document.getElementById('summary-slide').classList.add('active');
-    replay.style.display = newSess.style.display = 'block';
+    replay.style.display = newSess.style.display = 'none';
+    setTimeout(() => { replay.style.display = newSess.style.display = 'block'; }, 3000);
     hint.style.opacity = '0'; bar.style.width = '100%';
     const wrap   = document.getElementById('route-canvas-wrap');
     const canvas = document.getElementById('route-canvas');
