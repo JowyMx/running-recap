@@ -667,7 +667,7 @@ body {
 .laps-bars { width: 100%; display: flex; flex-direction: column; gap: 0; }
 .lap-row {
   display: grid;
-  grid-template-columns: 3em 4em 1fr 4em;
+  grid-template-columns: 3em 4em minmax(0,1fr) auto;
   align-items: center;
   gap: 10px;
   padding: 5px 0;
@@ -716,12 +716,13 @@ body {
   font-weight: 700;
   color: rgba(255,255,255,1);
   text-align: right;
+  white-space: nowrap;
 }
 
 /* HR rows table */
 .hr-row {
   display: grid;
-  grid-template-columns: 3em 4em 1fr 4em;
+  grid-template-columns: 3em 4em minmax(0,1fr) auto;
   align-items: center;
   gap: 10px;
   padding: 5px 0;
@@ -763,6 +764,7 @@ body {
   font-weight: 700;
   color: rgba(255,255,255,1);
   text-align: right;
+  white-space: nowrap;
 }
 
 /* Cadence rows table */
@@ -776,7 +778,7 @@ body {
 #cad-rows-body { width: 100%; }
 .cad-row {
   display: grid;
-  grid-template-columns: 3em 4em 1fr 4em;
+  grid-template-columns: 3em 4em minmax(0,1fr) auto;
   align-items: center;
   gap: 10px;
   padding: 5px 0;
@@ -818,6 +820,7 @@ body {
   font-weight: 700;
   color: rgba(255,255,255,1);
   text-align: right;
+  white-space: nowrap;
 }
 
 /* Power rows table */
@@ -831,7 +834,7 @@ body {
 #pow-rows-body { width: 100%; }
 .pow-row {
   display: grid;
-  grid-template-columns: 3em 4em 1fr 4em;
+  grid-template-columns: 3em 4em minmax(0,1fr) auto;
   align-items: center;
   gap: 10px;
   padding: 5px 0;
@@ -873,6 +876,7 @@ body {
   font-weight: 700;
   color: rgba(255,255,255,1);
   text-align: right;
+  white-space: nowrap;
 }
 
 /* Stride rows table */
@@ -886,7 +890,7 @@ body {
 #stride-rows-body { width: 100%; }
 .stride-row {
   display: grid;
-  grid-template-columns: 3em 4em 1fr 4em;
+  grid-template-columns: 3em 4em minmax(0,1fr) auto;
   align-items: center;
   gap: 10px;
   padding: 5px 0;
@@ -928,6 +932,7 @@ body {
   font-weight: 700;
   color: rgba(255,255,255,1);
   text-align: right;
+  white-space: nowrap;
 }
 
 /* Elev rows table */
@@ -941,7 +946,7 @@ body {
 #elev-rows-body { width: 100%; }
 .elev-row {
   display: grid;
-  grid-template-columns: 3em 5em 1fr 4em;
+  grid-template-columns: 3em 5em minmax(0,1fr) auto;
   align-items: center;
   gap: 10px;
   padding: 5px 0;
@@ -958,7 +963,7 @@ body {
 .elev-row-val { font-size: clamp(11px,2vw,16px); font-weight: 900; color: rgba(255,255,255,1); text-align: right; }
 .elev-bar-wrap { position: relative; height: clamp(20px,3.5vw,32px); }
 .elev-bar { position: absolute; left: 0; top: 0; height: 100%; background: rgba(255,255,255,1); border-radius: 6px; width: 0%; }
-.elev-row-cum { font-size: clamp(11px,2vw,16px); font-weight: 700; color: rgba(255,255,255,1); text-align: right; }
+.elev-row-cum { font-size: clamp(11px,2vw,16px); font-weight: 700; color: rgba(255,255,255,1); text-align: right; white-space: nowrap; }
 
 /* GCT rows table */
 #gct-rows-slide {
@@ -971,7 +976,7 @@ body {
 #gct-rows-body { width: 100%; }
 .gct-row {
   display: grid;
-  grid-template-columns: 3em 4em 1fr 4em;
+  grid-template-columns: 3em 4em minmax(0,1fr) auto;
   align-items: center;
   gap: 10px;
   padding: 5px 0;
@@ -988,7 +993,7 @@ body {
 .gct-row-val { font-size: clamp(13px,2.5vw,20px); font-weight: 900; color: rgba(255,255,255,1); text-align: right; }
 .gct-bar-wrap { position: relative; height: clamp(20px,3.5vw,32px); }
 .gct-bar { position: absolute; left: 0; top: 0; height: 100%; background: rgba(255,255,255,1); border-radius: 6px; width: 0%; }
-.gct-row-cum { font-size: clamp(11px,2vw,16px); font-weight: 700; color: rgba(255,255,255,1); text-align: right; }
+.gct-row-cum { font-size: clamp(11px,2vw,16px); font-weight: 700; color: rgba(255,255,255,1); text-align: right; white-space: nowrap; }
 
 /* Temp rows table */
 #temp-rows-slide {
@@ -1001,7 +1006,7 @@ body {
 #temp-rows-body { width: 100%; }
 .temp-row {
   display: grid;
-  grid-template-columns: 3em 4em 1fr 4em;
+  grid-template-columns: 3em 4em minmax(0,1fr) auto;
   align-items: center;
   gap: 10px;
   padding: 5px 0;
@@ -1018,7 +1023,7 @@ body {
 .temp-row-val { font-size: clamp(13px,2.5vw,20px); font-weight: 900; color: rgba(255,255,255,1); text-align: right; }
 .temp-bar-wrap { position: relative; height: clamp(20px,3.5vw,32px); }
 .temp-bar { position: absolute; left: 0; top: 0; height: 100%; background: rgba(255,255,255,1); border-radius: 6px; width: 0%; }
-.temp-row-cum { font-size: clamp(11px,2vw,16px); font-weight: 700; color: rgba(255,255,255,1); text-align: right; }
+.temp-row-cum { font-size: clamp(11px,2vw,16px); font-weight: 700; color: rgba(255,255,255,1); text-align: right; white-space: nowrap; }
 
 /* VR rows table */
 #vr-rows-slide {
@@ -1031,7 +1036,7 @@ body {
 #vr-rows-body { width: 100%; }
 .vr-row {
   display: grid;
-  grid-template-columns: 3em 4em 1fr 4em;
+  grid-template-columns: 3em 4em minmax(0,1fr) auto;
   align-items: center;
   gap: 10px;
   padding: 5px 0;
@@ -1048,7 +1053,7 @@ body {
 .vr-row-val { font-size: clamp(13px,2.5vw,20px); font-weight: 900; color: rgba(255,255,255,1); text-align: right; }
 .vr-bar-wrap { position: relative; height: clamp(20px,3.5vw,32px); }
 .vr-bar { position: absolute; left: 0; top: 0; height: 100%; background: rgba(255,255,255,1); border-radius: 6px; width: 0%; }
-.vr-row-cum { font-size: clamp(11px,2vw,16px); font-weight: 700; color: rgba(255,255,255,1); text-align: right; }
+.vr-row-cum { font-size: clamp(11px,2vw,16px); font-weight: 700; color: rgba(255,255,255,1); text-align: right; white-space: nowrap; }
 
 /* VO rows table */
 #vo-rows-slide {
@@ -1061,7 +1066,7 @@ body {
 #vo-rows-body { width: 100%; }
 .vo-row {
   display: grid;
-  grid-template-columns: 3em 4em 1fr 4em;
+  grid-template-columns: 3em 4em minmax(0,1fr) auto;
   align-items: center;
   gap: 10px;
   padding: 5px 0;
@@ -1078,7 +1083,7 @@ body {
 .vo-row-val { font-size: clamp(13px,2.5vw,20px); font-weight: 900; color: rgba(255,255,255,1); text-align: right; }
 .vo-bar-wrap { position: relative; height: clamp(20px,3.5vw,32px); }
 .vo-bar { position: absolute; left: 0; top: 0; height: 100%; background: rgba(255,255,255,1); border-radius: 6px; width: 0%; }
-.vo-row-cum { font-size: clamp(11px,2vw,16px); font-weight: 700; color: rgba(255,255,255,1); text-align: right; }
+.vo-row-cum { font-size: clamp(11px,2vw,16px); font-weight: 700; color: rgba(255,255,255,1); text-align: right; white-space: nowrap; }
 
 /* Summary */
 #summary-slide {
