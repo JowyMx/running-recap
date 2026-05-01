@@ -415,6 +415,15 @@ body {
 
 /* ── RECAP ── */
 #recap-view { display: none; width: 100vw; height: 100vh; position: relative; overflow: hidden; }
+#transition-overlay {
+  position: absolute;
+  inset: 0;
+  background: #0a0a0a;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 20;
+  transition: opacity 0.18s ease;
+}
 #screen {
   width: 100%; height: 100%;
   display: flex; flex-direction: column;
@@ -1202,6 +1211,7 @@ body {
 <!-- ── RECAP ── -->
 <div id="recap-view">
   <div id="bg-photo"></div>
+  <div id="transition-overlay"></div>
   <div id="screen">
 
     <div class="slide" id="s0">
@@ -1945,6 +1955,17 @@ function countPace(el, sec, dur) {
 }
 
 function showSlide(n) {
+  const ov = document.getElementById('transition-overlay');
+  // Fade in overlay → swap content → fade out overlay
+  ov.style.transition = 'opacity 0.15s ease';
+  ov.style.opacity = '1';
+  setTimeout(() => {
+    _doShowSlide(n);
+    ov.style.transition = 'opacity 0.3s ease';
+    ov.style.opacity = '0';
+  }, 150);
+}
+function _doShowSlide(n) {
   SLIDE_IDS.forEach(id => { const el=document.getElementById(id); if(el) el.classList.remove('active'); });
   document.querySelectorAll('.dot').forEach((d,i) => d.classList.toggle('on', i===n));
 
@@ -2335,7 +2356,7 @@ function startShow() {
   if (pb) pb.textContent = '⏸';
   if(timer) clearTimeout(timer);
   document.getElementById('bar').style.width='0%';
-  showSlide(0);
+  _doShowSlide(0);  // primer slide sin transición
 }
 function newSession() {
   _gpsPoints = null;
