@@ -1908,36 +1908,63 @@ function drawRoute(canvas, points) {
   }
 
   const path = pts.map(xy);
+  const color = _recapTextColor || 'rgba(255,255,255,0.85)';
+  const DUR_ROUTE = 2200;
+  const t0 = performance.now();
 
-  function drawPath() {
+  function renderFrame(now) {
+    const prog = Math.min((now - t0) / DUR_ROUTE, 1);
+    ctx.clearRect(0, 0, W, H);
+    ctx.save();
+    ctx.lineCap = ctx.lineJoin = 'round';
+
+    // Ruta de fondo tenue
+    ctx.globalAlpha = 0.15;
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 1.5;
     ctx.beginPath();
     path.forEach((p, i) => i === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y));
     ctx.stroke();
+
+    // Ruta animada hasta el punto actual
+    const endIdx = Math.max(1, Math.floor(prog * (path.length - 1)));
+    ctx.globalAlpha = 1;
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 1.8;
+    ctx.beginPath();
+    for (let i = 0; i <= endIdx; i++) {
+      i === 0 ? ctx.moveTo(path[i].x, path[i].y) : ctx.lineTo(path[i].x, path[i].y);
+    }
+    ctx.stroke();
+
+    ctx.fillStyle = color;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+
+    // Marcador inicio ▶
+    ctx.font = 'bold 13px Arial';
+    ctx.fillText('▶', path[0].x, path[0].y);
+
+    if (prog < 1) {
+      // Punto móvil pulsante
+      const cur = path[endIdx];
+      const pulse = 0.6 + 0.4 * Math.sin(now / 120);
+      ctx.globalAlpha = pulse;
+      ctx.beginPath();
+      ctx.arc(cur.x, cur.y, 4, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.globalAlpha = 1;
+      requestAnimationFrame(renderFrame);
+    } else {
+      // Marcador final ■
+      ctx.font = 'bold 17px Arial';
+      ctx.fillText('■', path[path.length - 1].x, path[path.length - 1].y);
+    }
+
+    ctx.restore();
   }
 
-  ctx.save();
-  ctx.lineCap = ctx.lineJoin = 'round';
-
-  // Línea con el color seleccionado
-  ctx.strokeStyle = _recapTextColor || 'rgba(255,255,255,0.85)';
-  ctx.lineWidth = 1.8;
-  drawPath();
-
-  ctx.restore();
-
-  ctx.fillStyle = _recapTextColor || 'rgba(255,255,255,0.9)';
-  ctx.font = 'bold 13px Arial';
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-
-  // Start — solo ▶
-  const s = path[0];
-  ctx.fillText('▶', s.x, s.y);
-
-  // End — solo ■
-  const e = path[path.length-1];
-  ctx.font = 'bold 17px Arial';
-  ctx.fillText('■', e.x, e.y);
+  requestAnimationFrame(renderFrame);
 }
 
 // ── DATA PROCESSING ───────────────────────────────────────────────────────
