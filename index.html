@@ -2161,6 +2161,36 @@ function showSlide(n) {
     } else {
       wrap.style.display = 'none';
     }
+    // Animar métricas del resumen de 0 al valor final
+    const DUR_SUM = 1200;
+    document.querySelectorAll('#stats-grid-top .stat-val').forEach((el, i) => {
+      const aType = el.dataset.animType;
+      const aRaw  = parseFloat(el.dataset.animRaw);
+      const aRaw2 = parseFloat(el.dataset.animRaw2 || 0);
+      const aFmt  = el.dataset.animFmt;
+      if (!aType || isNaN(aRaw)) return;
+      const delay = i * 80;
+      const t0Ref = { v: null };
+      const fmtNum = v => aFmt === '2' ? v.toFixed(2) : aFmt === '1' ? v.toFixed(1) : String(Math.round(v));
+      const fmtTime = sec => { const h=Math.floor(sec/3600),m=Math.floor((sec%3600)/60),s=Math.floor(sec%60); return h>0?`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`:`${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`; };
+      setTimeout(() => {
+        const t0 = performance.now();
+        (function step(now) {
+          const p = Math.min((now - t0) / DUR_SUM, 1);
+          const e = p < .5 ? 2*p*p : -1 + (4 - 2*p)*p;
+          if (aType === 'numeric') {
+            el.textContent = fmtNum(aRaw * e);
+          } else if (aType === 'time') {
+            el.textContent = fmtTime(aRaw * e);
+          } else if (aType === 'pace') {
+            el.textContent = secToMMSS(aRaw * e);
+          } else if (aType === 'elev') {
+            el.textContent = `+${Math.round(aRaw * e)} / −${Math.round(aRaw2 * e)}`;
+          }
+          if (p < 1) requestAnimationFrame(step);
+        })(performance.now());
+      }, delay);
+    });
     return;
   }
   replay.style.display = newSess.style.display = 'none';
@@ -4102,25 +4132,25 @@ function buildRecap(stats, sel) {
     ${c.icon ? `<div class="stat-cell-icon">${c.icon}</div>` : ''}
     <div class="stat-cell-body">
       <div class="stat-label">${c.label}</div>
-      <div class="stat-val">${c.val}</div>
+      <div class="stat-val" data-anim-type="${c.animType||''}" data-anim-raw="${c.animRaw!=null?c.animRaw:''}" data-anim-raw2="${c.animRaw2!=null?c.animRaw2:''}" data-anim-fmt="${c.animFmt||''}">0</div>
       <div class="stat-u">${c.u}</div>
     </div>
   </div>`;
 
   // Solo incluir celdas cuya métrica esté seleccionada
   const topCells = [
-    okSum('dist')   && stats.dist > 0            ? { icon:'📏', label:'Distancia',          val:stats.dist.toFixed(2),        u:'km'    } : null,
-    okSum('time')   && timeToSec(stats.time) > 0 ? { icon:'⏱',  label:'Tiempo',             val:(() => { const t=timeToSec(stats.time); const h=Math.floor(t/3600),m=Math.floor((t%3600)/60),s=t%60; return h>0?`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`:`${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`; })(), u:'h:m:s' } : null,
-    okSum('pace')   && stats.avgPaceSec > 0      ? { icon:'🏃',  label:'Ritmo medio',        val:secToMMSS(stats.avgPaceSec),  u:'min/km'} : null,
-    okSum('hr')     && stats.avgHR > 0           ? { icon:'❤️', label:'FC media',           val:stats.avgHR,                  u:'ppm'   } : null,
-    okSum('elev')   && (stats.elevation > 0 || stats.descent > 0) ? { icon:'⛰', label:'Desnivel', val:`+${stats.elevation} / −${stats.descent}`, u:'metros' } : null,
-    okSum('cad')    && stats.avgCad > 0          ? { icon:'🔄',  label:'Cadencia',           val:stats.avgCad,                 u:'spm'   } : null,
-    okSum('stride') && stats.strideLen > 0       ? { icon:'👟',  label:'Long. zancada',      val:stats.strideLen.toFixed(2),   u:'m'     } : null,
-    okSum('gct')    && stats.avgGCT > 0          ? { icon:'⚡',  label:'GCT',                val:stats.avgGCT,                 u:'ms'    } : null,
-    okSum('power')  && stats.avgPow > 0          ? { icon:'💪',  label:'Potencia',           val:stats.avgPow, u:`W · ${stats.wkg.toFixed(2)} W/kg` } : null,
-    okSum('temp')   && stats.avgTemp !== 0       ? { icon:'🌡',  label:'Temperatura',        val:stats.avgTemp.toFixed(1),     u:'°C'    } : null,
-    okSum('vr')     && stats.vertRatio > 0       ? { icon:'📐',  label:'Relación vertical',  val:stats.vertRatio.toFixed(1),   u:'%'     } : null,
-    okSum('vo')     && stats.vertOsc > 0         ? { icon:'〰️', label:'Oscilación vertical',val:stats.vertOsc.toFixed(1),     u:'cm'    } : null,
+    okSum('dist')   && stats.dist > 0            ? { icon:'📏', label:'Distancia',          u:'km',     animType:'numeric', animRaw:stats.dist,        animFmt:'2' } : null,
+    okSum('time')   && timeToSec(stats.time) > 0 ? { icon:'⏱',  label:'Tiempo',             u:'h:m:s',  animType:'time',    animRaw:timeToSec(stats.time) } : null,
+    okSum('pace')   && stats.avgPaceSec > 0      ? { icon:'🏃',  label:'Ritmo medio',        u:'min/km', animType:'pace',    animRaw:stats.avgPaceSec } : null,
+    okSum('hr')     && stats.avgHR > 0           ? { icon:'❤️', label:'FC media',           u:'ppm',    animType:'numeric', animRaw:stats.avgHR,        animFmt:'0' } : null,
+    okSum('elev')   && (stats.elevation > 0 || stats.descent > 0) ? { icon:'⛰', label:'Desnivel', u:'metros', animType:'elev', animRaw:stats.elevation, animRaw2:stats.descent } : null,
+    okSum('cad')    && stats.avgCad > 0          ? { icon:'🔄',  label:'Cadencia',           u:'spm',    animType:'numeric', animRaw:stats.avgCad,       animFmt:'0' } : null,
+    okSum('stride') && stats.strideLen > 0       ? { icon:'👟',  label:'Long. zancada',      u:'m',      animType:'numeric', animRaw:stats.strideLen,    animFmt:'2' } : null,
+    okSum('gct')    && stats.avgGCT > 0          ? { icon:'⚡',  label:'GCT',                u:'ms',     animType:'numeric', animRaw:stats.avgGCT,       animFmt:'0' } : null,
+    okSum('power')  && stats.avgPow > 0          ? { icon:'💪',  label:'Potencia',           u:`W · ${stats.wkg.toFixed(2)} W/kg`, animType:'numeric', animRaw:stats.avgPow, animFmt:'0' } : null,
+    okSum('temp')   && stats.avgTemp !== 0       ? { icon:'🌡',  label:'Temperatura',        u:'°C',     animType:'numeric', animRaw:stats.avgTemp,      animFmt:'1' } : null,
+    okSum('vr')     && stats.vertRatio > 0       ? { icon:'📐',  label:'Relación vertical',  u:'%',      animType:'numeric', animRaw:stats.vertRatio,    animFmt:'1' } : null,
+    okSum('vo')     && stats.vertOsc > 0         ? { icon:'〰️', label:'Oscilación vertical',u:'cm',     animType:'numeric', animRaw:stats.vertOsc,      animFmt:'1' } : null,
   ].filter(Boolean);
   document.getElementById('stats-grid-top').innerHTML = topCells.map(cellHTML).join('');
 
