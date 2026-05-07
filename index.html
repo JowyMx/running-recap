@@ -1103,25 +1103,24 @@ body {
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 1px; width: 90%; max-width: 700px;
+  gap: 8px; width: 96%; max-width: 780px;
 }
-.stat-cell { padding: 3px 6px; border: none; text-align: center; display: flex; align-items: center; gap: 0; }
-.stat-cell-icon { font-size: clamp(11px, 1.8vw, 16px); flex-shrink: 0; line-height: 1; }
+.stat-cell { padding: 8px 10px; border: none; text-align: center; display: flex; align-items: center; gap: 0; }
 .stat-cell-body { flex: 1; text-align: center; min-width: 0; }
 .stat-label {
-  font-size: clamp(8px, 1.3vw, 11px);
+  font-size: clamp(9px, 1.5vw, 13px);
   letter-spacing: 0.15em; color: rgba(255,255,255,1);
-  text-transform: uppercase; margin-bottom: 2px;
+  text-transform: uppercase; margin-bottom: 4px;
   text-shadow: 0 1px 4px rgba(0,0,0,0.8);
 }
 .stat-val {
-  font-size: clamp(13px, 2.5vw, 20px);
+  font-size: clamp(18px, 3.2vw, 28px);
   font-weight: 900; color: #fff; line-height: 1;
   text-shadow: 0 1px 8px rgba(0,0,0,0.7);
 }
 .stat-u {
-  font-size: clamp(7px, 1vw, 9px);
-  color: rgba(255,255,255,1); margin-top: 2px;
+  font-size: clamp(8px, 1.1vw, 11px);
+  color: rgba(255,255,255,1); margin-top: 3px;
   text-transform: uppercase; letter-spacing: 0.1em;
   text-shadow: 0 1px 4px rgba(0,0,0,0.9);
 }
@@ -1334,10 +1333,6 @@ body {
         <button class="theme-card" data-theme="clean" title="Blanco">
           <div class="theme-preview" style="background:#f0f0f0;color:#111111">Aa</div>
           <div class="theme-name">Blanco</div>
-        </button>
-        <button class="theme-card" data-theme="trail" title="Trail">
-          <div class="theme-preview" style="background:linear-gradient(160deg,#1b2f12,#080c06);color:#ffe066">Aa</div>
-          <div class="theme-name">Trail</div>
         </button>
       </div>
     </div>
@@ -4156,7 +4151,6 @@ function buildRecap(stats, sel) {
   const okSum = key => !sel || sel.has(key);
 
   const cellHTML = c => `<div class="stat-cell">
-    ${c.icon ? `<div class="stat-cell-icon">${c.icon}</div>` : ''}
     <div class="stat-cell-body">
       <div class="stat-label">${c.label}</div>
       <div class="stat-val" data-anim-type="${c.animType||''}" data-anim-raw="${c.animRaw!=null?c.animRaw:''}" data-anim-raw2="${c.animRaw2!=null?c.animRaw2:''}" data-anim-fmt="${c.animFmt||''}">0</div>
@@ -4322,7 +4316,6 @@ const THEMES = {
   dawn:   { bg: 'linear-gradient(160deg,#3d1500 0%,#0a0a0a 100%)',       text: '#FF4F00' },
   garmin: { bg: 'linear-gradient(160deg,#002847 0%,#000d1a 100%)',       text: '#109AD7' },
   clean:  { bg: '#f0f0f0',                                               text: '#111111' },
-  trail:  { bg: 'linear-gradient(160deg,#1b2f12 0%,#080c06 100%)',       text: '#ffe066' },
 };
 
 function applyTheme(id) {
