@@ -22,7 +22,7 @@ Repositorio: [JowyMx/running-recap](https://github.com/JowyMx/running-recap)
 ## Pantalla de carga — Opciones de personalización
 
 ### Temas completos
-6 temas predefinidos que aplican fondo + color de texto en un solo toque:
+5 temas predefinidos que aplican fondo + color de texto en un solo toque:
 
 | Tema | Fondo | Color texto |
 |---|---|---|
@@ -31,8 +31,8 @@ Repositorio: [JowyMx/running-recap](https://github.com/JowyMx/running-recap)
 | Strava | `linear-gradient(160deg, #3d1500, #0a0a0a)` | Naranja Internacional |
 | Garmin | `linear-gradient(160deg, #002847, #000d1a)` | Azul Garmin |
 | Blanco | `#f0f0f0` | Negro |
-| Trail | `linear-gradient(160deg, #1b2f12, #080c06)` | Amarillo |
 
+- ~~Trail~~ eliminado (tema `linear-gradient(160deg, #1b2f12, #080c06)` / amarillo)
 - Al subir una foto/video se activa automáticamente "Custom"
 - Tema y foto/video conviven: el tema aplica el fondo solo si no hay foto
 
@@ -98,9 +98,14 @@ El color se aplica mediante una etiqueta `<style id="rt-override">` inyectada di
 - Detección de zona por `e.clientX` vs `offsetWidth / 2`
 
 ### Resumen final
-- Tabla con todas las métricas seleccionadas + iconos alineados a la izquierda
-- Mapa de ruta GPS renderizado en `<canvas>` (si hay datos GPX/TCX/KML)
-- Botones "Repetir" y "Nueva sesión" aparecen tras **3 segundos** de delay
+- Tabla con todas las métricas seleccionadas (sin iconos, diseño limpio)
+- Cada métrica anima de **0 al valor final** con ease-in-out en 1200ms, escalonadas 80ms entre sí
+- **Mapa de ruta GPS** renderizado en `<canvas>` con animación progresiva:
+  - Ruta completa de fondo al 15% de opacidad
+  - Trayecto se dibuja de inicio a fin en ~2200ms
+  - Punto pulsante que sigue el extremo animado
+  - Marcador ▶ en inicio y ■ al terminar
+- Botones "Repetir" y "Nueva sesión" aparecen tras **5 segundos** de delay
 
 ### Tablas de vueltas
 - Grid CSS: `2em 3.2em minmax(0,1fr) auto` con gap `6px`
@@ -115,6 +120,8 @@ El color se aplica mediante una etiqueta `<style id="rt-override">` inyectada di
 - ~~Puntos de avance por slide~~ (eliminados — `#dots`)
 - ~~Indicador "toca para avanzar"~~ (eliminado — `#tap-hint`)
 - ~~Transición dip-to-black entre slides~~ (implementada y luego revertida por preferencia del usuario)
+- ~~Tema Trail~~ (eliminado de la pantalla de inicio)
+- ~~Iconos emoji en las celdas del resumen final~~ (eliminados para un look más serio)
 
 ---
 
