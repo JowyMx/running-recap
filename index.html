@@ -357,6 +357,35 @@ body {
   transition: color 0.12s;
 }
 .metric-row.checked .metric-val-preview { color: rgba(255,255,255,0.42); }
+.metric-sub-toggles {
+  display: flex;
+  gap: 5px;
+  flex-shrink: 0;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s;
+}
+.metric-row.checked .metric-sub-toggles {
+  opacity: 1;
+  pointer-events: auto;
+}
+.metric-sub-btn {
+  width: 26px; height: 26px;
+  border-radius: 5px;
+  border: 1.5px solid rgba(255,255,255,0.15);
+  background: transparent;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: border-color 0.12s, background 0.12s, opacity 0.12s;
+  padding: 0;
+  opacity: 0.35;
+}
+.metric-sub-btn svg { display: block; }
+.metric-sub-btn.active {
+  border-color: rgba(255,255,255,0.6);
+  background: rgba(255,255,255,0.1);
+  opacity: 1;
+}
 .metrics-footer {
   width: 100%;
   max-width: 440px;
@@ -2100,9 +2129,11 @@ function processData(data, customName) {
 let SLIDE_IDS, TOTAL, DUR;
 let cur=0, timer=null, barTimer=null, barStart=null, _stats=null, _gpsPoints=null, _csvStats=null, _csvFile=null;
 
-function initSlides(stats, sel) {
+function initSlides(stats, sel, selBars, selCharts) {
   // sel = Set<key> de métricas seleccionadas, o null = mostrar todo
-  const ok  = key => !sel || sel.has(key);
+  const ok      = key => !sel      || sel.has(key);
+  const okBars  = key => !selBars  || selBars.has(key);
+  const okChart = key => !selCharts|| selCharts.has(key);
   const add = (id, dur) => { SLIDE_IDS.push(id); DUR.push(dur); };
   const laps = f => (stats.tableRows || []).filter(f);
   SLIDE_IDS = ['s0']; DUR = [2500];
@@ -2110,27 +2141,51 @@ function initSlides(stats, sel) {
   if (ok('dist')   && stats.dist > 0)                              add('s1',  2000);
   if (ok('time')   && timeToSec(stats.time) > 0)                   add('s2',  2000);
   if (ok('pace')   && stats.avgPaceSec > 0)                        add('s5',  2000);
-  if (ok('pace')   && stats.tableRows && stats.tableRows.length > 0) add('rows-slide', 3000);
-  if (ok('pace')   && laps(r => !isDash(r.pace)).length >= 2)      add('pace-chart-slide', 3000);
+  if (ok('pace')   && okBars('pace')  && stats.tableRows && stats.tableRows.length > 0) add('rows-slide', 3000);
+  if (ok('pace')   && okChart('pace') && laps(r => !isDash(r.pace)).length >= 2)        add('pace-chart-slide', 3000);
   if (ok('hr')     && stats.avgHR > 0)                             add('s4',  2000);
-  if (ok('hr')     && laps(r => !isDash(r.hr) && parseFloat(r.hr) > 0).length >= 2) { add('hr-rows-slide', 3000); add('hr-chart-slide', 3000); }
+  if (ok('hr')     && laps(r => !isDash(r.hr) && parseFloat(r.hr) > 0).length >= 2) {
+    if (okBars('hr'))  add('hr-rows-slide', 3000);
+    if (okChart('hr')) add('hr-chart-slide', 3000);
+  }
   if (ok('elev')   && (stats.elevation > 0 || stats.descent > 0)) add('s10', 1800);
-  if (ok('elev')   && (stats.elevation > 0 || stats.descent > 0) && laps(r => parseFloat(r.elev) > 0 || parseFloat(r.elevDesc) > 0).length >= 2) add('elev-rows-slide', 3000);
+  if (ok('elev')   && okBars('elev') && (stats.elevation > 0 || stats.descent > 0) && laps(r => parseFloat(r.elev) > 0 || parseFloat(r.elevDesc) > 0).length >= 2) add('elev-rows-slide', 3000);
   if (ok('gps')    && _gpsPoints && _gpsPoints.length > 1 && _gpsPoints.some(p => p.ele !== null)) add('elev-profile-slide', 2800);
   if (ok('cad')    && stats.avgCad > 0)                            add('s6',  1800);
-  if (ok('cad')    && laps(r => !isDash(r.cad) && parseFloat(r.cad) > 0).length >= 2) { add('cad-rows-slide', 3000); add('cad-chart-slide', 3000); }
+  if (ok('cad')    && laps(r => !isDash(r.cad) && parseFloat(r.cad) > 0).length >= 2) {
+    if (okBars('cad'))  add('cad-rows-slide', 3000);
+    if (okChart('cad')) add('cad-chart-slide', 3000);
+  }
   if (ok('stride') && stats.strideLen > 0)                         add('s12', 1800);
-  if (ok('stride') && stats.strideLen > 0 && laps(r => !isDash(r.stride) && parseFloat(r.stride) > 0).length >= 2) { add('stride-rows-slide', 3000); add('stride-chart-slide', 3000); }
+  if (ok('stride') && stats.strideLen > 0 && laps(r => !isDash(r.stride) && parseFloat(r.stride) > 0).length >= 2) {
+    if (okBars('stride'))  add('stride-rows-slide', 3000);
+    if (okChart('stride')) add('stride-chart-slide', 3000);
+  }
   if (ok('gct')    && stats.avgGCT > 0)                            add('s7',  1800);
-  if (ok('gct')    && stats.avgGCT > 0 && laps(r => !isDash(r.gct) && parseFloat(r.gct) > 0).length >= 2) { add('gct-rows-slide', 3000); add('gct-chart-slide', 3000); }
+  if (ok('gct')    && stats.avgGCT > 0 && laps(r => !isDash(r.gct) && parseFloat(r.gct) > 0).length >= 2) {
+    if (okBars('gct'))  add('gct-rows-slide', 3000);
+    if (okChart('gct')) add('gct-chart-slide', 3000);
+  }
   if (ok('power')  && stats.avgPow > 0)                            add('s8',  1800);
-  if (ok('power')  && stats.avgPow > 0 && laps(r => !isDash(r.pow) && parseFloat(r.pow) > 0).length >= 2) { add('pow-rows-slide', 3000); add('pow-chart-slide', 3000); }
+  if (ok('power')  && stats.avgPow > 0 && laps(r => !isDash(r.pow) && parseFloat(r.pow) > 0).length >= 2) {
+    if (okBars('power'))  add('pow-rows-slide', 3000);
+    if (okChart('power')) add('pow-chart-slide', 3000);
+  }
   if (ok('temp')   && stats.avgTemp !== 0)                         add('s11', 1800);
-  if (ok('temp')   && stats.avgTemp !== 0 && laps(r => !isDash(r.temp) && parseFloat(r.temp) !== 0).length >= 2) { add('temp-rows-slide', 3000); add('temp-chart-slide', 3000); }
+  if (ok('temp')   && stats.avgTemp !== 0 && laps(r => !isDash(r.temp) && parseFloat(r.temp) !== 0).length >= 2) {
+    if (okBars('temp'))  add('temp-rows-slide', 3000);
+    if (okChart('temp')) add('temp-chart-slide', 3000);
+  }
   if (ok('vr')     && stats.vertRatio > 0)                         add('s13', 1800);
-  if (ok('vr')     && stats.vertRatio > 0 && laps(r => !isDash(r.vr) && parseFloat(r.vr) > 0).length >= 2) { add('vr-rows-slide', 3000); add('vr-chart-slide', 3000); }
+  if (ok('vr')     && stats.vertRatio > 0 && laps(r => !isDash(r.vr) && parseFloat(r.vr) > 0).length >= 2) {
+    if (okBars('vr'))  add('vr-rows-slide', 3000);
+    if (okChart('vr')) add('vr-chart-slide', 3000);
+  }
   if (ok('vo')     && stats.vertOsc > 0)                           add('s14', 1800);
-  if (ok('vo')     && stats.vertOsc > 0 && laps(r => !isDash(r.vo) && parseFloat(r.vo) > 0).length >= 2) { add('vo-rows-slide', 3000); add('vo-chart-slide', 3000); }
+  if (ok('vo')     && stats.vertOsc > 0 && laps(r => !isDash(r.vo) && parseFloat(r.vo) > 0).length >= 2) {
+    if (okBars('vo'))  add('vo-rows-slide', 3000);
+    if (okChart('vo')) add('vo-chart-slide', 3000);
+  }
 
   add('summary-slide', 0);
   TOTAL = SLIDE_IDS.length;
@@ -2628,37 +2683,42 @@ const METRIC_DEFS = [
   { key:'time',   label:'Tiempo',               icon:'⏱', avail: s => timeToSec(s.time) > 0,
     preview: s => s.time },
   { key:'pace',   label:'Ritmo & Vueltas',      icon:'🏃', avail: s => s.avgPaceSec > 0,
-    preview: s => `${secToMMSS(s.avgPaceSec)} /km` },
+    preview: s => `${secToMMSS(s.avgPaceSec)} /km`, hasBars: true, hasChart: true },
   { key:'hr',     label:'Frec. cardíaca',       icon:'❤️', avail: s => s.avgHR > 0,
-    preview: s => `${s.avgHR} ppm` },
+    preview: s => `${s.avgHR} ppm`, hasBars: true, hasChart: true },
   { key:'elev',   label:'Desnivel',             icon:'⛰', avail: s => s.elevation > 0 || s.descent > 0,
-    preview: s => `+${s.elevation} / −${s.descent} m` },
+    preview: s => `+${s.elevation} / −${s.descent} m`, hasBars: true },
   { key:'gps',    label:'Perfil de elevación',  icon:'🗺', avail: () => !!(_gpsPoints && _gpsPoints.length > 1 && _gpsPoints.some(p => p.ele !== null)),
     preview: () => 'GPS disponible' },
   { key:'cad',    label:'Cadencia',             icon:'🔄', avail: s => s.avgCad > 0,
-    preview: s => `${s.avgCad} spm` },
+    preview: s => `${s.avgCad} spm`, hasBars: true, hasChart: true },
   { key:'stride', label:'Long. de zancada',     icon:'👟', avail: s => s.strideLen > 0,
-    preview: s => `${s.strideLen.toFixed(2)} m` },
+    preview: s => `${s.strideLen.toFixed(2)} m`, hasBars: true, hasChart: true },
   { key:'gct',    label:'Contacto con suelo',   icon:'⚡', avail: s => s.avgGCT > 0,
-    preview: s => `${s.avgGCT} ms` },
+    preview: s => `${s.avgGCT} ms`, hasBars: true, hasChart: true },
   { key:'power',  label:'Potencia',             icon:'💪', avail: s => s.avgPow > 0,
-    preview: s => `${s.avgPow} W` },
+    preview: s => `${s.avgPow} W`, hasBars: true, hasChart: true },
   { key:'temp',   label:'Temperatura',          icon:'🌡', avail: s => s.avgTemp !== 0,
-    preview: s => `${s.avgTemp.toFixed(1)} °C` },
+    preview: s => `${s.avgTemp.toFixed(1)} °C`, hasBars: true, hasChart: true },
   { key:'vr',     label:'Relación vertical',    icon:'📐', avail: s => s.vertRatio > 0,
-    preview: s => `${s.vertRatio.toFixed(1)} %` },
+    preview: s => `${s.vertRatio.toFixed(1)} %`, hasBars: true, hasChart: true },
   { key:'vo',     label:'Oscilación vertical',  icon:'〰️', avail: s => s.vertOsc > 0,
-    preview: s => `${s.vertOsc.toFixed(1)} cm` },
+    preview: s => `${s.vertOsc.toFixed(1)} cm`, hasBars: true, hasChart: true },
 ];
 
 let _pendingStats = null;   // stats esperando confirmación en el selector
+
+const ICON_BARS  = `<svg width="13" height="13" viewBox="0 0 13 13" fill="currentColor"><rect x="0" y="7" width="3" height="6" rx="1"/><rect x="5" y="4" width="3" height="9" rx="1"/><rect x="10" y="1" width="3" height="12" rx="1"/></svg>`;
+const ICON_CHART = `<svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1,11 4,6 7,8 10,3 12,5"/></svg>`;
 
 function showMetricsSelector(stats) {
   _pendingStats = stats;
 
   // Cargar preferencias guardadas
-  let savedSel;
-  try { savedSel = JSON.parse(localStorage.getItem('selectedMetrics')); } catch(e) {}
+  let savedSel, savedBars, savedCharts;
+  try { savedSel    = JSON.parse(localStorage.getItem('selectedMetrics')); } catch(e) {}
+  try { savedBars   = JSON.parse(localStorage.getItem('selectedBars'));    } catch(e) {}
+  try { savedCharts = JSON.parse(localStorage.getItem('selectedCharts'));  } catch(e) {}
 
   document.getElementById('mv-session-name').textContent = stats.sessionName;
 
@@ -2667,16 +2727,43 @@ function showMetricsSelector(stats) {
   list.innerHTML = '';
 
   available.forEach(m => {
-    const isChecked = !savedSel || savedSel.includes(m.key);
+    const isChecked  = !savedSel    || savedSel.includes(m.key);
+    const barsOn     = !savedBars   || savedBars.includes(m.key);
+    const chartOn    = !savedCharts || savedCharts.includes(m.key);
+
     const row = document.createElement('div');
     row.className = 'metric-row' + (isChecked ? ' checked' : '');
     row.dataset.key = m.key;
+
+    let subHTML = '';
+    if (m.hasBars || m.hasChart) {
+      const barsBtn  = m.hasBars  ? `<button class="metric-sub-btn${barsOn  ? ' active' : ''}" data-sub="bars"  title="Tabla de vueltas">${ICON_BARS}</button>`  : '';
+      const chartBtn = m.hasChart ? `<button class="metric-sub-btn${chartOn ? ' active' : ''}" data-sub="chart" title="Gráfica">${ICON_CHART}</button>` : '';
+      subHTML = `<div class="metric-sub-toggles">${barsBtn}${chartBtn}</div>`;
+    }
+
     row.innerHTML = `
       <div class="metric-check">${isChecked ? '✓' : ''}</div>
       <div class="metric-icon">${m.icon}</div>
       <div class="metric-label">${m.label}</div>
-      <div class="metric-val-preview">${m.preview(stats)}</div>`;
-    row.addEventListener('click', () => toggleMetricRow(row));
+      <div class="metric-val-preview">${m.preview(stats)}</div>
+      ${subHTML}`;
+
+    // Click en la fila: toggle principal (ignorar clics en sub-btns)
+    row.addEventListener('click', e => {
+      if (e.target.closest('.metric-sub-btn')) return;
+      toggleMetricRow(row);
+    });
+
+    // Click en sub-btns: toggle individual sin afectar la fila
+    row.querySelectorAll('.metric-sub-btn').forEach(btn => {
+      btn.addEventListener('click', e => {
+        e.stopPropagation();
+        btn.classList.toggle('active');
+        updateDurationDisplay();
+      });
+    });
+
     list.appendChild(row);
   });
 
@@ -2687,36 +2774,74 @@ function showMetricsSelector(stats) {
   document.getElementById('metrics-view').style.display = 'flex';
 }
 
-function calcRecapDuration(stats, sel) {
+function getSubSel() {
+  const bars = [], charts = [];
+  document.querySelectorAll('#mv-list .metric-row').forEach(row => {
+    const key = row.dataset.key;
+    const bBtn = row.querySelector('[data-sub="bars"]');
+    const cBtn = row.querySelector('[data-sub="chart"]');
+    if (bBtn && bBtn.classList.contains('active')) bars.push(key);
+    if (cBtn && cBtn.classList.contains('active')) charts.push(key);
+  });
+  return { bars, charts };
+}
+
+function calcRecapDuration(stats, sel, selBars, selCharts) {
   // Replica la lógica de initSlides para sumar durations sin construir los slides
-  const ok  = key => !sel || sel.has(key);
+  const ok      = key => !sel      || sel.has(key);
+  const okBars  = key => !selBars  || selBars.has(key);
+  const okChart = key => !selCharts|| selCharts.has(key);
   const laps = f => (stats.tableRows || []).filter(f);
   let ms = 2500; // s0 título siempre presente
 
   if (ok('dist')   && stats.dist > 0)                              ms += 2000;
   if (ok('time')   && timeToSec(stats.time) > 0)                   ms += 2000;
   if (ok('pace')   && stats.avgPaceSec > 0)                        ms += 2000;
-  if (ok('pace')   && stats.tableRows && stats.tableRows.length > 0) ms += 3000;
-  if (ok('pace')   && laps(r => !isDash(r.pace)).length >= 2)      ms += 3000;
+  if (ok('pace')   && okBars('pace')  && stats.tableRows && stats.tableRows.length > 0) ms += 3000;
+  if (ok('pace')   && okChart('pace') && laps(r => !isDash(r.pace)).length >= 2)        ms += 3000;
   if (ok('hr')     && stats.avgHR > 0)                             ms += 2000;
-  if (ok('hr')     && laps(r => !isDash(r.hr) && parseFloat(r.hr) > 0).length >= 2) ms += 3000 + 3000;
+  if (ok('hr')     && laps(r => !isDash(r.hr) && parseFloat(r.hr) > 0).length >= 2) {
+    if (okBars('hr'))  ms += 3000;
+    if (okChart('hr')) ms += 3000;
+  }
   if (ok('elev')   && (stats.elevation > 0 || stats.descent > 0)) ms += 1800;
-  if (ok('elev')   && (stats.elevation > 0 || stats.descent > 0) && laps(r => parseFloat(r.elev) > 0 || parseFloat(r.elevDesc) > 0).length >= 2) ms += 3000;
+  if (ok('elev')   && okBars('elev') && (stats.elevation > 0 || stats.descent > 0) && laps(r => parseFloat(r.elev) > 0 || parseFloat(r.elevDesc) > 0).length >= 2) ms += 3000;
   if (ok('gps')    && _gpsPoints && _gpsPoints.length > 1 && _gpsPoints.some(p => p.ele !== null)) ms += 2800;
   if (ok('cad')    && stats.avgCad > 0)                            ms += 1800;
-  if (ok('cad')    && laps(r => !isDash(r.cad) && parseFloat(r.cad) > 0).length >= 2) ms += 3000 + 3000;
+  if (ok('cad')    && laps(r => !isDash(r.cad) && parseFloat(r.cad) > 0).length >= 2) {
+    if (okBars('cad'))  ms += 3000;
+    if (okChart('cad')) ms += 3000;
+  }
   if (ok('stride') && stats.strideLen > 0)                         ms += 1800;
-  if (ok('stride') && stats.strideLen > 0 && laps(r => !isDash(r.stride) && parseFloat(r.stride) > 0).length >= 2) ms += 3000 + 3000;
+  if (ok('stride') && stats.strideLen > 0 && laps(r => !isDash(r.stride) && parseFloat(r.stride) > 0).length >= 2) {
+    if (okBars('stride'))  ms += 3000;
+    if (okChart('stride')) ms += 3000;
+  }
   if (ok('gct')    && stats.avgGCT > 0)                            ms += 1800;
-  if (ok('gct')    && stats.avgGCT > 0 && laps(r => !isDash(r.gct) && parseFloat(r.gct) > 0).length >= 2) ms += 3000 + 3000;
+  if (ok('gct')    && stats.avgGCT > 0 && laps(r => !isDash(r.gct) && parseFloat(r.gct) > 0).length >= 2) {
+    if (okBars('gct'))  ms += 3000;
+    if (okChart('gct')) ms += 3000;
+  }
   if (ok('power')  && stats.avgPow > 0)                            ms += 1800;
-  if (ok('power')  && stats.avgPow > 0 && laps(r => !isDash(r.pow) && parseFloat(r.pow) > 0).length >= 2) ms += 3000 + 3000;
+  if (ok('power')  && stats.avgPow > 0 && laps(r => !isDash(r.pow) && parseFloat(r.pow) > 0).length >= 2) {
+    if (okBars('power'))  ms += 3000;
+    if (okChart('power')) ms += 3000;
+  }
   if (ok('temp')   && stats.avgTemp !== 0)                         ms += 1800;
-  if (ok('temp')   && stats.avgTemp !== 0 && laps(r => !isDash(r.temp) && parseFloat(r.temp) !== 0).length >= 2) ms += 3000 + 3000;
+  if (ok('temp')   && stats.avgTemp !== 0 && laps(r => !isDash(r.temp) && parseFloat(r.temp) !== 0).length >= 2) {
+    if (okBars('temp'))  ms += 3000;
+    if (okChart('temp')) ms += 3000;
+  }
   if (ok('vr')     && stats.vertRatio > 0)                         ms += 1800;
-  if (ok('vr')     && stats.vertRatio > 0 && laps(r => !isDash(r.vr) && parseFloat(r.vr) > 0).length >= 2) ms += 3000 + 3000;
+  if (ok('vr')     && stats.vertRatio > 0 && laps(r => !isDash(r.vr) && parseFloat(r.vr) > 0).length >= 2) {
+    if (okBars('vr'))  ms += 3000;
+    if (okChart('vr')) ms += 3000;
+  }
   if (ok('vo')     && stats.vertOsc > 0)                           ms += 1800;
-  if (ok('vo')     && stats.vertOsc > 0 && laps(r => !isDash(r.vo) && parseFloat(r.vo) > 0).length >= 2) ms += 3000 + 3000;
+  if (ok('vo')     && stats.vertOsc > 0 && laps(r => !isDash(r.vo) && parseFloat(r.vo) > 0).length >= 2) {
+    if (okBars('vo'))  ms += 3000;
+    if (okChart('vo')) ms += 3000;
+  }
   // summary-slide tiene DUR=0, no se suma
 
   return ms;
@@ -2726,7 +2851,10 @@ function updateDurationDisplay() {
   if (!_pendingStats) return;
   const rows = document.querySelectorAll('#mv-list .metric-row');
   const sel  = new Set([...rows].filter(r => r.classList.contains('checked')).map(r => r.dataset.key));
-  const ms   = calcRecapDuration(_pendingStats, sel);
+  const { bars, charts } = getSubSel();
+  const selBars   = new Set(bars);
+  const selCharts = new Set(charts);
+  const ms   = calcRecapDuration(_pendingStats, sel, selBars, selCharts);
   const sec  = Math.round(ms / 1000);
   const min  = Math.floor(sec / 60);
   const s    = sec % 60;
@@ -2765,10 +2893,15 @@ function launchRecap() {
   if (!_pendingStats) return;
   const rows = document.querySelectorAll('#mv-list .metric-row');
   const sel  = new Set([...rows].filter(r => r.classList.contains('checked')).map(r => r.dataset.key));
+  const { bars, charts } = getSubSel();
+  const selBars   = new Set(bars);
+  const selCharts = new Set(charts);
   // Guardar preferencias
-  try { localStorage.setItem('selectedMetrics', JSON.stringify([...sel])); } catch(e) {}
+  try { localStorage.setItem('selectedMetrics', JSON.stringify([...sel]));    } catch(e) {}
+  try { localStorage.setItem('selectedBars',    JSON.stringify(bars));         } catch(e) {}
+  try { localStorage.setItem('selectedCharts',  JSON.stringify(charts));       } catch(e) {}
   document.getElementById('metrics-view').style.display = 'none';
-  buildRecap(_pendingStats, sel);
+  buildRecap(_pendingStats, sel, selBars, selCharts);
 }
 
 function backToUpload() {
@@ -3589,7 +3722,7 @@ function animateVoChart() {
 }
 
 // ── BUILD RECAP ───────────────────────────────────────────────────────────
-function buildRecap(stats, sel) {
+function buildRecap(stats, sel, selBars, selCharts) {
   _stats = stats;
   const nameInput = document.getElementById('session-name');
   try { if (nameInput.value.trim()) localStorage.setItem('lastSessionName', nameInput.value.trim()); } catch(e) {}
@@ -4175,7 +4308,7 @@ function buildRecap(stats, sel) {
 
   document.getElementById('verdict-text').innerHTML = '';
 
-  initSlides(stats, sel || null);
+  initSlides(stats, sel || null, selBars || null, selCharts || null);
 
   // Dots
   const dotsEl = document.getElementById('dots');
