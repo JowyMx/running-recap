@@ -49,7 +49,7 @@ body {
   border: 1px dashed rgba(255,255,255,0.18);
   border-radius: 8px;
   padding: 0 24px;
-  height: 88px;
+  height: 110px;
   cursor: pointer;
   display: flex;
   flex-direction: column;
@@ -128,12 +128,6 @@ body {
   line-height: 1.7;
 }
 .step-txt strong { color: rgba(255,255,255,0.60); }
-#gps-zone-text {
-  font-size: clamp(13px, 2.5vw, 16px);
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  color: rgba(255,255,255,0.45);
-}
 #gps-zone-text.loaded { color: rgba(127,255,212,0.7); font-size: 13px; }
 .drop-text.loaded { color: rgba(127,255,212,0.7); }
 .drop-sub.loaded  { color: rgba(127,255,212,0.45); }
@@ -143,7 +137,7 @@ body {
   border: 1px dashed rgba(255,255,255,0.18);
   border-radius: 8px;
   padding: 0 24px;
-  height: 88px;
+  height: 110px;
   cursor: pointer;
   display: flex;
   flex-direction: column;
@@ -163,7 +157,7 @@ body {
   border: 1px dashed rgba(255,255,255,0.18);
   border-radius: 8px;
   padding: 0 24px;
-  height: 88px;
+  height: 110px;
   cursor: pointer;
   display: flex;
   flex-direction: column;
@@ -176,13 +170,6 @@ body {
 #photo-zone:hover, #photo-zone.drag-over {
   border-color: rgba(255,255,255,0.35);
   background: rgba(255,255,255,0.02);
-}
-#photo-zone-text {
-  font-size: clamp(13px, 2.5vw, 16px);
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: rgba(255,255,255,0.45);
 }
 #photo-zone-text.loaded { color: rgba(127,255,212,0.7); }
 
@@ -1303,8 +1290,9 @@ body {
       <input type="text" id="session-name" placeholder="Auto">
     </div>
     <div id="gps-zone" onclick="document.getElementById('gps-input').click()">
-      <span style="font-size:14px;color:rgba(255,255,255,0.2)">⊕</span>
-      <span id="gps-zone-text">GPX / TCX / KML</span>
+      <div class="drop-icon">⊕</div>
+      <div class="drop-text" id="gps-zone-text">GPX / TCX / KML</div>
+      <div class="drop-sub">Arrastra o haz clic para seleccionar</div>
     </div>
     <input type="file" id="gps-input" accept=".gpx,.tcx,.kml" style="display:none">
     <div id="drop-zone" onclick="document.getElementById('file-input').click()">
@@ -1314,8 +1302,9 @@ body {
     </div>
     <input type="file" id="file-input" accept=".csv" style="display:none">
     <div id="photo-zone" onclick="document.getElementById('photo-input').click()">
-      <div class="drop-icon" style="font-size:22px">🖼</div>
-      <span id="photo-zone-text">FOTO O VIDEO DE FONDO · OPCIONAL</span>
+      <div class="drop-icon">🖼</div>
+      <div class="drop-text" id="photo-zone-text">FOTO O VIDEO DE FONDO</div>
+      <div class="drop-sub">Arrastra o haz clic para seleccionar</div>
     </div>
     <input type="file" id="photo-input" accept="image/*,video/*" style="display:none">
 
