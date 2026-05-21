@@ -4678,11 +4678,11 @@ function applyRecapTextColor(color) {
     #screen svg stop:last-child  { stop-color: ${color} !important; stop-opacity: 0   !important; }
   `;
 }
-applyRecapTextColor('#ffffff');
-updateStylePreview();
-
 // ── Font picker ──
 let _recapFont = '';
+
+applyRecapTextColor('#ffffff');
+updateStylePreview();
 
 function applyRecapFont(fontFamily) {
   _recapFont = fontFamily;
