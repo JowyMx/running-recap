@@ -12,6 +12,9 @@
 <meta name="apple-mobile-web-app-title" content="Recap Running">
 <link rel="apple-touch-icon" href="icon.svg">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Bebas+Neue&family=Oswald:wght@600&family=Space+Grotesk:wght@700&family=Barlow+Condensed:wght@700&family=Racing+Sans+One&family=DM+Mono:wght@500&display=swap" rel="stylesheet">
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body {
@@ -49,7 +52,7 @@ body {
   border: 1px dashed rgba(255,255,255,0.18);
   border-radius: 8px;
   padding: 0 24px;
-  height: 76px;
+  height: 38px;
   cursor: pointer;
   display: flex;
   flex-direction: column;
@@ -62,15 +65,15 @@ body {
   border-color: rgba(255,255,255,0.55);
   background: rgba(255,255,255,0.03);
 }
-.drop-icon { font-size: 18px; color: rgba(255,255,255,0.22); margin-bottom: 3px; }
+.drop-icon { display: none; }
 .drop-text {
-  font-size: clamp(13px, 2.5vw, 16px);
+  font-size: clamp(11px, 2vw, 13px);
   font-weight: 700;
   letter-spacing: 0.08em;
   color: rgba(255,255,255,0.45);
-  margin-bottom: 6px;
+  margin-bottom: 2px;
 }
-.drop-sub { font-size: 11px; color: rgba(255,255,255,0.18); letter-spacing: 0.12em; }
+.drop-sub { font-size: 10px; color: rgba(255,255,255,0.18); letter-spacing: 0.1em; }
 .opt-row {
   display: flex;
   align-items: center;
@@ -101,33 +104,6 @@ body {
 }
 .opt-row input:focus { outline: none; border-color: rgba(255,255,255,0.45); }
 .error-msg { margin-top: 18px; font-size: 12px; color: rgba(255,100,100,0.95); letter-spacing: 0.08em; background: rgba(255,60,60,0.08); border: 1px solid rgba(255,80,80,0.25); border-radius: 6px; padding: 10px 14px; line-height: 1.6; }
-.upload-steps {
-  margin-bottom: 28px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  text-align: left;
-}
-.step-row {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-}
-.step-n {
-  font-size: 11px;
-  font-weight: 900;
-  color: rgba(255,255,255,0.5);
-  letter-spacing: 0.1em;
-  min-width: 16px;
-  padding-top: 1px;
-}
-.step-txt {
-  font-size: 11px;
-  color: rgba(255,255,255,0.32);
-  letter-spacing: 0.06em;
-  line-height: 1.7;
-}
-.step-txt strong { color: rgba(255,255,255,0.60); }
 #gps-zone-text.loaded { color: rgba(127,255,212,0.7); font-size: 13px; }
 .drop-text.loaded { color: rgba(127,255,212,0.7); }
 .drop-sub.loaded  { color: rgba(127,255,212,0.45); }
@@ -137,7 +113,7 @@ body {
   border: 1px dashed rgba(255,255,255,0.18);
   border-radius: 8px;
   padding: 0 24px;
-  height: 76px;
+  height: 38px;
   cursor: pointer;
   display: flex;
   flex-direction: column;
@@ -157,7 +133,7 @@ body {
   border: 1px dashed rgba(255,255,255,0.18);
   border-radius: 8px;
   padding: 0 24px;
-  height: 76px;
+  height: 38px;
   cursor: pointer;
   display: flex;
   flex-direction: column;
@@ -172,6 +148,67 @@ body {
   background: rgba(255,255,255,0.02);
 }
 #photo-zone-text.loaded { color: rgba(127,255,212,0.7); }
+
+/* Font selector */
+#font-zone {
+  width: 100%;
+  margin-bottom: 8px;
+}
+.font-zone-label {
+  font-size: 10px; letter-spacing: 0.25em; color: rgba(255,255,255,0.25);
+  text-transform: uppercase; margin-bottom: 8px;
+  display: flex; align-items: center; gap: 6px;
+}
+#font-chips {
+  display: flex; flex-wrap: wrap; gap: 6px;
+}
+.font-chip {
+  border: 1.5px solid rgba(255,255,255,0.12);
+  border-radius: 20px;
+  padding: 5px 13px;
+  background: transparent;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 700;
+  color: rgba(255,255,255,0.45);
+  letter-spacing: 0.02em;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+  white-space: nowrap;
+}
+.font-chip:hover { border-color: rgba(255,255,255,0.35); color: rgba(255,255,255,0.75); }
+.font-chip.active { border-color: rgba(255,255,255,0.8); color: #fff; background: rgba(255,255,255,0.06); }
+
+/* Style preview */
+#style-preview {
+  width: 100%;
+  margin-top: 10px;
+  margin-bottom: 2px;
+}
+.preview-label {
+  font-size: 9px; letter-spacing: 0.3em; color: rgba(255,255,255,0.2);
+  text-transform: uppercase; margin-bottom: 7px;
+}
+#preview-card {
+  border: 1.5px solid rgba(255,255,255,0.1);
+  border-radius: 10px;
+  padding: 12px 16px;
+  background: rgba(255,255,255,0.02);
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  transition: background 0.3s;
+}
+.preview-metric { display: flex; flex-direction: column; gap: 3px; }
+.preview-metric-lbl {
+  font-size: 9px; letter-spacing: 0.2em;
+  text-transform: uppercase; opacity: 0.4;
+  font-family: inherit;
+}
+.preview-metric-val {
+  font-size: 22px; font-weight: 900;
+  line-height: 1; letter-spacing: -0.02em;
+  font-family: inherit;
+}
 
 /* Text color picker */
 #text-color-zone {
@@ -1307,13 +1344,6 @@ body {
 <div id="upload-view">
   <div class="upload-card">
     <div class="upload-title">Recap Running</div>
-    <div class="upload-steps">
-      <div class="step-row"><span class="step-n">1</span><span class="step-txt">Escribe el nombre de tu sesión <strong>(opcional)</strong></span></div>
-      <div class="step-row"><span class="step-n">2</span><span class="step-txt">Sube un <strong>GPX / TCX / KML</strong> para ruta y métricas básicas, un <strong>CSV</strong> de Garmin para métricas avanzadas, o <strong>ambos</strong></span></div>
-      <div class="step-row"><span class="step-n">3</span><span class="step-txt">Personaliza el fondo con un <strong>tema</strong> o tu propia <strong>foto / video</strong></span></div>
-      <div class="step-row"><span class="step-n">4</span><span class="step-txt">Ajusta la <strong>posición</strong> y el <strong>color del texto</strong> a tu gusto</span></div>
-      <div class="step-row"><span class="step-n">5</span><span class="step-txt">Pulsa <strong>Seleccionar métricas</strong> para elegir qué aparece en el recap</span></div>
-    </div>
     <div class="opt-row" style="margin-bottom:14px;">
       <label>Nombre de la sesión</label>
       <input type="text" id="session-name" placeholder="Auto">
@@ -1336,6 +1366,21 @@ body {
       <div class="drop-sub">Arrastra o haz clic para seleccionar</div>
     </div>
     <input type="file" id="photo-input" accept="image/*,video/*" style="display:none">
+
+    <!-- Fuentes -->
+    <div id="font-zone">
+      <div class="font-zone-label">Font</div>
+      <div id="font-chips">
+        <button class="font-chip active" data-font="" style="font-family:-apple-system,'Helvetica Neue',sans-serif">Sistema</button>
+        <button class="font-chip" data-font="Anton" style="font-family:'Anton',sans-serif">Anton</button>
+        <button class="font-chip" data-font="Bebas Neue" style="font-family:'Bebas Neue',sans-serif">Bebas</button>
+        <button class="font-chip" data-font="Oswald" style="font-family:'Oswald',sans-serif">Oswald</button>
+        <button class="font-chip" data-font="Space Grotesk" style="font-family:'Space Grotesk',sans-serif">Space</button>
+        <button class="font-chip" data-font="Barlow Condensed" style="font-family:'Barlow Condensed',sans-serif">Barlow</button>
+        <button class="font-chip" data-font="Racing Sans One" style="font-family:'Racing Sans One',sans-serif">Racing</button>
+        <button class="font-chip" data-font="DM Mono" style="font-family:'DM Mono',monospace">Mono</button>
+      </div>
+    </div>
 
     <!-- Temas -->
     <div id="theme-zone">
@@ -1402,6 +1447,25 @@ body {
           <span style="font-size:10px;line-height:1;">+</span>
           <input type="color" id="custom-color-input" value="#ffffff" style="opacity:0;position:absolute;width:0;height:0;">
         </label>
+      </div>
+    </div>
+
+    <!-- Preview de estilo -->
+    <div id="style-preview">
+      <div class="preview-label">Preview</div>
+      <div id="preview-card">
+        <div class="preview-metric">
+          <span class="preview-metric-lbl">Distance</span>
+          <span class="preview-metric-val" id="pv-dist">00.00<span style="font-size:13px;font-weight:400">Km</span></span>
+        </div>
+        <div class="preview-metric">
+          <span class="preview-metric-lbl">Pace</span>
+          <span class="preview-metric-val" id="pv-pace">0'00"</span>
+        </div>
+        <div class="preview-metric">
+          <span class="preview-metric-lbl">Time</span>
+          <span class="preview-metric-val" id="pv-time">0:00:00</span>
+        </div>
       </div>
     </div>
 
@@ -2658,6 +2722,9 @@ function newSession() {
   document.getElementById('photo-zone-text').classList.remove('loaded');
   document.getElementById('photo-input').value = '';
   applyRecapTextColor('#ffffff');
+  applyRecapFont('');
+  document.querySelectorAll('.font-chip').forEach(b => b.classList.remove('active'));
+  document.querySelector('.font-chip[data-font=""]').classList.add('active');
   document.querySelectorAll('.color-swatch').forEach(b => b.classList.remove('active'));
   document.querySelector('.color-swatch[data-color="#ffffff"]').classList.add('active');
   document.getElementById('custom-color-input').value = '#ffffff';
@@ -2713,6 +2780,7 @@ const ICON_CHART = `<svg width="13" height="13" viewBox="0 0 13 13" fill="none" 
 
 function showMetricsSelector(stats) {
   _pendingStats = stats;
+  updateStylePreview();
 
   // Cargar preferencias guardadas
   let savedSel, savedBars, savedCharts;
@@ -4456,9 +4524,11 @@ function applyTheme(id) {
 
   if (id === 'none') {
     _themeBg = null;
+    updateStylePreview();
     // No toca el color de texto ni la foto
   } else {
     _themeBg = t.bg;
+    updateStylePreview();
     // Aplicar color de texto y sincronizar swatch
     if (t.text) {
       applyRecapTextColor(t.text);
@@ -4593,6 +4663,7 @@ let _recapTextColor = '#ffffff';
 
 function applyRecapTextColor(color) {
   _recapTextColor = color;
+  updateStylePreview();
   let s = document.getElementById('rt-override');
   if (!s) { s = document.createElement('style'); s.id = 'rt-override'; document.head.appendChild(s); }
   s.textContent = `
@@ -4608,6 +4679,64 @@ function applyRecapTextColor(color) {
   `;
 }
 applyRecapTextColor('#ffffff');
+updateStylePreview();
+
+// ── Font picker ──
+let _recapFont = '';
+
+function applyRecapFont(fontFamily) {
+  _recapFont = fontFamily;
+  let s = document.getElementById('rf-override');
+  if (!s) { s = document.createElement('style'); s.id = 'rf-override'; document.head.appendChild(s); }
+  s.textContent = fontFamily
+    ? `#screen, #screen * { font-family: '${fontFamily}', sans-serif !important; }`
+    : '';
+  updateStylePreview();
+}
+
+function updateStylePreview() {
+  const card = document.getElementById('preview-card');
+  if (!card) return;
+
+  const color = _recapTextColor || '#ffffff';
+  const font  = _recapFont
+    ? `'${_recapFont}', sans-serif`
+    : "-apple-system, 'Helvetica Neue', sans-serif";
+  const bg    = (_themeBg && _themeBg !== '') ? _themeBg : '#111111';
+
+  // Inyectar CSS con !important — mismo patrón que applyRecapTextColor
+  let s = document.getElementById('pv-override');
+  if (!s) { s = document.createElement('style'); s.id = 'pv-override'; document.head.appendChild(s); }
+  s.textContent = `
+    #preview-card { background: ${bg} !important; border-color: rgba(255,255,255,0.12) !important; }
+    #preview-card, #preview-card * { color: ${color} !important; font-family: ${font} !important; }
+    #preview-card .preview-metric-val { font-weight: 900 !important; }
+    #preview-card .preview-metric-lbl { opacity: 0.4 !important; }
+  `;
+
+  // Actualizar valores: reales si hay stats, placeholders si no
+  const s2    = _pendingStats || _csvStats;
+  const distEl = document.getElementById('pv-dist');
+  const paceEl = document.getElementById('pv-pace');
+  const timeEl = document.getElementById('pv-time');
+  if (s2) {
+    if (distEl) distEl.innerHTML = `${s2.dist.toFixed(2)}<span style="font-size:13px;font-weight:400">Km</span>`;
+    if (paceEl) paceEl.textContent = `${secToMMSS(s2.avgPaceSec)}"`;
+    if (timeEl) timeEl.textContent = s2.time;
+  } else {
+    if (distEl) distEl.innerHTML = `00.00<span style="font-size:13px;font-weight:400">Km</span>`;
+    if (paceEl) paceEl.textContent = `0'00"`;
+    if (timeEl) timeEl.textContent = `0:00:00`;
+  }
+}
+
+document.querySelectorAll('.font-chip').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.font-chip').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    applyRecapFont(btn.dataset.font);
+  });
+});
 
 document.querySelectorAll('.color-swatch[data-color]').forEach(btn => {
   btn.addEventListener('click', () => {
