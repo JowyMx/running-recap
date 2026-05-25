@@ -210,6 +210,19 @@ body {
   font-family: inherit;
 }
 
+/* Template selector */
+#template-zone { width: 100%; margin-top: 18px; }
+.template-zone-label { font-size: 10px; letter-spacing: 0.25em; color: rgba(255,255,255,0.25); text-transform: uppercase; margin-bottom: 10px; }
+#template-cards { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 2px; scrollbar-width: none; }
+#template-cards::-webkit-scrollbar { display: none; }
+.tpl-card { background: transparent; border: 1.5px solid rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; cursor: pointer; padding: 0; flex-shrink: 0; transition: border-color 0.2s, transform 0.15s; width: 110px; text-align: left; }
+.tpl-card:hover { transform: scale(1.04); border-color: rgba(255,255,255,0.3); }
+.tpl-card.active { border-color: rgba(255,255,255,0.8); }
+.tpl-thumb { width: 110px; height: 78px; overflow: hidden; position: relative; }
+.tpl-thumb-inner { transform: scale(0.38); transform-origin: top left; width: 290px; position: absolute; top: 0; left: 0; pointer-events: none; font-family: -apple-system, 'Helvetica Neue', sans-serif; }
+.tpl-name { font-size: 8px; letter-spacing: 0.15em; color: rgba(255,255,255,0.3); text-transform: uppercase; text-align: center; padding: 5px 4px 6px; background: #0d0d0d; border-top: 1px solid rgba(255,255,255,0.06); }
+.tpl-card.active .tpl-name { color: rgba(255,255,255,0.75); }
+
 /* Text color picker */
 #text-color-zone {
   display: flex;
@@ -1466,6 +1479,132 @@ body {
           <span class="preview-metric-lbl">Time</span>
           <span class="preview-metric-val" id="pv-time">0:00:00</span>
         </div>
+      </div>
+    </div>
+
+    <!-- Plantillas -->
+    <div id="template-zone">
+      <div class="template-zone-label">Plantilla</div>
+      <div id="template-cards">
+
+        <!-- T1: Minimalista -->
+        <button class="tpl-card active" data-tpl="minimalista">
+          <div class="tpl-thumb">
+            <div class="tpl-thumb-inner">
+              <div style="background:#0a0a0a;padding:20px 18px 16px;">
+                <div style="font-size:9px;letter-spacing:0.3em;color:rgba(255,255,255,0.25);text-transform:uppercase;text-align:center;margin-bottom:3px">Rodaje suave</div>
+                <div style="font-size:7px;color:rgba(255,255,255,0.12);text-align:center;margin-bottom:14px">19 Mayo 2026</div>
+                <div style="height:1px;background:rgba(255,255,255,0.07);margin-bottom:14px"></div>
+                <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px 6px">
+                  <div style="text-align:center"><div style="font-size:7px;color:rgba(255,255,255,0.2);text-transform:uppercase;margin-bottom:4px">Dist.</div><div style="font-size:20px;font-weight:300;color:rgba(255,255,255,0.85);letter-spacing:-0.02em;line-height:1">6.78</div><div style="font-size:6px;color:rgba(255,255,255,0.2);margin-top:2px">km</div></div>
+                  <div style="text-align:center"><div style="font-size:7px;color:rgba(255,255,255,0.2);text-transform:uppercase;margin-bottom:4px">Tiempo</div><div style="font-size:20px;font-weight:300;color:rgba(255,255,255,0.85);letter-spacing:-0.02em;line-height:1">39:10</div><div style="font-size:6px;color:rgba(255,255,255,0.2);margin-top:2px">h:m:s</div></div>
+                  <div style="text-align:center"><div style="font-size:7px;color:rgba(255,255,255,0.2);text-transform:uppercase;margin-bottom:4px">Ritmo</div><div style="font-size:20px;font-weight:300;color:rgba(255,255,255,0.85);letter-spacing:-0.02em;line-height:1">5:46</div><div style="font-size:6px;color:rgba(255,255,255,0.2);margin-top:2px">/km</div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="tpl-name">Minimalista</div>
+        </button>
+
+        <!-- T2: Bold -->
+        <button class="tpl-card" data-tpl="bold">
+          <div class="tpl-thumb">
+            <div class="tpl-thumb-inner">
+              <div style="background:#0a0a0a;">
+                <div style="background:linear-gradient(160deg,#1a1a1a,#0a0a0a);padding:22px 20px 16px;border-bottom:1px solid rgba(255,255,255,0.05)">
+                  <div style="font-size:8px;letter-spacing:0.25em;color:rgba(255,255,255,0.3);text-transform:uppercase;border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:2px 8px;display:inline-block;margin-bottom:12px">Carrera · 19 Mayo</div>
+                  <div style="width:28px;height:3px;background:#00ff88;border-radius:2px;margin-bottom:10px"></div>
+                  <div style="font-size:56px;font-weight:900;color:#fff;letter-spacing:-0.04em;line-height:1">5:46</div>
+                  <div style="font-size:12px;color:rgba(255,255,255,0.35);letter-spacing:0.08em;margin-top:4px">min / km</div>
+                  <div style="display:flex;gap:18px;margin-top:14px">
+                    <div><div style="font-size:20px;font-weight:700;color:rgba(255,255,255,0.9);letter-spacing:-0.02em">6.78</div><div style="font-size:8px;color:rgba(255,255,255,0.25)">km</div></div>
+                    <div><div style="font-size:20px;font-weight:700;color:rgba(255,255,255,0.9);letter-spacing:-0.02em">39:10</div><div style="font-size:8px;color:rgba(255,255,255,0.25)">tiempo</div></div>
+                    <div><div style="font-size:20px;font-weight:700;color:rgba(255,255,255,0.9);letter-spacing:-0.02em">148</div><div style="font-size:8px;color:rgba(255,255,255,0.25)">ppm</div></div>
+                  </div>
+                </div>
+                <div style="padding:14px 20px 18px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
+                  <div><div style="font-size:7px;color:rgba(255,255,255,0.18);text-transform:uppercase;margin-bottom:2px">Cadencia</div><div style="font-size:14px;font-weight:800;color:rgba(255,255,255,0.75)">172</div><div style="font-size:7px;color:rgba(255,255,255,0.2)">spm</div></div>
+                  <div><div style="font-size:7px;color:rgba(255,255,255,0.18);text-transform:uppercase;margin-bottom:2px">Zancada</div><div style="font-size:14px;font-weight:800;color:rgba(255,255,255,0.75)">1.20</div><div style="font-size:7px;color:rgba(255,255,255,0.2)">m</div></div>
+                  <div><div style="font-size:7px;color:rgba(255,255,255,0.18);text-transform:uppercase;margin-bottom:2px">Desnivel</div><div style="font-size:14px;font-weight:800;color:rgba(255,255,255,0.75)">+84</div><div style="font-size:7px;color:rgba(255,255,255,0.2)">m</div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="tpl-name">Bold</div>
+        </button>
+
+        <!-- T3: Mapa -->
+        <button class="tpl-card" data-tpl="mapa">
+          <div class="tpl-thumb">
+            <div class="tpl-thumb-inner">
+              <div style="background:#0d0d0d;">
+                <div style="height:120px;background:linear-gradient(135deg,#0d1a0d,#0a1408);position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden">
+                  <svg width="220" height="110" viewBox="0 0 260 130" fill="none" style="opacity:0.6">
+                    <polyline points="20,100 45,80 60,85 80,60 100,55 115,65 130,40 150,45 170,30 190,50 210,35 240,55" stroke="rgba(255,255,255,0.7)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <circle cx="20" cy="100" r="4" fill="rgba(255,255,255,0.5)"/>
+                    <rect x="236" y="51" width="8" height="8" rx="1" fill="rgba(255,255,255,0.5)"/>
+                  </svg>
+                  <div style="position:absolute;inset:0;background:linear-gradient(to bottom,transparent 50%,#0d0d0d 100%)"></div>
+                  <div style="position:absolute;top:10px;left:10px;font-size:8px;letter-spacing:0.18em;color:rgba(255,255,255,0.4);text-transform:uppercase;background:rgba(0,0,0,0.5);border-radius:4px;padding:2px 6px">Ruta GPS</div>
+                </div>
+                <div style="padding:14px 18px 18px">
+                  <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:12px">
+                    <div style="font-size:8px;letter-spacing:0.18em;color:rgba(255,255,255,0.2);text-transform:uppercase">Rodaje · 19 Mayo</div>
+                    <div style="text-align:right"><div style="font-size:32px;font-weight:900;color:#fff;letter-spacing:-0.03em;line-height:1">6.78</div><div style="font-size:9px;color:rgba(255,255,255,0.3)">km</div></div>
+                  </div>
+                  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px">
+                    <div style="text-align:center"><div style="font-size:6px;color:rgba(255,255,255,0.2);text-transform:uppercase;margin-bottom:2px">Ritmo</div><div style="font-size:12px;font-weight:700;color:rgba(255,255,255,0.75)">5:46</div></div>
+                    <div style="text-align:center"><div style="font-size:6px;color:rgba(255,255,255,0.2);text-transform:uppercase;margin-bottom:2px">Tiempo</div><div style="font-size:12px;font-weight:700;color:rgba(255,255,255,0.75)">39:10</div></div>
+                    <div style="text-align:center"><div style="font-size:6px;color:rgba(255,255,255,0.2);text-transform:uppercase;margin-bottom:2px">FC</div><div style="font-size:12px;font-weight:700;color:rgba(255,255,255,0.75)">148</div></div>
+                    <div style="text-align:center"><div style="font-size:6px;color:rgba(255,255,255,0.2);text-transform:uppercase;margin-bottom:2px">Cad.</div><div style="font-size:12px;font-weight:700;color:rgba(255,255,255,0.75)">172</div></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="tpl-name">Mapa</div>
+        </button>
+
+        <!-- T4: Split -->
+        <button class="tpl-card" data-tpl="split">
+          <div class="tpl-thumb">
+            <div class="tpl-thumb-inner">
+              <div style="background:#0a0a0a;">
+                <div style="padding:18px 18px 14px;display:flex;align-items:center;gap:14px;border-bottom:1px solid rgba(255,255,255,0.05)">
+                  <div style="width:3px;height:46px;background:linear-gradient(to bottom,rgba(255,255,255,0.6),rgba(255,255,255,0.05));border-radius:2px;flex-shrink:0"></div>
+                  <div style="flex:1">
+                    <div style="font-size:8px;letter-spacing:0.2em;color:rgba(255,255,255,0.2);text-transform:uppercase;margin-bottom:4px">Rodaje suave</div>
+                    <div style="font-size:10px;font-weight:600;color:rgba(255,255,255,0.55)">Martes 19 Mayo</div>
+                  </div>
+                  <div style="text-align:right">
+                    <div style="font-size:30px;font-weight:900;color:#fff;letter-spacing:-0.03em;line-height:1">5:46</div>
+                    <div style="font-size:8px;color:rgba(255,255,255,0.25)">min/km</div>
+                  </div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr">
+                  <div style="padding:14px 18px;border-right:1px solid rgba(255,255,255,0.05)">
+                    <div style="font-size:7px;color:rgba(255,255,255,0.18);text-transform:uppercase;margin-bottom:2px">Distancia</div>
+                    <div style="font-size:24px;font-weight:800;color:rgba(255,255,255,0.85);letter-spacing:-0.02em">6.78</div>
+                    <div style="font-size:8px;color:rgba(255,255,255,0.22)">km</div>
+                  </div>
+                  <div style="padding:14px 18px">
+                    <div style="font-size:7px;color:rgba(255,255,255,0.18);text-transform:uppercase;margin-bottom:2px">Tiempo</div>
+                    <div style="font-size:24px;font-weight:800;color:rgba(255,255,255,0.85);letter-spacing:-0.02em">39:10</div>
+                    <div style="font-size:8px;color:rgba(255,255,255,0.22)">h:m:s</div>
+                  </div>
+                </div>
+                <div style="display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid rgba(255,255,255,0.05)">
+                  <div style="padding:10px 8px;text-align:center;border-right:1px solid rgba(255,255,255,0.04)"><div style="font-size:6px;color:rgba(255,255,255,0.15);text-transform:uppercase;margin-bottom:3px">FC</div><div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.6)">148</div></div>
+                  <div style="padding:10px 8px;text-align:center;border-right:1px solid rgba(255,255,255,0.04)"><div style="font-size:6px;color:rgba(255,255,255,0.15);text-transform:uppercase;margin-bottom:3px">Cad.</div><div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.6)">172</div></div>
+                  <div style="padding:10px 8px;text-align:center;border-right:1px solid rgba(255,255,255,0.04)"><div style="font-size:6px;color:rgba(255,255,255,0.15);text-transform:uppercase;margin-bottom:3px">Pot.</div><div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.6)">234W</div></div>
+                  <div style="padding:10px 8px;text-align:center"><div style="font-size:6px;color:rgba(255,255,255,0.15);text-transform:uppercase;margin-bottom:3px">Desn.</div><div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.6)">+84m</div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="tpl-name">Split</div>
+        </button>
+
       </div>
     </div>
 
@@ -4737,6 +4876,21 @@ document.querySelectorAll('.font-chip').forEach(btn => {
     applyRecapFont(btn.dataset.font);
   });
 });
+
+// ── Template picker ──
+let _recapTemplate = localStorage.getItem('recapTemplate') || 'minimalista';
+(function initTemplatePicker() {
+  document.querySelectorAll('.tpl-card').forEach(btn => {
+    if (btn.dataset.tpl === _recapTemplate) btn.classList.add('active');
+    else btn.classList.remove('active');
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tpl-card').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      _recapTemplate = btn.dataset.tpl;
+      localStorage.setItem('recapTemplate', _recapTemplate);
+    });
+  });
+})();
 
 document.querySelectorAll('.color-swatch[data-color]').forEach(btn => {
   btn.addEventListener('click', () => {
