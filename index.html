@@ -1366,27 +1366,8 @@ body {
       <div class="template-zone-label">Plantilla</div>
       <div id="template-cards">
 
-        <!-- T1: Minimalista -->
-        <button class="tpl-card active" data-tpl="minimalista">
-          <div class="tpl-thumb">
-            <div class="tpl-thumb-inner">
-              <div style="background:#0a0a0a;padding:20px 18px 16px;">
-                <div style="font-size:9px;letter-spacing:0.3em;color:rgba(255,255,255,0.25);text-transform:uppercase;text-align:center;margin-bottom:3px">Rodaje suave</div>
-                <div style="font-size:7px;color:rgba(255,255,255,0.12);text-align:center;margin-bottom:14px">19 Mayo 2026</div>
-                <div style="height:1px;background:rgba(255,255,255,0.07);margin-bottom:14px"></div>
-                <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px 6px">
-                  <div style="text-align:center"><div style="font-size:7px;color:rgba(255,255,255,0.2);text-transform:uppercase;margin-bottom:4px">Dist.</div><div style="font-size:20px;font-weight:300;color:rgba(255,255,255,0.85);letter-spacing:-0.02em;line-height:1">6.78</div><div style="font-size:6px;color:rgba(255,255,255,0.2);margin-top:2px">km</div></div>
-                  <div style="text-align:center"><div style="font-size:7px;color:rgba(255,255,255,0.2);text-transform:uppercase;margin-bottom:4px">Tiempo</div><div style="font-size:20px;font-weight:300;color:rgba(255,255,255,0.85);letter-spacing:-0.02em;line-height:1">39:10</div><div style="font-size:6px;color:rgba(255,255,255,0.2);margin-top:2px">h:m:s</div></div>
-                  <div style="text-align:center"><div style="font-size:7px;color:rgba(255,255,255,0.2);text-transform:uppercase;margin-bottom:4px">Ritmo</div><div style="font-size:20px;font-weight:300;color:rgba(255,255,255,0.85);letter-spacing:-0.02em;line-height:1">5:46</div><div style="font-size:6px;color:rgba(255,255,255,0.2);margin-top:2px">/km</div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="tpl-name">Minimalista</div>
-        </button>
-
         <!-- T2: Bold -->
-        <button class="tpl-card" data-tpl="bold">
+        <button class="tpl-card active" data-tpl="bold">
           <div class="tpl-thumb">
             <div class="tpl-thumb-inner">
               <div style="background:#0a0a0a;">
@@ -4712,7 +4693,7 @@ document.querySelectorAll('.font-chip').forEach(btn => {
 });
 
 // ── Template picker ──
-let _recapTemplate = localStorage.getItem('recapTemplate') || 'minimalista';
+let _recapTemplate = localStorage.getItem('recapTemplate') || 'bold';
 (function initTemplatePicker() {
   document.querySelectorAll('.tpl-card').forEach(btn => {
     if (btn.dataset.tpl === _recapTemplate) btn.classList.add('active');
