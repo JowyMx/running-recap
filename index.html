@@ -178,37 +178,7 @@ body {
 .font-chip:hover { border-color: rgba(255,255,255,0.35); color: rgba(255,255,255,0.75); }
 .font-chip.active { border-color: rgba(255,255,255,0.8); color: #fff; background: rgba(255,255,255,0.06); }
 
-/* Style preview */
-#style-preview {
-  width: 100%;
-  margin-top: 10px;
-  margin-bottom: 2px;
-}
-.preview-label {
-  font-size: 9px; letter-spacing: 0.3em; color: rgba(255,255,255,0.2);
-  text-transform: uppercase; margin-bottom: 7px;
-}
-#preview-card {
-  border: 1.5px solid rgba(255,255,255,0.1);
-  border-radius: 10px;
-  padding: 12px 16px;
-  background: rgba(255,255,255,0.02);
-  display: flex;
-  gap: 20px;
-  align-items: center;
-  transition: background 0.3s;
-}
-.preview-metric { display: flex; flex-direction: column; gap: 3px; }
-.preview-metric-lbl {
-  font-size: 9px; letter-spacing: 0.2em;
-  text-transform: uppercase; opacity: 0.4;
-  font-family: inherit;
-}
-.preview-metric-val {
-  font-size: 22px; font-weight: 900;
-  line-height: 1; letter-spacing: -0.02em;
-  font-family: inherit;
-}
+
 
 /* Template selector */
 #template-zone { width: 100%; margin-top: 18px; }
@@ -1388,25 +1358,6 @@ body {
           <span style="font-size:10px;line-height:1;">+</span>
           <input type="color" id="custom-color-input" value="#ffffff" style="opacity:0;position:absolute;width:0;height:0;">
         </label>
-      </div>
-    </div>
-
-    <!-- Preview de estilo -->
-    <div id="style-preview">
-      <div class="preview-label">Preview</div>
-      <div id="preview-card">
-        <div class="preview-metric">
-          <span class="preview-metric-lbl">Distance</span>
-          <span class="preview-metric-val" id="pv-dist">00.00<span style="font-size:13px;font-weight:400">Km</span></span>
-        </div>
-        <div class="preview-metric">
-          <span class="preview-metric-lbl">Pace</span>
-          <span class="preview-metric-val" id="pv-pace">0'00"</span>
-        </div>
-        <div class="preview-metric">
-          <span class="preview-metric-lbl">Time</span>
-          <span class="preview-metric-val" id="pv-time">0:00:00</span>
-        </div>
       </div>
     </div>
 
@@ -2847,7 +2798,7 @@ const ICON_CHART = `<svg width="13" height="13" viewBox="0 0 13 13" fill="none" 
 
 function showMetricsSelector(stats) {
   _pendingStats = stats;
-  updateStylePreview();
+
 
   // Cargar preferencias guardadas
   let savedSel, savedBars, savedCharts;
@@ -4583,11 +4534,11 @@ function applyTheme(id) {
 
   if (id === 'none') {
     _themeBg = null;
-    updateStylePreview();
+  
     // No toca el color de texto ni la foto
   } else {
     _themeBg = t.bg;
-    updateStylePreview();
+  
     // Aplicar color de texto y sincronizar swatch
     if (t.text) {
       applyRecapTextColor(t.text);
@@ -4722,7 +4673,7 @@ let _recapTextColor = '#ffffff';
 
 function applyRecapTextColor(color) {
   _recapTextColor = color;
-  updateStylePreview();
+
   let s = document.getElementById('rt-override');
   if (!s) { s = document.createElement('style'); s.id = 'rt-override'; document.head.appendChild(s); }
   s.textContent = `
@@ -4750,43 +4701,6 @@ function applyRecapFont(fontFamily) {
   s.textContent = fontFamily
     ? `#screen, #screen * { font-family: '${fontFamily}', sans-serif !important; }`
     : '';
-  updateStylePreview();
-}
-
-function updateStylePreview() {
-  const card = document.getElementById('preview-card');
-  if (!card) return;
-
-  const color = _recapTextColor || '#ffffff';
-  const font  = _recapFont
-    ? `'${_recapFont}', sans-serif`
-    : "-apple-system, 'Helvetica Neue', sans-serif";
-  const bg    = (_themeBg && _themeBg !== '') ? _themeBg : '#111111';
-
-  // Inyectar CSS con !important — mismo patrón que applyRecapTextColor
-  let s = document.getElementById('pv-override');
-  if (!s) { s = document.createElement('style'); s.id = 'pv-override'; document.head.appendChild(s); }
-  s.textContent = `
-    #preview-card { background: ${bg} !important; border-color: rgba(255,255,255,0.12) !important; }
-    #preview-card, #preview-card * { color: ${color} !important; font-family: ${font} !important; }
-    #preview-card .preview-metric-val { font-weight: 900 !important; }
-    #preview-card .preview-metric-lbl { opacity: 0.4 !important; }
-  `;
-
-  // Actualizar valores: reales si hay stats, placeholders si no
-  const s2    = _pendingStats || _csvStats;
-  const distEl = document.getElementById('pv-dist');
-  const paceEl = document.getElementById('pv-pace');
-  const timeEl = document.getElementById('pv-time');
-  if (s2) {
-    if (distEl) distEl.innerHTML = `${s2.dist.toFixed(2)}<span style="font-size:13px;font-weight:400">Km</span>`;
-    if (paceEl) paceEl.textContent = `${secToMMSS(s2.avgPaceSec)}"`;
-    if (timeEl) timeEl.textContent = s2.time;
-  } else {
-    if (distEl) distEl.innerHTML = `00.00<span style="font-size:13px;font-weight:400">Km</span>`;
-    if (paceEl) paceEl.textContent = `0'00"`;
-    if (timeEl) timeEl.textContent = `0:00:00`;
-  }
 }
 
 document.querySelectorAll('.font-chip').forEach(btn => {
