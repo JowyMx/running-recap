@@ -2136,8 +2136,8 @@ function processData(data, customName) {
     ? Math.round(rowSum('Calorías'))
     : safeInt(col('Calorías', 'Calorias') || colFuzzy('calor'));
   const dist       = type === 'intervals'
-    ? safeFloat(rowSum('Distancia').toFixed(2))
-    : safeFloat(col('Distancia'));
+    ? safeFloat((rowSum('Distancia') || rowSum('Distancia km') || rowSum('Distance')).toFixed(2))
+    : safeFloat(col('Distancia', 'Distancia km', 'Distancia (km)', 'Distance', 'Distance (km)') || colFuzzy('distancia'));
   const time       = type === 'intervals'
     ? (() => { const s = rowTotalSec(); const h=Math.floor(s/3600),m=Math.floor((s%3600)/60),sec=Math.round(s%60); return h>0?`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`:`${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`; })()
     : col('Tiempo');
