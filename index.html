@@ -4409,47 +4409,56 @@ function renderTemplateCover(stats) {
   const cover = document.getElementById('tpl-cover');
   const card  = document.getElementById('tpl-cover-card');
   const s     = stats;
-  const dist  = s.dist.toFixed(2);
-  const pace  = secToMMSS(s.avgPaceSec);
-  const time  = s.time;
-  const hr    = s.avgHR  > 0 ? s.avgHR  : '—';
-  const cad   = s.avgCad > 0 ? s.avgCad : '—';
-  const elev  = s.elev   > 0 ? `+${Math.round(s.elev)}` : '—';
-  const date  = s.dateStr || '';
-  const name  = document.getElementById('session-name').value.trim() || 'Sesión';
+
+  // ── Valores finales ─────────────────────────────────────────────────────
+  // Distancia: fallback desde tiempo/ritmo si dist=0 (CSV sin campo Distancia)
+  const distRaw = (parseFloat(s.dist) > 0)
+    ? parseFloat(s.dist)
+    : (s.avgPaceSec > 0 && timeToSec(s.time) > 0 ? timeToSec(s.time) / s.avgPaceSec : 0);
+  const timeSec = timeToSec(s.time);
+  const hrRaw   = s.avgHR  > 0 ? s.avgHR  : 0;
+  const cadRaw  = s.avgCad > 0 ? s.avgCad : 0;
+  const elevRaw = (s.elevation || 0);
+  const maxHRRaw= s.maxHR  > 0 ? s.maxHR  : 0;
+  const date    = s.dateStr || '';
+  const name    = document.getElementById('session-name').value.trim() || 'Sesión';
 
   const color = _recapTextColor || '#ffffff';
   const font  = _recapFont ? `'${_recapFont}', sans-serif` : "-apple-system, 'Helvetica Neue', sans-serif";
   const bg    = (_themeBg && _themeBg !== '') ? _themeBg : '#0a0a0a';
+  const bs    = `font-family:${font};color:${color};`;
 
-  const baseStyle = `font-family:${font};color:${color};`;
+  // Helpers para marcadores animables
+  const A = (id, val, fmt) => `<span class="tc-anim" data-id="${id}" data-val="${val}" data-fmt="${fmt}">0</span>`;
+  const paceA = (id, val) => `<span class="tc-anim" data-id="${id}" data-val="${val}" data-fmt="pace">0'00"</span>`;
+  const timeA = (id, val) => `<span class="tc-anim" data-id="${id}" data-val="${val}" data-fmt="time">0:00:00</span>`;
 
   let html = '';
 
   if (_recapTemplate === 'bold') {
     html = `
-      <div style="${baseStyle}background:${bg};border-radius:16px;overflow:hidden;">
+      <div style="${bs}background:${bg};border-radius:16px;overflow:hidden;">
         <div style="background:linear-gradient(160deg,rgba(255,255,255,0.06),transparent);padding:28px 24px 20px;border-bottom:1px solid rgba(255,255,255,0.06)">
           <div style="font-size:9px;letter-spacing:0.3em;opacity:0.35;text-transform:uppercase;border:1px solid rgba(255,255,255,0.15);border-radius:20px;padding:3px 10px;display:inline-block;margin-bottom:16px">${name} · ${date}</div>
           <div style="width:32px;height:3px;background:${color};border-radius:2px;margin-bottom:12px"></div>
-          <div style="font-size:58px;font-weight:900;letter-spacing:-0.04em;line-height:1">${pace}</div>
+          <div style="font-size:58px;font-weight:900;letter-spacing:-0.04em;line-height:1">${paceA('pace', s.avgPaceSec)}</div>
           <div style="font-size:13px;opacity:0.35;letter-spacing:0.08em;margin-top:4px">min / km</div>
           <div style="display:flex;gap:22px;margin-top:18px">
-            <div><div style="font-size:22px;font-weight:700;letter-spacing:-0.02em">${dist}</div><div style="font-size:9px;opacity:0.3;letter-spacing:0.1em">km</div></div>
-            <div><div style="font-size:22px;font-weight:700;letter-spacing:-0.02em">${time}</div><div style="font-size:9px;opacity:0.3;letter-spacing:0.1em">tiempo</div></div>
-            <div><div style="font-size:22px;font-weight:700;letter-spacing:-0.02em">${hr}</div><div style="font-size:9px;opacity:0.3;letter-spacing:0.1em">ppm</div></div>
+            <div><div style="font-size:22px;font-weight:700;letter-spacing:-0.02em">${A('dist', distRaw, 'dist')}</div><div style="font-size:9px;opacity:0.3;letter-spacing:0.1em">km</div></div>
+            <div><div style="font-size:22px;font-weight:700;letter-spacing:-0.02em">${timeA('time', timeSec)}</div><div style="font-size:9px;opacity:0.3;letter-spacing:0.1em">tiempo</div></div>
+            <div><div style="font-size:22px;font-weight:700;letter-spacing:-0.02em">${hrRaw > 0 ? A('hr', hrRaw, 'int') : '—'}</div><div style="font-size:9px;opacity:0.3;letter-spacing:0.1em">ppm</div></div>
           </div>
         </div>
         <div style="padding:18px 24px 22px;display:grid;grid-template-columns:repeat(3,1fr);gap:14px">
-          <div><div style="font-size:8px;letter-spacing:0.18em;opacity:0.2;text-transform:uppercase;margin-bottom:3px">Cadencia</div><div style="font-size:15px;font-weight:800;opacity:0.8">${cad}</div><div style="font-size:8px;opacity:0.2">spm</div></div>
-          <div><div style="font-size:8px;letter-spacing:0.18em;opacity:0.2;text-transform:uppercase;margin-bottom:3px">Desnivel</div><div style="font-size:15px;font-weight:800;opacity:0.8">${elev}</div><div style="font-size:8px;opacity:0.2">m</div></div>
-          <div><div style="font-size:8px;letter-spacing:0.18em;opacity:0.2;text-transform:uppercase;margin-bottom:3px">FC máx</div><div style="font-size:15px;font-weight:800;opacity:0.8">${s.maxHR > 0 ? s.maxHR : '—'}</div><div style="font-size:8px;opacity:0.2">ppm</div></div>
+          <div><div style="font-size:8px;letter-spacing:0.18em;opacity:0.2;text-transform:uppercase;margin-bottom:3px">Cadencia</div><div style="font-size:15px;font-weight:800;opacity:0.8">${cadRaw > 0 ? A('cad', cadRaw, 'int') : '—'}</div><div style="font-size:8px;opacity:0.2">spm</div></div>
+          <div><div style="font-size:8px;letter-spacing:0.18em;opacity:0.2;text-transform:uppercase;margin-bottom:3px">Desnivel</div><div style="font-size:15px;font-weight:800;opacity:0.8">${elevRaw > 0 ? A('elev', elevRaw, 'elev') : '—'}</div><div style="font-size:8px;opacity:0.2">m</div></div>
+          <div><div style="font-size:8px;letter-spacing:0.18em;opacity:0.2;text-transform:uppercase;margin-bottom:3px">FC máx</div><div style="font-size:15px;font-weight:800;opacity:0.8">${maxHRRaw > 0 ? A('maxhr', maxHRRaw, 'int') : '—'}</div><div style="font-size:8px;opacity:0.2">ppm</div></div>
         </div>
       </div>`;
 
   } else if (_recapTemplate === 'mapa') {
     html = `
-      <div style="${baseStyle}background:${bg};border-radius:16px;overflow:hidden;">
+      <div style="${bs}background:${bg};border-radius:16px;overflow:hidden;">
         <div style="height:160px;background:linear-gradient(135deg,rgba(255,255,255,0.04),transparent);position:relative;display:flex;align-items:center;justify-content:center;">
           <canvas id="tpl-cover-canvas" style="position:absolute;inset:0;width:100%;height:100%"></canvas>
           <div style="position:absolute;inset:0;background:linear-gradient(to bottom,transparent 50%,${bg} 100%)"></div>
@@ -4458,58 +4467,64 @@ function renderTemplateCover(stats) {
         <div style="padding:16px 20px 22px">
           <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:14px">
             <div style="font-size:9px;letter-spacing:0.2em;opacity:0.25;text-transform:uppercase">${name} · ${date}</div>
-            <div style="text-align:right"><div style="font-size:36px;font-weight:900;letter-spacing:-0.03em;line-height:1">${dist}</div><div style="font-size:10px;opacity:0.3">km</div></div>
+            <div style="text-align:right">
+              <div style="font-size:36px;font-weight:900;letter-spacing:-0.03em;line-height:1">${A('dist', distRaw, 'dist')}</div>
+              <div style="font-size:10px;opacity:0.3">km</div>
+            </div>
           </div>
           <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px">
-            <div style="text-align:center"><div style="font-size:7px;letter-spacing:0.15em;opacity:0.2;text-transform:uppercase;margin-bottom:3px">Ritmo</div><div style="font-size:13px;font-weight:700;opacity:0.8">${pace}</div></div>
-            <div style="text-align:center"><div style="font-size:7px;letter-spacing:0.15em;opacity:0.2;text-transform:uppercase;margin-bottom:3px">Tiempo</div><div style="font-size:13px;font-weight:700;opacity:0.8">${time}</div></div>
-            <div style="text-align:center"><div style="font-size:7px;letter-spacing:0.15em;opacity:0.2;text-transform:uppercase;margin-bottom:3px">FC</div><div style="font-size:13px;font-weight:700;opacity:0.8">${hr}</div></div>
-            <div style="text-align:center"><div style="font-size:7px;letter-spacing:0.15em;opacity:0.2;text-transform:uppercase;margin-bottom:3px">Cad.</div><div style="font-size:13px;font-weight:700;opacity:0.8">${cad}</div></div>
+            <div style="text-align:center"><div style="font-size:7px;letter-spacing:0.15em;opacity:0.2;text-transform:uppercase;margin-bottom:3px">Ritmo</div><div style="font-size:13px;font-weight:700;opacity:0.8">${paceA('pace', s.avgPaceSec)}</div></div>
+            <div style="text-align:center"><div style="font-size:7px;letter-spacing:0.15em;opacity:0.2;text-transform:uppercase;margin-bottom:3px">Tiempo</div><div style="font-size:13px;font-weight:700;opacity:0.8">${timeA('time', timeSec)}</div></div>
+            <div style="text-align:center"><div style="font-size:7px;letter-spacing:0.15em;opacity:0.2;text-transform:uppercase;margin-bottom:3px">FC</div><div style="font-size:13px;font-weight:700;opacity:0.8">${hrRaw > 0 ? A('hr', hrRaw, 'int') : '—'}</div></div>
+            <div style="text-align:center"><div style="font-size:7px;letter-spacing:0.15em;opacity:0.2;text-transform:uppercase;margin-bottom:3px">Cad.</div><div style="font-size:13px;font-weight:700;opacity:0.8">${cadRaw > 0 ? A('cad', cadRaw, 'int') : '—'}</div></div>
           </div>
         </div>
       </div>`;
 
   } else if (_recapTemplate === 'horizontal') {
     html = `
-      <div style="${baseStyle}background:${bg};border-radius:16px;padding:32px 28px;display:flex;gap:0;justify-content:space-between;align-items:center;">
+      <div style="${bs}background:${bg};border-radius:16px;padding:32px 28px;display:flex;justify-content:space-between;align-items:center;">
         <div style="text-align:center;flex:1">
           <div style="font-size:10px;letter-spacing:0.25em;font-weight:700;text-transform:uppercase;opacity:0.5;margin-bottom:8px">Distance</div>
-          <div style="font-size:36px;font-weight:900;letter-spacing:-0.02em;line-height:1">${dist}<span style="font-size:16px;font-weight:900">Km</span></div>
+          <div style="font-size:36px;font-weight:900;letter-spacing:-0.02em;line-height:1">${A('dist', distRaw, 'dist')}<span style="font-size:16px;font-weight:900">Km</span></div>
         </div>
         <div style="width:1px;height:48px;background:rgba(255,255,255,0.1)"></div>
         <div style="text-align:center;flex:1">
           <div style="font-size:10px;letter-spacing:0.25em;font-weight:700;text-transform:uppercase;opacity:0.5;margin-bottom:8px">Pace</div>
-          <div style="font-size:36px;font-weight:900;letter-spacing:-0.02em;line-height:1">${pace}"</div>
+          <div style="font-size:36px;font-weight:900;letter-spacing:-0.02em;line-height:1">${paceA('pace', s.avgPaceSec)}</div>
         </div>
         <div style="width:1px;height:48px;background:rgba(255,255,255,0.1)"></div>
         <div style="text-align:center;flex:1">
           <div style="font-size:10px;letter-spacing:0.25em;font-weight:700;text-transform:uppercase;opacity:0.5;margin-bottom:8px">Time</div>
-          <div style="font-size:36px;font-weight:900;letter-spacing:-0.02em;line-height:1">${time}</div>
+          <div style="font-size:36px;font-weight:900;letter-spacing:-0.02em;line-height:1">${timeA('time', timeSec)}</div>
         </div>
       </div>`;
 
   } else if (_recapTemplate === 'vertical') {
     html = `
-      <div style="${baseStyle}background:${bg};border-radius:16px;padding:32px 36px;display:flex;flex-direction:column;gap:24px;">
+      <div style="${bs}background:${bg};border-radius:16px;padding:32px 36px;display:flex;flex-direction:column;gap:24px;">
         <div>
           <div style="font-size:10px;letter-spacing:0.25em;font-weight:700;text-transform:uppercase;opacity:0.5;margin-bottom:6px">Distance</div>
-          <div style="font-size:52px;font-weight:900;letter-spacing:-0.02em;line-height:1">${dist}<span style="font-size:22px;font-weight:900">Km</span></div>
+          <div style="font-size:52px;font-weight:900;letter-spacing:-0.02em;line-height:1">${A('dist', distRaw, 'dist')}<span style="font-size:22px;font-weight:900">Km</span></div>
         </div>
         <div style="height:1px;background:rgba(255,255,255,0.07)"></div>
         <div>
           <div style="font-size:10px;letter-spacing:0.25em;font-weight:700;text-transform:uppercase;opacity:0.5;margin-bottom:6px">Pace</div>
-          <div style="font-size:52px;font-weight:900;letter-spacing:-0.02em;line-height:1">${pace}"</div>
+          <div style="font-size:52px;font-weight:900;letter-spacing:-0.02em;line-height:1">${paceA('pace', s.avgPaceSec)}</div>
         </div>
         <div style="height:1px;background:rgba(255,255,255,0.07)"></div>
         <div>
           <div style="font-size:10px;letter-spacing:0.25em;font-weight:700;text-transform:uppercase;opacity:0.5;margin-bottom:6px">Time</div>
-          <div style="font-size:52px;font-weight:900;letter-spacing:-0.02em;line-height:1">${time}</div>
+          <div style="font-size:52px;font-weight:900;letter-spacing:-0.02em;line-height:1">${timeA('time', timeSec)}</div>
         </div>
       </div>`;
   }
 
   card.innerHTML = html;
   cover.style.display = 'flex';
+
+  // Animar valores de 0 al final
+  requestAnimationFrame(() => animateCoverValues(card));
 
   // Si es plantilla Mapa, dibujar la ruta en el canvas
   if (_recapTemplate === 'mapa' && _gpsPoints && _gpsPoints.length > 1) {
@@ -4518,6 +4533,46 @@ function renderTemplateCover(stats) {
       if (c) { c.width = c.offsetWidth; c.height = c.offsetHeight; drawRoute(c, _gpsPoints); }
     });
   }
+}
+
+function animateCoverValues(container) {
+  const DUR  = 1400;
+  const ease = t => t < 0.5 ? 2*t*t : -1+(4-2*t)*t;
+
+  const fmtDist = v => v.toFixed(2);
+  const fmtInt  = v => Math.round(v).toString();
+  const fmtElev = v => `+${Math.round(v)}`;
+  const fmtPace = v => {
+    const s = Math.round(v);
+    return `${Math.floor(s/60)}'${String(s%60).padStart(2,'0')}"`;
+  };
+  const fmtTime = v => {
+    const s = Math.round(v);
+    const h = Math.floor(s/3600), m = Math.floor((s%3600)/60), sec = s%60;
+    return h > 0
+      ? `${h}:${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`
+      : `${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;
+  };
+
+  container.querySelectorAll('.tc-anim').forEach((el, i) => {
+    const target = parseFloat(el.dataset.val) || 0;
+    const fmt    = el.dataset.fmt;
+    const delay  = i * 80;
+    const start  = performance.now() + delay;
+
+    function tick(now) {
+      if (now < start) { requestAnimationFrame(tick); return; }
+      const t = Math.min((now - start) / DUR, 1);
+      const v = target * ease(t);
+      if      (fmt === 'dist') el.textContent = fmtDist(v);
+      else if (fmt === 'int')  el.textContent = fmtInt(v);
+      else if (fmt === 'elev') el.textContent = fmtElev(v);
+      else if (fmt === 'pace') el.textContent = fmtPace(v);
+      else if (fmt === 'time') el.textContent = fmtTime(v);
+      if (t < 1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  });
 }
 
 function hideTplCover() {
