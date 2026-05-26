@@ -3802,6 +3802,21 @@ function animateVoChart() {
 // ── BUILD RECAP ───────────────────────────────────────────────────────────
 function buildRecap(stats, sel, selBars, selCharts) {
   _stats = stats;
+
+  // ── Fallback distancia ───────────────────────────────────────────────────
+  // El CSV a veces no tiene el campo 'Distancia'. Recalcular desde GPS o
+  // desde tiempo÷ritmo para que todos los slides muestren el valor correcto.
+  if (!(stats.dist > 0)) {
+    if (_gpsPoints && _gpsPoints.length > 1) {
+      const g = computeGPSStats(_gpsPoints);
+      if (g.dist > 0) stats.dist = g.dist;
+    }
+    if (!(stats.dist > 0) && stats.avgPaceSec > 0 && timeToSec(stats.time) > 0) {
+      stats.dist = timeToSec(stats.time) / stats.avgPaceSec;
+    }
+  }
+  // ─────────────────────────────────────────────────────────────────────────
+
   const nameInput = document.getElementById('session-name');
   try { if (nameInput.value.trim()) localStorage.setItem('lastSessionName', nameInput.value.trim()); } catch(e) {}
 
