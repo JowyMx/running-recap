@@ -233,6 +233,39 @@ body {
 #recap-view #dots,
 #recap-view #bar,
 #recap-view #tap-hint { z-index: 2; }
+
+/* Template cover — aparece antes del recap */
+#tpl-cover {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #000;
+  cursor: pointer;
+  animation: tplFadeIn 0.4s ease;
+}
+@keyframes tplFadeIn { from { opacity: 0; } to { opacity: 1; } }
+#tpl-cover.hiding {
+  animation: tplFadeOut 0.35s ease forwards;
+}
+@keyframes tplFadeOut { from { opacity: 1; } to { opacity: 0; } }
+#tpl-cover-card {
+  width: min(340px, 90vw);
+  border-radius: 16px;
+  overflow: hidden;
+  font-family: inherit;
+}
+#tpl-cover-hint {
+  position: absolute;
+  bottom: 32px;
+  font-size: 10px;
+  letter-spacing: 0.3em;
+  color: rgba(255,255,255,0.2);
+  text-transform: uppercase;
+  text-align: center;
+}
 #gps-zone-text {
   font-size: 11px;
   color: rgba(255,255,255,0.25);
@@ -1456,6 +1489,12 @@ body {
 
 <!-- ── RECAP ── -->
 <div id="recap-view">
+  <!-- Template cover slide -->
+  <div id="tpl-cover" style="display:none" onclick="hideTplCover()">
+    <div id="tpl-cover-card"></div>
+    <div id="tpl-cover-hint">Toca para comenzar</div>
+  </div>
+
   <div id="bg-photo"></div>
   <div id="screen">
 
@@ -4361,7 +4400,134 @@ function buildRecap(stats, sel, selBars, selCharts) {
   applyRecapLayout();
   document.getElementById('upload-view').style.display = 'none';
   document.getElementById('recap-view').style.display  = 'block';
-  startShow();
+
+  // Mostrar plantilla antes del recap
+  renderTemplateCover(stats);
+}
+
+function renderTemplateCover(stats) {
+  const cover = document.getElementById('tpl-cover');
+  const card  = document.getElementById('tpl-cover-card');
+  const s     = stats;
+  const dist  = s.dist.toFixed(2);
+  const pace  = secToMMSS(s.avgPaceSec);
+  const time  = s.time;
+  const hr    = s.avgHR  > 0 ? s.avgHR  : '—';
+  const cad   = s.avgCad > 0 ? s.avgCad : '—';
+  const elev  = s.elev   > 0 ? `+${Math.round(s.elev)}` : '—';
+  const date  = s.dateStr || '';
+  const name  = document.getElementById('session-name').value.trim() || 'Sesión';
+
+  const color = _recapTextColor || '#ffffff';
+  const font  = _recapFont ? `'${_recapFont}', sans-serif` : "-apple-system, 'Helvetica Neue', sans-serif";
+  const bg    = (_themeBg && _themeBg !== '') ? _themeBg : '#0a0a0a';
+
+  const baseStyle = `font-family:${font};color:${color};`;
+
+  let html = '';
+
+  if (_recapTemplate === 'bold') {
+    html = `
+      <div style="${baseStyle}background:${bg};border-radius:16px;overflow:hidden;">
+        <div style="background:linear-gradient(160deg,rgba(255,255,255,0.06),transparent);padding:28px 24px 20px;border-bottom:1px solid rgba(255,255,255,0.06)">
+          <div style="font-size:9px;letter-spacing:0.3em;opacity:0.35;text-transform:uppercase;border:1px solid rgba(255,255,255,0.15);border-radius:20px;padding:3px 10px;display:inline-block;margin-bottom:16px">${name} · ${date}</div>
+          <div style="width:32px;height:3px;background:${color};border-radius:2px;margin-bottom:12px"></div>
+          <div style="font-size:58px;font-weight:900;letter-spacing:-0.04em;line-height:1">${pace}</div>
+          <div style="font-size:13px;opacity:0.35;letter-spacing:0.08em;margin-top:4px">min / km</div>
+          <div style="display:flex;gap:22px;margin-top:18px">
+            <div><div style="font-size:22px;font-weight:700;letter-spacing:-0.02em">${dist}</div><div style="font-size:9px;opacity:0.3;letter-spacing:0.1em">km</div></div>
+            <div><div style="font-size:22px;font-weight:700;letter-spacing:-0.02em">${time}</div><div style="font-size:9px;opacity:0.3;letter-spacing:0.1em">tiempo</div></div>
+            <div><div style="font-size:22px;font-weight:700;letter-spacing:-0.02em">${hr}</div><div style="font-size:9px;opacity:0.3;letter-spacing:0.1em">ppm</div></div>
+          </div>
+        </div>
+        <div style="padding:18px 24px 22px;display:grid;grid-template-columns:repeat(3,1fr);gap:14px">
+          <div><div style="font-size:8px;letter-spacing:0.18em;opacity:0.2;text-transform:uppercase;margin-bottom:3px">Cadencia</div><div style="font-size:15px;font-weight:800;opacity:0.8">${cad}</div><div style="font-size:8px;opacity:0.2">spm</div></div>
+          <div><div style="font-size:8px;letter-spacing:0.18em;opacity:0.2;text-transform:uppercase;margin-bottom:3px">Desnivel</div><div style="font-size:15px;font-weight:800;opacity:0.8">${elev}</div><div style="font-size:8px;opacity:0.2">m</div></div>
+          <div><div style="font-size:8px;letter-spacing:0.18em;opacity:0.2;text-transform:uppercase;margin-bottom:3px">FC máx</div><div style="font-size:15px;font-weight:800;opacity:0.8">${s.maxHR > 0 ? s.maxHR : '—'}</div><div style="font-size:8px;opacity:0.2">ppm</div></div>
+        </div>
+      </div>`;
+
+  } else if (_recapTemplate === 'mapa') {
+    html = `
+      <div style="${baseStyle}background:${bg};border-radius:16px;overflow:hidden;">
+        <div style="height:160px;background:linear-gradient(135deg,rgba(255,255,255,0.04),transparent);position:relative;display:flex;align-items:center;justify-content:center;">
+          <canvas id="tpl-cover-canvas" style="position:absolute;inset:0;width:100%;height:100%"></canvas>
+          <div style="position:absolute;inset:0;background:linear-gradient(to bottom,transparent 50%,${bg} 100%)"></div>
+          <div style="position:absolute;top:12px;left:12px;font-size:9px;letter-spacing:0.2em;opacity:0.4;text-transform:uppercase;background:rgba(0,0,0,0.5);border-radius:4px;padding:3px 7px">Ruta GPS</div>
+        </div>
+        <div style="padding:16px 20px 22px">
+          <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:14px">
+            <div style="font-size:9px;letter-spacing:0.2em;opacity:0.25;text-transform:uppercase">${name} · ${date}</div>
+            <div style="text-align:right"><div style="font-size:36px;font-weight:900;letter-spacing:-0.03em;line-height:1">${dist}</div><div style="font-size:10px;opacity:0.3">km</div></div>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px">
+            <div style="text-align:center"><div style="font-size:7px;letter-spacing:0.15em;opacity:0.2;text-transform:uppercase;margin-bottom:3px">Ritmo</div><div style="font-size:13px;font-weight:700;opacity:0.8">${pace}</div></div>
+            <div style="text-align:center"><div style="font-size:7px;letter-spacing:0.15em;opacity:0.2;text-transform:uppercase;margin-bottom:3px">Tiempo</div><div style="font-size:13px;font-weight:700;opacity:0.8">${time}</div></div>
+            <div style="text-align:center"><div style="font-size:7px;letter-spacing:0.15em;opacity:0.2;text-transform:uppercase;margin-bottom:3px">FC</div><div style="font-size:13px;font-weight:700;opacity:0.8">${hr}</div></div>
+            <div style="text-align:center"><div style="font-size:7px;letter-spacing:0.15em;opacity:0.2;text-transform:uppercase;margin-bottom:3px">Cad.</div><div style="font-size:13px;font-weight:700;opacity:0.8">${cad}</div></div>
+          </div>
+        </div>
+      </div>`;
+
+  } else if (_recapTemplate === 'horizontal') {
+    html = `
+      <div style="${baseStyle}background:${bg};border-radius:16px;padding:32px 28px;display:flex;gap:0;justify-content:space-between;align-items:center;">
+        <div style="text-align:center;flex:1">
+          <div style="font-size:10px;letter-spacing:0.25em;font-weight:700;text-transform:uppercase;opacity:0.5;margin-bottom:8px">Distance</div>
+          <div style="font-size:36px;font-weight:900;letter-spacing:-0.02em;line-height:1">${dist}<span style="font-size:16px;font-weight:900">Km</span></div>
+        </div>
+        <div style="width:1px;height:48px;background:rgba(255,255,255,0.1)"></div>
+        <div style="text-align:center;flex:1">
+          <div style="font-size:10px;letter-spacing:0.25em;font-weight:700;text-transform:uppercase;opacity:0.5;margin-bottom:8px">Pace</div>
+          <div style="font-size:36px;font-weight:900;letter-spacing:-0.02em;line-height:1">${pace}"</div>
+        </div>
+        <div style="width:1px;height:48px;background:rgba(255,255,255,0.1)"></div>
+        <div style="text-align:center;flex:1">
+          <div style="font-size:10px;letter-spacing:0.25em;font-weight:700;text-transform:uppercase;opacity:0.5;margin-bottom:8px">Time</div>
+          <div style="font-size:36px;font-weight:900;letter-spacing:-0.02em;line-height:1">${time}</div>
+        </div>
+      </div>`;
+
+  } else if (_recapTemplate === 'vertical') {
+    html = `
+      <div style="${baseStyle}background:${bg};border-radius:16px;padding:32px 36px;display:flex;flex-direction:column;gap:24px;">
+        <div>
+          <div style="font-size:10px;letter-spacing:0.25em;font-weight:700;text-transform:uppercase;opacity:0.5;margin-bottom:6px">Distance</div>
+          <div style="font-size:52px;font-weight:900;letter-spacing:-0.02em;line-height:1">${dist}<span style="font-size:22px;font-weight:900">Km</span></div>
+        </div>
+        <div style="height:1px;background:rgba(255,255,255,0.07)"></div>
+        <div>
+          <div style="font-size:10px;letter-spacing:0.25em;font-weight:700;text-transform:uppercase;opacity:0.5;margin-bottom:6px">Pace</div>
+          <div style="font-size:52px;font-weight:900;letter-spacing:-0.02em;line-height:1">${pace}"</div>
+        </div>
+        <div style="height:1px;background:rgba(255,255,255,0.07)"></div>
+        <div>
+          <div style="font-size:10px;letter-spacing:0.25em;font-weight:700;text-transform:uppercase;opacity:0.5;margin-bottom:6px">Time</div>
+          <div style="font-size:52px;font-weight:900;letter-spacing:-0.02em;line-height:1">${time}</div>
+        </div>
+      </div>`;
+  }
+
+  card.innerHTML = html;
+  cover.style.display = 'flex';
+
+  // Si es plantilla Mapa, dibujar la ruta en el canvas
+  if (_recapTemplate === 'mapa' && _gpsPoints && _gpsPoints.length > 1) {
+    requestAnimationFrame(() => {
+      const c = document.getElementById('tpl-cover-canvas');
+      if (c) { c.width = c.offsetWidth; c.height = c.offsetHeight; drawRoute(c, _gpsPoints); }
+    });
+  }
+}
+
+function hideTplCover() {
+  const cover = document.getElementById('tpl-cover');
+  cover.classList.add('hiding');
+  setTimeout(() => {
+    cover.style.display = 'none';
+    cover.classList.remove('hiding');
+    startShow();
+  }, 350);
 }
 
 // ── PAUSA ─────────────────────────────────────────────────────────────────
