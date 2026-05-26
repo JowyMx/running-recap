@@ -1552,59 +1552,6 @@ body {
       <div class="unit">min / km</div>
     </div>
 
-    <div class="slide" id="s6">
-      <div class="label">Cadencia</div>
-      <div class="value" id="v-cad">0</div>
-      <div class="unit">spm</div>
-    </div>
-
-    <div id="cad-rows-slide">
-      <div class="rows-label" id="cad-rows-label"></div>
-      <div id="cad-rows-body"></div>
-    </div>
-
-    <div class="slide" id="cad-chart-slide">
-      <div class="label">Cadencia por vuelta</div>
-      <div id="cad-chart-wrap" style="width:88%;max-width:580px;margin-top:12px;">
-        <svg id="cad-chart-svg" width="100%" style="overflow:visible;"></svg>
-      </div>
-    </div>
-
-    <div class="slide" id="s7">
-      <div class="label">Contacto con el suelo</div>
-      <div class="value" id="v-gct">0</div>
-      <div class="unit">ms</div>
-    </div>
-
-    <div id="gct-rows-slide">
-      <div class="rows-label" id="gct-rows-label"></div>
-      <div id="gct-rows-body"></div>
-    </div>
-
-    <div class="slide" id="gct-chart-slide">
-      <div class="label">Contacto con el suelo por vuelta</div>
-      <div id="gct-chart-wrap" style="width:88%;max-width:580px;margin-top:12px;">
-        <svg id="gct-chart-svg" width="100%" style="overflow:visible;"></svg>
-      </div>
-    </div>
-
-    <div class="slide" id="s8">
-      <div class="label">Potencia media</div>
-      <div class="value" id="v-pow">0</div>
-      <div class="unit" id="v-pow-unit">W</div>
-    </div>
-
-    <div id="pow-rows-slide">
-      <div class="rows-label" id="pow-rows-label"></div>
-      <div id="pow-rows-body"></div>
-    </div>
-
-    <div class="slide" id="pow-chart-slide">
-      <div class="label">Potencia por vuelta</div>
-      <div id="pow-chart-wrap" style="width:88%;max-width:580px;margin-top:12px;">
-        <svg id="pow-chart-svg" width="100%" style="overflow:visible;"></svg>
-      </div>
-    </div>
 
     <div class="slide" id="s9">
       <div class="label">Calorías</div>
@@ -1630,77 +1577,6 @@ body {
       </div>
     </div>
 
-    <div class="slide" id="s11">
-      <div class="label">Temperatura</div>
-      <div class="value" id="v-temp">0</div>
-      <div class="unit">°C</div>
-    </div>
-
-    <div id="temp-rows-slide">
-      <div class="rows-label" id="temp-rows-label"></div>
-      <div id="temp-rows-body"></div>
-    </div>
-
-    <div class="slide" id="temp-chart-slide">
-      <div class="label">Temperatura por vuelta</div>
-      <div id="temp-chart-wrap" style="width:88%;max-width:580px;margin-top:12px;">
-        <svg id="temp-chart-svg" width="100%" style="overflow:visible;"></svg>
-      </div>
-    </div>
-
-    <div class="slide" id="s12">
-      <div class="label">Longitud de zancada</div>
-      <div class="value" id="v-stride">0</div>
-      <div class="unit">m</div>
-    </div>
-
-    <div id="stride-rows-slide">
-      <div class="rows-label" id="stride-rows-label"></div>
-      <div id="stride-rows-body"></div>
-    </div>
-
-    <div class="slide" id="stride-chart-slide">
-      <div class="label">Zancada por vuelta</div>
-      <div id="stride-chart-wrap" style="width:88%;max-width:580px;margin-top:12px;">
-        <svg id="stride-chart-svg" width="100%" style="overflow:visible;"></svg>
-      </div>
-    </div>
-
-    <div class="slide" id="s13">
-      <div class="label">Relación vertical</div>
-      <div class="value" id="v-vr">0</div>
-      <div class="unit">%</div>
-    </div>
-
-    <div id="vr-rows-slide">
-      <div class="rows-label" id="vr-rows-label"></div>
-      <div id="vr-rows-body"></div>
-    </div>
-
-    <div class="slide" id="vr-chart-slide">
-      <div class="label">Relación vertical por vuelta</div>
-      <div id="vr-chart-wrap" style="width:88%;max-width:580px;margin-top:12px;">
-        <svg id="vr-chart-svg" width="100%" style="overflow:visible;"></svg>
-      </div>
-    </div>
-
-    <div class="slide" id="s14">
-      <div class="label">Oscilación vertical</div>
-      <div class="value" id="v-vo">0</div>
-      <div class="unit">cm</div>
-    </div>
-
-    <div id="vo-rows-slide">
-      <div class="rows-label" id="vo-rows-label"></div>
-      <div id="vo-rows-body"></div>
-    </div>
-
-    <div class="slide" id="vo-chart-slide">
-      <div class="label">Oscilación vertical por vuelta</div>
-      <div id="vo-chart-wrap" style="width:88%;max-width:580px;margin-top:12px;">
-        <svg id="vo-chart-svg" width="100%" style="overflow:visible;"></svg>
-      </div>
-    </div>
 
 
     <div id="summary-slide">
@@ -2232,41 +2108,6 @@ function initSlides(stats, sel, selBars, selCharts) {
   if (ok('elev')   && (stats.elevation > 0 || stats.descent > 0)) add('s10', 1800);
   if (ok('elev')   && okBars('elev') && (stats.elevation > 0 || stats.descent > 0) && laps(r => parseFloat(r.elev) > 0 || parseFloat(r.elevDesc) > 0).length >= 2) add('elev-rows-slide', 3000);
   if (ok('gps')    && _gpsPoints && _gpsPoints.length > 1 && _gpsPoints.some(p => p.ele !== null)) add('elev-profile-slide', 2800);
-  if (ok('cad')    && stats.avgCad > 0)                            add('s6',  1800);
-  if (ok('cad')    && laps(r => !isDash(r.cad) && parseFloat(r.cad) > 0).length >= 2) {
-    if (okBars('cad'))  add('cad-rows-slide', 3000);
-    if (okChart('cad')) add('cad-chart-slide', 3000);
-  }
-  if (ok('stride') && stats.strideLen > 0)                         add('s12', 1800);
-  if (ok('stride') && stats.strideLen > 0 && laps(r => !isDash(r.stride) && parseFloat(r.stride) > 0).length >= 2) {
-    if (okBars('stride'))  add('stride-rows-slide', 3000);
-    if (okChart('stride')) add('stride-chart-slide', 3000);
-  }
-  if (ok('gct')    && stats.avgGCT > 0)                            add('s7',  1800);
-  if (ok('gct')    && stats.avgGCT > 0 && laps(r => !isDash(r.gct) && parseFloat(r.gct) > 0).length >= 2) {
-    if (okBars('gct'))  add('gct-rows-slide', 3000);
-    if (okChart('gct')) add('gct-chart-slide', 3000);
-  }
-  if (ok('power')  && stats.avgPow > 0)                            add('s8',  1800);
-  if (ok('power')  && stats.avgPow > 0 && laps(r => !isDash(r.pow) && parseFloat(r.pow) > 0).length >= 2) {
-    if (okBars('power'))  add('pow-rows-slide', 3000);
-    if (okChart('power')) add('pow-chart-slide', 3000);
-  }
-  if (ok('temp')   && stats.avgTemp !== 0)                         add('s11', 1800);
-  if (ok('temp')   && stats.avgTemp !== 0 && laps(r => !isDash(r.temp) && parseFloat(r.temp) !== 0).length >= 2) {
-    if (okBars('temp'))  add('temp-rows-slide', 3000);
-    if (okChart('temp')) add('temp-chart-slide', 3000);
-  }
-  if (ok('vr')     && stats.vertRatio > 0)                         add('s13', 1800);
-  if (ok('vr')     && stats.vertRatio > 0 && laps(r => !isDash(r.vr) && parseFloat(r.vr) > 0).length >= 2) {
-    if (okBars('vr'))  add('vr-rows-slide', 3000);
-    if (okChart('vr')) add('vr-chart-slide', 3000);
-  }
-  if (ok('vo')     && stats.vertOsc > 0)                           add('s14', 1800);
-  if (ok('vo')     && stats.vertOsc > 0 && laps(r => !isDash(r.vo) && parseFloat(r.vo) > 0).length >= 2) {
-    if (okBars('vo'))  add('vo-rows-slide', 3000);
-    if (okChart('vo')) add('vo-chart-slide', 3000);
-  }
 
   add('summary-slide', 0);
   TOTAL = SLIDE_IDS.length;
@@ -2395,95 +2236,6 @@ function showSlide(n) {
     requestAnimationFrame(() => requestAnimationFrame(() => animateHRChart()));
   }
 
-  // Animar tabla de cadencia por vuelta
-  if (n === idx('cad-rows-slide')) {
-    requestAnimationFrame(() => requestAnimationFrame(() => {
-      const body  = document.getElementById('cad-rows-body');
-      const label = document.getElementById('cad-rows-label');
-      body.style.zoom = '';
-      const labelH = label ? label.offsetHeight + 18 : 0;
-      const bodyH  = body.scrollHeight;
-      const availH = window.innerHeight * 0.94 - labelH;
-      if (bodyH > availH) body.style.zoom = String(availH / bodyH);
-    }));
-    const bars = document.querySelectorAll('.cad-bar');
-    bars.forEach(el => { el.style.width = '0%'; });
-    const dur = 900;
-    let t0cad = null;
-    function animCadBars(now) {
-      if (t0cad === null) t0cad = now;
-      const p = Math.min((now - t0cad) / dur, 1);
-      const e = p < .5 ? 2*p*p : -1+(4-2*p)*p;
-      bars.forEach(el => { el.style.width = (parseFloat(el.dataset.pct) * e) + '%'; });
-      if (p < 1) requestAnimationFrame(animCadBars);
-    }
-    requestAnimationFrame(animCadBars);
-  }
-
-  // Animar gráfica de cadencia
-  if (n === idx('cad-chart-slide')) {
-    requestAnimationFrame(() => requestAnimationFrame(() => animateCadChart()));
-  }
-
-  // Animar tabla de potencia por vuelta
-  if (n === idx('pow-rows-slide')) {
-    requestAnimationFrame(() => requestAnimationFrame(() => {
-      const body  = document.getElementById('pow-rows-body');
-      const label = document.getElementById('pow-rows-label');
-      body.style.zoom = '';
-      const labelH = label ? label.offsetHeight + 18 : 0;
-      const bodyH  = body.scrollHeight;
-      const availH = window.innerHeight * 0.94 - labelH;
-      if (bodyH > availH) body.style.zoom = String(availH / bodyH);
-    }));
-    const bars = document.querySelectorAll('.pow-bar');
-    bars.forEach(el => { el.style.width = '0%'; });
-    const dur = 900;
-    let t0pow = null;
-    function animPowBars(now) {
-      if (t0pow === null) t0pow = now;
-      const p = Math.min((now - t0pow) / dur, 1);
-      const e = p < .5 ? 2*p*p : -1+(4-2*p)*p;
-      bars.forEach(el => { el.style.width = (parseFloat(el.dataset.pct) * e) + '%'; });
-      if (p < 1) requestAnimationFrame(animPowBars);
-    }
-    requestAnimationFrame(animPowBars);
-  }
-
-  // Animar gráfica de potencia
-  if (n === idx('pow-chart-slide')) {
-    requestAnimationFrame(() => requestAnimationFrame(() => animatePowChart()));
-  }
-
-  // Animar tabla de zancada por vuelta
-  if (n === idx('stride-rows-slide')) {
-    requestAnimationFrame(() => requestAnimationFrame(() => {
-      const body  = document.getElementById('stride-rows-body');
-      const label = document.getElementById('stride-rows-label');
-      body.style.zoom = '';
-      const labelH = label ? label.offsetHeight + 18 : 0;
-      const bodyH  = body.scrollHeight;
-      const availH = window.innerHeight * 0.94 - labelH;
-      if (bodyH > availH) body.style.zoom = String(availH / bodyH);
-    }));
-    const bars = document.querySelectorAll('.stride-bar');
-    bars.forEach(el => { el.style.width = '0%'; });
-    const dur = 900;
-    let t0stride = null;
-    function animStrideBars(now) {
-      if (t0stride === null) t0stride = now;
-      const p = Math.min((now - t0stride) / dur, 1);
-      const e = p < .5 ? 2*p*p : -1+(4-2*p)*p;
-      bars.forEach(el => { el.style.width = (parseFloat(el.dataset.pct) * e) + '%'; });
-      if (p < 1) requestAnimationFrame(animStrideBars);
-    }
-    requestAnimationFrame(animStrideBars);
-  }
-
-  // Animar gráfica de zancada
-  if (n === idx('stride-chart-slide')) {
-    requestAnimationFrame(() => requestAnimationFrame(() => animateStrideChart()));
-  }
 
   // Animar tabla de desnivel por vuelta
   if (n === idx('elev-rows-slide')) {
@@ -2508,126 +2260,6 @@ function showSlide(n) {
       if (p < 1) requestAnimationFrame(animElevBars);
     }
     requestAnimationFrame(animElevBars);
-  }
-
-  // Animar tabla de contacto con el suelo por vuelta
-  if (n === idx('gct-rows-slide')) {
-    requestAnimationFrame(() => requestAnimationFrame(() => {
-      const body  = document.getElementById('gct-rows-body');
-      const label = document.getElementById('gct-rows-label');
-      body.style.zoom = '';
-      const labelH = label ? label.offsetHeight + 18 : 0;
-      const bodyH  = body.scrollHeight;
-      const availH = window.innerHeight * 0.94 - labelH;
-      if (bodyH > availH) body.style.zoom = String(availH / bodyH);
-    }));
-    const bars = document.querySelectorAll('.gct-bar');
-    bars.forEach(el => { el.style.width = '0%'; });
-    const dur = 900;
-    let t0gct = null;
-    function animGctBars(now) {
-      if (t0gct === null) t0gct = now;
-      const p = Math.min((now - t0gct) / dur, 1);
-      const e = p < .5 ? 2*p*p : -1+(4-2*p)*p;
-      bars.forEach(el => { el.style.width = (parseFloat(el.dataset.pct) * e) + '%'; });
-      if (p < 1) requestAnimationFrame(animGctBars);
-    }
-    requestAnimationFrame(animGctBars);
-  }
-
-  // Animar gráfica de contacto con el suelo
-  if (n === idx('gct-chart-slide')) {
-    requestAnimationFrame(() => requestAnimationFrame(() => animateGctChart()));
-  }
-
-  // Animar tabla de temperatura por vuelta
-  if (n === idx('temp-rows-slide')) {
-    requestAnimationFrame(() => requestAnimationFrame(() => {
-      const body  = document.getElementById('temp-rows-body');
-      const label = document.getElementById('temp-rows-label');
-      body.style.zoom = '';
-      const labelH = label ? label.offsetHeight + 18 : 0;
-      const bodyH  = body.scrollHeight;
-      const availH = window.innerHeight * 0.94 - labelH;
-      if (bodyH > availH) body.style.zoom = String(availH / bodyH);
-    }));
-    const bars = document.querySelectorAll('.temp-bar');
-    bars.forEach(el => { el.style.width = '0%'; });
-    const dur = 900;
-    let t0temp = null;
-    function animTempBars(now) {
-      if (t0temp === null) t0temp = now;
-      const p = Math.min((now - t0temp) / dur, 1);
-      const e = p < .5 ? 2*p*p : -1+(4-2*p)*p;
-      bars.forEach(el => { el.style.width = (parseFloat(el.dataset.pct) * e) + '%'; });
-      if (p < 1) requestAnimationFrame(animTempBars);
-    }
-    requestAnimationFrame(animTempBars);
-  }
-
-  // Animar gráfica de temperatura
-  if (n === idx('temp-chart-slide')) {
-    requestAnimationFrame(() => requestAnimationFrame(() => animateTempChart()));
-  }
-
-  // Animar tabla de relación vertical por vuelta
-  if (n === idx('vr-rows-slide')) {
-    requestAnimationFrame(() => requestAnimationFrame(() => {
-      const body  = document.getElementById('vr-rows-body');
-      const label = document.getElementById('vr-rows-label');
-      body.style.zoom = '';
-      const labelH = label ? label.offsetHeight + 18 : 0;
-      const bodyH  = body.scrollHeight;
-      const availH = window.innerHeight * 0.94 - labelH;
-      if (bodyH > availH) body.style.zoom = String(availH / bodyH);
-    }));
-    const bars = document.querySelectorAll('.vr-bar');
-    bars.forEach(el => { el.style.width = '0%'; });
-    const dur = 900;
-    let t0vr = null;
-    function animVrBars(now) {
-      if (t0vr === null) t0vr = now;
-      const p = Math.min((now - t0vr) / dur, 1);
-      const e = p < .5 ? 2*p*p : -1+(4-2*p)*p;
-      bars.forEach(el => { el.style.width = (parseFloat(el.dataset.pct) * e) + '%'; });
-      if (p < 1) requestAnimationFrame(animVrBars);
-    }
-    requestAnimationFrame(animVrBars);
-  }
-
-  // Animar gráfica de relación vertical
-  if (n === idx('vr-chart-slide')) {
-    requestAnimationFrame(() => requestAnimationFrame(() => animateVrChart()));
-  }
-
-  // Animar tabla de oscilación vertical por vuelta
-  if (n === idx('vo-rows-slide')) {
-    requestAnimationFrame(() => requestAnimationFrame(() => {
-      const body  = document.getElementById('vo-rows-body');
-      const label = document.getElementById('vo-rows-label');
-      body.style.zoom = '';
-      const labelH = label ? label.offsetHeight + 18 : 0;
-      const bodyH  = body.scrollHeight;
-      const availH = window.innerHeight * 0.94 - labelH;
-      if (bodyH > availH) body.style.zoom = String(availH / bodyH);
-    }));
-    const bars = document.querySelectorAll('.vo-bar');
-    bars.forEach(el => { el.style.width = '0%'; });
-    const dur = 900;
-    let t0vo = null;
-    function animVoBars(now) {
-      if (t0vo === null) t0vo = now;
-      const p = Math.min((now - t0vo) / dur, 1);
-      const e = p < .5 ? 2*p*p : -1+(4-2*p)*p;
-      bars.forEach(el => { el.style.width = (parseFloat(el.dataset.pct) * e) + '%'; });
-      if (p < 1) requestAnimationFrame(animVoBars);
-    }
-    requestAnimationFrame(animVoBars);
-  }
-
-  // Animar gráfica de oscilación vertical
-  if (n === idx('vo-chart-slide')) {
-    requestAnimationFrame(() => requestAnimationFrame(() => animateVoChart()));
   }
 
   // Animar perfil de elevación
@@ -2685,13 +2317,6 @@ function showSlide(n) {
     })(performance.now());
   }
   if (n === idx('s9'))  countUp(document.getElementById('v-cal'),    s.cals,      d, v=>Math.round(v));
-  if (n === idx('s11') && idx('s11') !== -1) countUp(document.getElementById('v-temp'),   s.avgTemp,   d, v=>v.toFixed(1));
-  if (n === idx('s6'))  countUp(document.getElementById('v-cad'),    s.avgCad,    d, v=>Math.round(v));
-  if (n === idx('s12') && idx('s12') !== -1) countUp(document.getElementById('v-stride'), s.strideLen, d, v=>v.toFixed(2));
-  if (n === idx('s13') && idx('s13') !== -1) countUp(document.getElementById('v-vr'),     s.vertRatio, d, v=>v.toFixed(1));
-  if (n === idx('s14') && idx('s14') !== -1) countUp(document.getElementById('v-vo'),     s.vertOsc,   d, v=>v.toFixed(1));
-  if (n === idx('s7'))  countUp(document.getElementById('v-gct'),    s.avgGCT,    d, v=>Math.round(v));
-  if (n === idx('s8'))  countUp(document.getElementById('v-pow'),    s.avgPow,    d, v=>Math.round(v));
 
   if (barTimer) cancelAnimationFrame(barTimer);
   barStart = performance.now();
@@ -2767,20 +2392,6 @@ const METRIC_DEFS = [
     preview: s => `+${s.elevation} / −${s.descent} m`, hasBars: true },
   { key:'gps',    label:'Perfil de elevación',  icon:'🗺', avail: () => !!(_gpsPoints && _gpsPoints.length > 1 && _gpsPoints.some(p => p.ele !== null)),
     preview: () => 'GPS disponible' },
-  { key:'cad',    label:'Cadencia',             icon:'🔄', avail: s => s.avgCad > 0,
-    preview: s => `${s.avgCad} spm`, hasBars: true, hasChart: true },
-  { key:'stride', label:'Long. de zancada',     icon:'👟', avail: s => s.strideLen > 0,
-    preview: s => `${s.strideLen.toFixed(2)} m`, hasBars: true, hasChart: true },
-  { key:'gct',    label:'Contacto con suelo',   icon:'⚡', avail: s => s.avgGCT > 0,
-    preview: s => `${s.avgGCT} ms`, hasBars: true, hasChart: true },
-  { key:'power',  label:'Potencia',             icon:'💪', avail: s => s.avgPow > 0,
-    preview: s => `${s.avgPow} W`, hasBars: true, hasChart: true },
-  { key:'temp',   label:'Temperatura',          icon:'🌡', avail: s => s.avgTemp !== 0,
-    preview: s => `${s.avgTemp.toFixed(1)} °C`, hasBars: true, hasChart: true },
-  { key:'vr',     label:'Relación vertical',    icon:'📐', avail: s => s.vertRatio > 0,
-    preview: s => `${s.vertRatio.toFixed(1)} %`, hasBars: true, hasChart: true },
-  { key:'vo',     label:'Oscilación vertical',  icon:'〰️', avail: s => s.vertOsc > 0,
-    preview: s => `${s.vertOsc.toFixed(1)} cm`, hasBars: true, hasChart: true },
 ];
 
 let _pendingStats = null;   // stats esperando confirmación en el selector
@@ -2885,41 +2496,6 @@ function calcRecapDuration(stats, sel, selBars, selCharts) {
   if (ok('elev')   && (stats.elevation > 0 || stats.descent > 0)) ms += 1800;
   if (ok('elev')   && okBars('elev') && (stats.elevation > 0 || stats.descent > 0) && laps(r => parseFloat(r.elev) > 0 || parseFloat(r.elevDesc) > 0).length >= 2) ms += 3000;
   if (ok('gps')    && _gpsPoints && _gpsPoints.length > 1 && _gpsPoints.some(p => p.ele !== null)) ms += 2800;
-  if (ok('cad')    && stats.avgCad > 0)                            ms += 1800;
-  if (ok('cad')    && laps(r => !isDash(r.cad) && parseFloat(r.cad) > 0).length >= 2) {
-    if (okBars('cad'))  ms += 3000;
-    if (okChart('cad')) ms += 3000;
-  }
-  if (ok('stride') && stats.strideLen > 0)                         ms += 1800;
-  if (ok('stride') && stats.strideLen > 0 && laps(r => !isDash(r.stride) && parseFloat(r.stride) > 0).length >= 2) {
-    if (okBars('stride'))  ms += 3000;
-    if (okChart('stride')) ms += 3000;
-  }
-  if (ok('gct')    && stats.avgGCT > 0)                            ms += 1800;
-  if (ok('gct')    && stats.avgGCT > 0 && laps(r => !isDash(r.gct) && parseFloat(r.gct) > 0).length >= 2) {
-    if (okBars('gct'))  ms += 3000;
-    if (okChart('gct')) ms += 3000;
-  }
-  if (ok('power')  && stats.avgPow > 0)                            ms += 1800;
-  if (ok('power')  && stats.avgPow > 0 && laps(r => !isDash(r.pow) && parseFloat(r.pow) > 0).length >= 2) {
-    if (okBars('power'))  ms += 3000;
-    if (okChart('power')) ms += 3000;
-  }
-  if (ok('temp')   && stats.avgTemp !== 0)                         ms += 1800;
-  if (ok('temp')   && stats.avgTemp !== 0 && laps(r => !isDash(r.temp) && parseFloat(r.temp) !== 0).length >= 2) {
-    if (okBars('temp'))  ms += 3000;
-    if (okChart('temp')) ms += 3000;
-  }
-  if (ok('vr')     && stats.vertRatio > 0)                         ms += 1800;
-  if (ok('vr')     && stats.vertRatio > 0 && laps(r => !isDash(r.vr) && parseFloat(r.vr) > 0).length >= 2) {
-    if (okBars('vr'))  ms += 3000;
-    if (okChart('vr')) ms += 3000;
-  }
-  if (ok('vo')     && stats.vertOsc > 0)                           ms += 1800;
-  if (ok('vo')     && stats.vertOsc > 0 && laps(r => !isDash(r.vo) && parseFloat(r.vo) > 0).length >= 2) {
-    if (okBars('vo'))  ms += 3000;
-    if (okChart('vo')) ms += 3000;
-  }
   // summary-slide tiene DUR=0, no se suma
 
   return ms;
@@ -3829,10 +3405,7 @@ function buildRecap(stats, sel, selBars, selCharts) {
   document.getElementById('s1-label').textContent = stats.distLabel;
   document.getElementById('s2-label').textContent = stats.timeLabel;
 
-  // Power unit
-  document.getElementById('v-pow-unit').textContent = stats.wkg
-    ? `W · ${stats.wkg.toFixed(2)} W/kg`
-    : 'W';
+
 
   // Tabla de filas
   document.getElementById('rows-label').textContent = stats.rowsLabel;
@@ -4389,13 +3962,6 @@ function buildRecap(stats, sel, selBars, selCharts) {
     okSum('pace')   && stats.avgPaceSec > 0      ? { icon:'🏃',  label:'Ritmo medio',        u:'min/km', animType:'pace',    animRaw:stats.avgPaceSec } : null,
     okSum('hr')     && stats.avgHR > 0           ? { icon:'❤️', label:'FC media',           u:'ppm',    animType:'numeric', animRaw:stats.avgHR,        animFmt:'0' } : null,
     okSum('elev')   && (stats.elevation > 0 || stats.descent > 0) ? { icon:'⛰', label:'Desnivel', u:'metros', animType:'elev', animRaw:stats.elevation, animRaw2:stats.descent } : null,
-    okSum('cad')    && stats.avgCad > 0          ? { icon:'🔄',  label:'Cadencia',           u:'spm',    animType:'numeric', animRaw:stats.avgCad,       animFmt:'0' } : null,
-    okSum('stride') && stats.strideLen > 0       ? { icon:'👟',  label:'Long. zancada',      u:'m',      animType:'numeric', animRaw:stats.strideLen,    animFmt:'2' } : null,
-    okSum('gct')    && stats.avgGCT > 0          ? { icon:'⚡',  label:'GCT',                u:'ms',     animType:'numeric', animRaw:stats.avgGCT,       animFmt:'0' } : null,
-    okSum('power')  && stats.avgPow > 0          ? { icon:'💪',  label:'Potencia',           u:`W · ${stats.wkg.toFixed(2)} W/kg`, animType:'numeric', animRaw:stats.avgPow, animFmt:'0' } : null,
-    okSum('temp')   && stats.avgTemp !== 0       ? { icon:'🌡',  label:'Temperatura',        u:'°C',     animType:'numeric', animRaw:stats.avgTemp,      animFmt:'1' } : null,
-    okSum('vr')     && stats.vertRatio > 0       ? { icon:'📐',  label:'Relación vertical',  u:'%',      animType:'numeric', animRaw:stats.vertRatio,    animFmt:'1' } : null,
-    okSum('vo')     && stats.vertOsc > 0         ? { icon:'〰️', label:'Oscilación vertical',u:'cm',     animType:'numeric', animRaw:stats.vertOsc,      animFmt:'1' } : null,
   ].filter(Boolean);
   document.getElementById('stats-grid-top').innerHTML = topCells.map(cellHTML).join('');
 
@@ -4432,7 +3998,6 @@ function renderTemplateCover(stats) {
     : (s.avgPaceSec > 0 && timeToSec(s.time) > 0 ? timeToSec(s.time) / s.avgPaceSec : 0);
   const timeSec = timeToSec(s.time);
   const hrRaw   = s.avgHR  > 0 ? s.avgHR  : 0;
-  const cadRaw  = s.avgCad > 0 ? s.avgCad : 0;
   const elevRaw = (s.elevation || 0);
   const maxHRRaw= s.maxHR  > 0 ? s.maxHR  : 0;
   const date    = s.dateStr || '';
@@ -4464,8 +4029,7 @@ function renderTemplateCover(stats) {
             <div><div style="font-size:22px;font-weight:700;letter-spacing:-0.02em">${hrRaw > 0 ? A('hr', hrRaw, 'int') : '—'}</div><div style="font-size:9px;opacity:0.3;letter-spacing:0.1em">ppm</div></div>
           </div>
         </div>
-        <div style="padding:18px 24px 22px;display:grid;grid-template-columns:repeat(3,1fr);gap:14px">
-          <div><div style="font-size:8px;letter-spacing:0.18em;opacity:0.2;text-transform:uppercase;margin-bottom:3px">Cadencia</div><div style="font-size:15px;font-weight:800;opacity:0.8">${cadRaw > 0 ? A('cad', cadRaw, 'int') : '—'}</div><div style="font-size:8px;opacity:0.2">spm</div></div>
+        <div style="padding:18px 24px 22px;display:grid;grid-template-columns:repeat(2,1fr);gap:14px">
           <div><div style="font-size:8px;letter-spacing:0.18em;opacity:0.2;text-transform:uppercase;margin-bottom:3px">Desnivel</div><div style="font-size:15px;font-weight:800;opacity:0.8">${elevRaw > 0 ? A('elev', elevRaw, 'elev') : '—'}</div><div style="font-size:8px;opacity:0.2">m</div></div>
           <div><div style="font-size:8px;letter-spacing:0.18em;opacity:0.2;text-transform:uppercase;margin-bottom:3px">FC máx</div><div style="font-size:15px;font-weight:800;opacity:0.8">${maxHRRaw > 0 ? A('maxhr', maxHRRaw, 'int') : '—'}</div><div style="font-size:8px;opacity:0.2">ppm</div></div>
         </div>
@@ -4491,7 +4055,7 @@ function renderTemplateCover(stats) {
             <div style="text-align:center"><div style="font-size:7px;letter-spacing:0.15em;opacity:0.2;text-transform:uppercase;margin-bottom:3px">Ritmo</div><div style="font-size:13px;font-weight:700;opacity:0.8">${paceA('pace', s.avgPaceSec)}</div></div>
             <div style="text-align:center"><div style="font-size:7px;letter-spacing:0.15em;opacity:0.2;text-transform:uppercase;margin-bottom:3px">Tiempo</div><div style="font-size:13px;font-weight:700;opacity:0.8">${timeA('time', timeSec)}</div></div>
             <div style="text-align:center"><div style="font-size:7px;letter-spacing:0.15em;opacity:0.2;text-transform:uppercase;margin-bottom:3px">FC</div><div style="font-size:13px;font-weight:700;opacity:0.8">${hrRaw > 0 ? A('hr', hrRaw, 'int') : '—'}</div></div>
-            <div style="text-align:center"><div style="font-size:7px;letter-spacing:0.15em;opacity:0.2;text-transform:uppercase;margin-bottom:3px">Cad.</div><div style="font-size:13px;font-weight:700;opacity:0.8">${cadRaw > 0 ? A('cad', cadRaw, 'int') : '—'}</div></div>
+            <div style="text-align:center"><div style="font-size:7px;letter-spacing:0.15em;opacity:0.2;text-transform:uppercase;margin-bottom:3px">Desnivel</div><div style="font-size:13px;font-weight:700;opacity:0.8">${elevRaw > 0 ? A('elev', elevRaw, 'elev') : '—'}</div></div>
           </div>
         </div>
       </div>`;
