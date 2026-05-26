@@ -128,27 +128,6 @@ body {
   background: rgba(255,255,255,0.02);
 }
 
-/* Photo zone */
-#photo-zone {
-  border: 1px dashed rgba(255,255,255,0.18);
-  border-radius: 8px;
-  padding: 0 24px;
-  height: 38px;
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  margin-bottom: 8px;
-  transition: border-color 0.2s, background 0.2s;
-}
-#photo-zone:hover, #photo-zone.drag-over {
-  border-color: rgba(255,255,255,0.35);
-  background: rgba(255,255,255,0.02);
-}
-#photo-zone-text.loaded { color: rgba(127,255,212,0.7); }
-
 /* Font selector */
 #font-zone {
   width: 100%;
@@ -1293,12 +1272,6 @@ body {
       <div class="drop-sub" style="color:rgba(255,255,255,0.18)">Arrastra o haz clic para seleccionar</div>
     </div>
     <input type="file" id="file-input" accept=".csv" style="display:none">
-    <div id="photo-zone" onclick="document.getElementById('photo-input').click()">
-      <div class="drop-icon">🖼</div>
-      <div class="drop-text" id="photo-zone-text">FOTO O VIDEO DE FONDO</div>
-      <div class="drop-sub">Arrastra o haz clic para seleccionar</div>
-    </div>
-    <input type="file" id="photo-input" accept="image/*,video/*" style="display:none">
 
     <!-- Fuentes -->
     <div id="font-zone">
@@ -1425,45 +1398,7 @@ body {
           <div class="tpl-name">Mapa</div>
         </button>
 
-        <!-- T4: Split -->
-        <button class="tpl-card" data-tpl="split">
-          <div class="tpl-thumb">
-            <div class="tpl-thumb-inner">
-              <div style="background:#0a0a0a;">
-                <div style="padding:18px 18px 14px;display:flex;align-items:center;gap:14px;border-bottom:1px solid rgba(255,255,255,0.05)">
-                  <div style="width:3px;height:46px;background:linear-gradient(to bottom,rgba(255,255,255,0.6),rgba(255,255,255,0.05));border-radius:2px;flex-shrink:0"></div>
-                  <div style="flex:1">
-                    <div style="font-size:8px;letter-spacing:0.2em;color:rgba(255,255,255,0.2);text-transform:uppercase;margin-bottom:4px">Rodaje suave</div>
-                    <div style="font-size:10px;font-weight:600;color:rgba(255,255,255,0.55)">Martes 19 Mayo</div>
-                  </div>
-                  <div style="text-align:right">
-                    <div style="font-size:30px;font-weight:900;color:#fff;letter-spacing:-0.03em;line-height:1">5:46</div>
-                    <div style="font-size:8px;color:rgba(255,255,255,0.25)">min/km</div>
-                  </div>
-                </div>
-                <div style="display:grid;grid-template-columns:1fr 1fr">
-                  <div style="padding:14px 18px;border-right:1px solid rgba(255,255,255,0.05)">
-                    <div style="font-size:7px;color:rgba(255,255,255,0.18);text-transform:uppercase;margin-bottom:2px">Distancia</div>
-                    <div style="font-size:24px;font-weight:800;color:rgba(255,255,255,0.85);letter-spacing:-0.02em">6.78</div>
-                    <div style="font-size:8px;color:rgba(255,255,255,0.22)">km</div>
-                  </div>
-                  <div style="padding:14px 18px">
-                    <div style="font-size:7px;color:rgba(255,255,255,0.18);text-transform:uppercase;margin-bottom:2px">Tiempo</div>
-                    <div style="font-size:24px;font-weight:800;color:rgba(255,255,255,0.85);letter-spacing:-0.02em">39:10</div>
-                    <div style="font-size:8px;color:rgba(255,255,255,0.22)">h:m:s</div>
-                  </div>
-                </div>
-                <div style="display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid rgba(255,255,255,0.05)">
-                  <div style="padding:10px 8px;text-align:center;border-right:1px solid rgba(255,255,255,0.04)"><div style="font-size:6px;color:rgba(255,255,255,0.15);text-transform:uppercase;margin-bottom:3px">FC</div><div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.6)">148</div></div>
-                  <div style="padding:10px 8px;text-align:center;border-right:1px solid rgba(255,255,255,0.04)"><div style="font-size:6px;color:rgba(255,255,255,0.15);text-transform:uppercase;margin-bottom:3px">Cad.</div><div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.6)">172</div></div>
-                  <div style="padding:10px 8px;text-align:center;border-right:1px solid rgba(255,255,255,0.04)"><div style="font-size:6px;color:rgba(255,255,255,0.15);text-transform:uppercase;margin-bottom:3px">Pot.</div><div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.6)">234W</div></div>
-                  <div style="padding:10px 8px;text-align:center"><div style="font-size:6px;color:rgba(255,255,255,0.15);text-transform:uppercase;margin-bottom:3px">Desn.</div><div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.6)">+84m</div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="tpl-name">Split</div>
-        </button>
+
 
       </div>
     </div>
@@ -2710,16 +2645,9 @@ function newSession() {
   _dt.textContent = 'CSV'; _dt.style.color = '';
   _ds.textContent = 'Arrastra o haz clic para seleccionar'; _ds.style.color = '';
   updateRecapBtn();
-  _bgPhotoURL = null;
-  _bgVideoURL = null;
-  _bgIsVideo  = false;
   const bgEl = document.getElementById('bg-photo');
+  bgEl.style.background = '';
   bgEl.style.backgroundImage = 'none';
-  const oldVid = bgEl.querySelector('video');
-  if (oldVid) oldVid.remove();
-  document.getElementById('photo-zone-text').textContent = 'Foto o video de fondo · opcional';
-  document.getElementById('photo-zone-text').classList.remove('loaded');
-  document.getElementById('photo-input').value = '';
   applyRecapTextColor('#ffffff');
   applyRecapFont('');
   document.querySelectorAll('.font-chip').forEach(b => b.classList.remove('active'));
@@ -4469,9 +4397,6 @@ function handleFile(file) {
   updateRecapBtn();
 }
 
-let _bgPhotoURL  = null;
-let _bgVideoURL  = null;
-let _bgIsVideo   = false;
 let _themeBg     = null;
 let _recapLayout = 'full';
 
@@ -4538,52 +4463,10 @@ document.querySelectorAll('.theme-card').forEach(card => {
   card.addEventListener('click', () => applyTheme(card.dataset.theme));
 });
 
-function handlePhoto(file) {
-  if (!file) return;
-  const isVideo = file.type.startsWith('video/');
-  const isImage = file.type.startsWith('image/');
-  if (!isVideo && !isImage) return;
-  const reader = new FileReader();
-  reader.onload = e => {
-    if (isVideo) {
-      _bgVideoURL = e.target.result;
-      _bgPhotoURL = null;
-      _bgIsVideo  = true;
-    } else {
-      _bgPhotoURL = e.target.result;
-      _bgVideoURL = null;
-      _bgIsVideo  = false;
-    }
-    const zt = document.getElementById('photo-zone-text');
-    zt.textContent = '✓ ' + file.name;
-    zt.classList.add('loaded');
-    // Al subir foto/video, desactivar tema (modo custom)
-    _themeBg = null;
-    document.querySelectorAll('.theme-card').forEach(c => c.classList.toggle('active', c.dataset.theme === 'none'));
-  };
-  reader.readAsDataURL(file);
-}
 
 function applyBgPhoto() {
   const el = document.getElementById('bg-photo');
-  // remove any existing video element
-  const existing = el.querySelector('video');
-  if (existing) existing.remove();
-  if (_bgIsVideo && _bgVideoURL) {
-    el.style.background = '';
-    el.style.backgroundImage = 'none';
-    const vid = document.createElement('video');
-    vid.src = _bgVideoURL;
-    vid.autoplay = true;
-    vid.loop     = true;
-    vid.muted    = true;
-    vid.playsInline = true;
-    vid.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;';
-    el.appendChild(vid);
-  } else if (_bgPhotoURL) {
-    el.style.background = '';
-    el.style.backgroundImage = `url(${_bgPhotoURL})`;
-  } else if (_themeBg) {
+  if (_themeBg) {
     el.style.backgroundImage = 'none';
     el.style.background = _themeBg;
   } else {
@@ -4638,16 +4521,6 @@ dz.addEventListener('drop', e => {
   if (e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
 });
 
-document.getElementById('photo-input').addEventListener('change', function() {
-  if (this.files && this.files[0]) handlePhoto(this.files[0]);
-});
-const pz = document.getElementById('photo-zone');
-pz.addEventListener('dragover',  e => { e.preventDefault(); pz.classList.add('drag-over'); });
-pz.addEventListener('dragleave', ()  => pz.classList.remove('drag-over'));
-pz.addEventListener('drop', e => {
-  e.preventDefault(); pz.classList.remove('drag-over');
-  if (e.dataTransfer.files[0]) handlePhoto(e.dataTransfer.files[0]);
-});
 
 // ── Text color picker ──
 let _recapTextColor = '#ffffff';
