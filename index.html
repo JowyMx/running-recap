@@ -4484,21 +4484,19 @@ function applyTheme(id) {
 
   if (id === 'none') {
     _themeBg = null;
-  
     // No toca el color de texto ni la foto
   } else {
     _themeBg = t.bg;
-  
     // Aplicar color de texto y sincronizar swatch
     if (t.text) {
       applyRecapTextColor(t.text);
-      // Sincronizar picker: si existe swatch, marcarlo activo
       const match = document.querySelector(`.color-swatch[data-color="${t.text}"]`);
       document.querySelectorAll('.color-swatch').forEach(b => b.classList.remove('active'));
       if (match) match.classList.add('active');
       else document.getElementById('custom-color-input').value = t.text;
     }
   }
+  updateTplPreviews();
   applyBgPhoto();
 }
 
@@ -4571,7 +4569,6 @@ let _recapTextColor = '#ffffff';
 
 function applyRecapTextColor(color) {
   _recapTextColor = color;
-
   let s = document.getElementById('rt-override');
   if (!s) { s = document.createElement('style'); s.id = 'rt-override'; document.head.appendChild(s); }
   s.textContent = `
@@ -4585,12 +4582,11 @@ function applyRecapTextColor(color) {
     #screen svg stop:first-child { stop-color: ${color} !important; stop-opacity: 0.22 !important; }
     #screen svg stop:last-child  { stop-color: ${color} !important; stop-opacity: 0   !important; }
   `;
+  updateTplPreviews();
 }
+
 // ── Font picker ──
 let _recapFont = '';
-
-applyRecapTextColor('#ffffff');
-updateStylePreview();
 
 function applyRecapFont(fontFamily) {
   _recapFont = fontFamily;
@@ -4599,7 +4595,23 @@ function applyRecapFont(fontFamily) {
   s.textContent = fontFamily
     ? `#screen, #screen * { font-family: '${fontFamily}', sans-serif !important; }`
     : '';
+  updateTplPreviews();
 }
+
+// ── Template preview updater ──
+function updateTplPreviews() {
+  const color = _recapTextColor || '#ffffff';
+  const font  = _recapFont ? `'${_recapFont}', sans-serif` : "-apple-system, 'Helvetica Neue', sans-serif";
+  const bg    = (_themeBg && _themeBg !== '') ? _themeBg : '#000000';
+  let s = document.getElementById('tpl-preview-override');
+  if (!s) { s = document.createElement('style'); s.id = 'tpl-preview-override'; document.head.appendChild(s); }
+  s.textContent = `
+    #template-cards .tpl-thumb-inner > div { background: ${bg} !important; }
+    #template-cards .tpl-thumb-inner * { color: ${color} !important; font-family: ${font} !important; }
+  `;
+}
+
+applyRecapTextColor('#ffffff');
 
 document.querySelectorAll('.font-chip').forEach(btn => {
   btn.addEventListener('click', () => {
