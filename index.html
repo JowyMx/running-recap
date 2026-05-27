@@ -3217,9 +3217,9 @@ function renderTemplateCover(stats) {
   const mediaOverlay = hasBgMedia
     ? `<div style="position:absolute;inset:0;background:rgba(0,0,0,0.5);z-index:0;pointer-events:none;"></div>`
     : '';
-  // Gradiente inferior solo cuando no hay foto/video (si hay media el overlay ya oscurece)
+  // Gradiente inferior solo cuando no hay foto/video (el overlay uniforme ya cubre todo)
   const sectionGrad = hasBgMedia
-    ? `<div style="position:absolute;inset:0;background:linear-gradient(to bottom,transparent 40%,rgba(0,0,0,0.6) 100%)"></div>`
+    ? ''
     : `<div style="position:absolute;inset:0;background:linear-gradient(to bottom,transparent 50%,${bg} 100%)"></div>`;
 
   // Métricas comunes
