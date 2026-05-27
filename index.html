@@ -128,6 +128,26 @@ body {
   background: rgba(255,255,255,0.02);
 }
 
+#photo-zone {
+  border: 1px dashed rgba(255,255,255,0.18);
+  border-radius: 8px;
+  padding: 0 24px;
+  height: 38px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  transition: border-color 0.2s, background 0.2s;
+}
+#photo-zone:hover, #photo-zone.drag-over {
+  border-color: rgba(255,255,255,0.35);
+  background: rgba(255,255,255,0.02);
+}
+#photo-zone-icon { font-size: 13px; }
+
 /* Font selector */
 #font-zone {
   width: 100%;
@@ -1305,6 +1325,14 @@ body {
     </div>
     <input type="file" id="file-input" accept=".csv" style="display:none">
 
+    <!-- Foto / Video de fondo -->
+    <div id="photo-zone" onclick="document.getElementById('photo-input').click()">
+      <div class="drop-icon" id="photo-zone-icon">🖼</div>
+      <div class="drop-text" id="photo-zone-text">Foto / Video de fondo</div>
+      <div class="drop-sub">Opcional · PNG, JPG, MP4, MOV</div>
+    </div>
+    <input type="file" id="photo-input" accept="image/*,video/mp4,video/quicktime,video/mov" style="display:none">
+
     <!-- Fuentes -->
     <div id="font-zone">
       <div class="font-zone-label">Font</div>
@@ -1487,6 +1515,7 @@ body {
   </div>
 
   <div id="bg-photo"></div>
+  <video id="bg-video" autoplay muted loop playsinline style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;display:none"></video>
   <div id="screen">
 
     <div class="slide" id="s0">
@@ -2337,8 +2366,15 @@ function newSession() {
   _csvFile   = null;
   document.getElementById('gps-zone-text').textContent = 'Ruta opcional · GPX / TCX / KML';
   document.getElementById('gps-zone-text').classList.remove('loaded');
-  document.getElementById('gps-input').value  = '';
-  document.getElementById('file-input').value = '';
+  document.getElementById('gps-input').value   = '';
+  document.getElementById('file-input').value  = '';
+  document.getElementById('photo-input').value = '';
+  if (_bgMediaUrl) { URL.revokeObjectURL(_bgMediaUrl); _bgMediaUrl = null; _bgMediaType = null; }
+  const _pz = document.getElementById('photo-zone');
+  document.getElementById('photo-zone-icon').textContent = '🖼';
+  document.getElementById('photo-zone-text').textContent = 'Foto / Video de fondo';
+  document.getElementById('photo-zone-text').classList.remove('loaded');
+  _pz.style.borderColor = '';
   const _dt = document.getElementById('drop-zone').querySelector('.drop-text');
   const _ds = document.getElementById('drop-zone').querySelector('.drop-sub');
   _dt.textContent = 'CSV'; _dt.style.color = '';
@@ -3397,6 +3433,8 @@ function handleFile(file) {
 
 let _themeBg     = null;
 let _recapLayout = 'full';
+let _bgMediaUrl  = null;   // URL.createObjectURL del archivo cargado
+let _bgMediaType = null;   // 'image' | 'video'
 
 function applyRecapLayout() {
   const rv     = document.getElementById('recap-view');
@@ -3461,13 +3499,23 @@ document.querySelectorAll('.theme-card').forEach(card => {
 
 
 function applyBgPhoto() {
-  const el = document.getElementById('bg-photo');
-  if (_themeBg) {
-    el.style.backgroundImage = 'none';
+  const el  = document.getElementById('bg-photo');
+  const vid = document.getElementById('bg-video');
+  // Primero limpiar los dos
+  el.style.backgroundImage = 'none';
+  el.style.background = '';
+  vid.style.display = 'none';
+  vid.src = '';
+
+  if (_bgMediaUrl) {
+    if (_bgMediaType === 'video') {
+      vid.src = _bgMediaUrl;
+      vid.style.display = 'block';
+    } else {
+      el.style.backgroundImage = `url(${_bgMediaUrl})`;
+    }
+  } else if (_themeBg) {
     el.style.background = _themeBg;
-  } else {
-    el.style.background = '';
-    el.style.backgroundImage = 'none';
   }
 }
 
@@ -3478,6 +3526,31 @@ function showError(msg) {
 
 document.getElementById('file-input').addEventListener('change', function() {
   if (this.files && this.files[0]) handleFile(this.files[0]);
+});
+
+// Foto / Video de fondo
+function handlePhotoFile(file) {
+  if (!file) return;
+  if (_bgMediaUrl) URL.revokeObjectURL(_bgMediaUrl);
+  _bgMediaUrl  = URL.createObjectURL(file);
+  _bgMediaType = file.type.startsWith('video') ? 'video' : 'image';
+  const icon = document.getElementById('photo-zone-icon');
+  const text = document.getElementById('photo-zone-text');
+  icon.textContent = _bgMediaType === 'video' ? '🎬' : '🖼';
+  text.textContent = `✓ ${file.name}`;
+  text.classList.add('loaded');
+  document.getElementById('photo-zone').style.borderColor = 'rgba(127,255,212,0.5)';
+}
+document.getElementById('photo-input').addEventListener('change', function() {
+  if (this.files && this.files[0]) handlePhotoFile(this.files[0]);
+});
+const pz = document.getElementById('photo-zone');
+pz.addEventListener('dragover',  e => { e.preventDefault(); pz.classList.add('drag-over'); });
+pz.addEventListener('dragleave', ()  => pz.classList.remove('drag-over'));
+pz.addEventListener('drop', e => {
+  e.preventDefault(); pz.classList.remove('drag-over');
+  const f = e.dataTransfer.files[0];
+  if (f && (f.type.startsWith('image') || f.type.startsWith('video'))) handlePhotoFile(f);
 });
 
 // GPS file
