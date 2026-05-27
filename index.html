@@ -158,6 +158,63 @@ body {
   border-radius: 2px;
 }
 
+/* ── TPL METRICS ZONE ── */
+#tpl-metrics-zone {
+  border-top: 1px solid rgba(255,255,255,0.07);
+  padding: 14px 0 6px;
+  margin-top: 4px;
+}
+.tpl-metrics-label {
+  font-size: 11px;
+  color: rgba(255,255,255,0.25);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.tpl-metric-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 9px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s;
+  user-select: none;
+}
+.tpl-metric-row:hover { background: rgba(255,255,255,0.04); }
+.tpl-metric-check {
+  width: 20px;
+  height: 20px;
+  border: 1.5px solid rgba(255,255,255,0.22);
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 900;
+  flex-shrink: 0;
+  color: #0a0a0a;
+  transition: border-color 0.15s, background 0.15s;
+}
+.tpl-metric-row.checked .tpl-metric-check {
+  background: rgba(255,255,255,0.9);
+  border-color: rgba(255,255,255,0.9);
+}
+.tpl-metric-icon { font-size: 15px; flex-shrink: 0; width: 22px; text-align: center; }
+.tpl-metric-label {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.82);
+  flex: 1;
+}
+.tpl-metric-val {
+  font-size: 11px;
+  color: rgba(255,255,255,0.32);
+  letter-spacing: 0.04em;
+}
+
 #photo-zone {
   border: 1px dashed rgba(255,255,255,0.18);
   border-radius: 8px;
@@ -1461,6 +1518,12 @@ body {
       </div>
     </div>
 
+    <!-- Métricas de plantilla (aparece al cargar archivos) -->
+    <div id="tpl-metrics-zone" style="display:none">
+      <div class="tpl-metrics-label">Métricas en plantilla</div>
+      <div id="tpl-metrics-list"></div>
+    </div>
+
     <div id="upload-error" class="error-msg" style="display:none"></div>
     <button id="gps-only-btn" onclick="startRecap()" style="display:none;margin-top:16px;width:100%;padding:12px;background:transparent;border:1px solid rgba(255,255,255,0.3);color:rgba(255,255,255,0.7);font-size:12px;letter-spacing:0.2em;text-transform:uppercase;cursor:pointer;border-radius:4px;font-family:inherit;transition:border-color 0.2s,color 0.2s;">
       Seleccionar métricas
@@ -2334,6 +2397,9 @@ function newSession() {
   if (_bgMediaUrl) { URL.revokeObjectURL(_bgMediaUrl); _bgMediaUrl = null; _bgMediaType = null; }
   _tplAspect = '9/16';
   document.querySelectorAll('.aspect-btn').forEach(b => b.classList.toggle('active', b.dataset.aspect === '9/16'));
+  _tplMetrics = new Set(['dist','time','pace','hr','elev']);
+  document.getElementById('tpl-metrics-zone').style.display = 'none';
+  document.getElementById('tpl-metrics-list').innerHTML = '';
   const _pz = document.getElementById('photo-zone');
   document.getElementById('photo-zone-icon').textContent = '🖼';
   document.getElementById('photo-zone-text').textContent = 'Foto / Video de fondo';
@@ -3186,14 +3252,26 @@ function renderTemplateCover(stats) {
     ? ''
     : `<div style="position:absolute;inset:0;background:linear-gradient(to bottom,transparent 50%,${bg} 100%)"></div>`;
 
-  // Métricas comunes
-  const metricsGrid = `
-    <div style="display:grid;grid-template-columns:repeat(${elevRaw > 0 ? 4 : 3},1fr);gap:4px">
-      <div><div style="font-size:9px;letter-spacing:0.12em;text-transform:uppercase;opacity:0.65;margin-bottom:5px">KM</div><div style="font-size:19px;font-weight:800;letter-spacing:-0.02em">${A('dist', distRaw, 'dist')}</div></div>
-      <div><div style="font-size:9px;letter-spacing:0.12em;text-transform:uppercase;opacity:0.65;margin-bottom:5px">TIEMPO</div><div style="font-size:19px;font-weight:800;letter-spacing:-0.02em">${timeA('time', timeSec)}</div></div>
-      <div><div style="font-size:9px;letter-spacing:0.12em;text-transform:uppercase;opacity:0.65;margin-bottom:5px">PPM</div><div style="font-size:19px;font-weight:800;letter-spacing:-0.02em">${hrRaw > 0 ? A('hr', hrRaw, 'int') : '—'}</div></div>
-      ${elevRaw > 0 ? `<div><div style="font-size:9px;letter-spacing:0.12em;text-transform:uppercase;opacity:0.65;margin-bottom:5px">DESNIVEL</div><div style="font-size:19px;font-weight:800;letter-spacing:-0.02em">${elevA('elev', elevRaw, descentRaw)}</div></div>` : ''}
-    </div>`;
+  // Métricas comunes — filtradas por _tplMetrics
+  const tm = _tplMetrics;
+  const gridCells = [
+    (tm.has('dist') && distRaw > 0)
+      ? `<div><div style="font-size:9px;letter-spacing:0.12em;text-transform:uppercase;opacity:0.65;margin-bottom:5px">KM</div><div style="font-size:19px;font-weight:800;letter-spacing:-0.02em">${A('dist', distRaw, 'dist')}</div></div>`
+      : null,
+    (tm.has('time') && timeSec > 0)
+      ? `<div><div style="font-size:9px;letter-spacing:0.12em;text-transform:uppercase;opacity:0.65;margin-bottom:5px">TIEMPO</div><div style="font-size:19px;font-weight:800;letter-spacing:-0.02em">${timeA('time', timeSec)}</div></div>`
+      : null,
+    (tm.has('hr') && hrRaw > 0)
+      ? `<div><div style="font-size:9px;letter-spacing:0.12em;text-transform:uppercase;opacity:0.65;margin-bottom:5px">PPM</div><div style="font-size:19px;font-weight:800;letter-spacing:-0.02em">${A('hr', hrRaw, 'int')}</div></div>`
+      : null,
+    (tm.has('elev') && elevRaw > 0)
+      ? `<div><div style="font-size:9px;letter-spacing:0.12em;text-transform:uppercase;opacity:0.65;margin-bottom:5px">DESNIVEL</div><div style="font-size:19px;font-weight:800;letter-spacing:-0.02em">${elevA('elev', elevRaw, descentRaw)}</div></div>`
+      : null,
+  ].filter(Boolean);
+
+  const metricsGrid = gridCells.length
+    ? `<div style="display:grid;grid-template-columns:repeat(${gridCells.length},1fr);gap:4px">${gridCells.join('')}</div>`
+    : '';
 
   // Alineación según plantilla
   const alignMap = { bold: 'center', izq: 'flex-start', der: 'flex-end' };
@@ -3217,9 +3295,10 @@ function renderTemplateCover(stats) {
           </div>
           <div style="padding:10px 22px 0;display:flex;flex-direction:column;align-items:${align};text-align:${textAlign};">
             <div style="font-size:9px;letter-spacing:0.2em;opacity:0.65;text-transform:uppercase;margin-bottom:12px">${date}</div>
+            ${tm.has('pace') && s.avgPaceSec > 0 ? `
             <div style="width:26px;height:3px;background:${color};border-radius:2px;margin-bottom:10px"></div>
             <div style="font-size:64px;font-weight:900;letter-spacing:-0.04em;line-height:0.95">${paceA('pace', s.avgPaceSec)}</div>
-            <div style="font-size:11px;opacity:0.65;letter-spacing:0.12em;margin-top:6px">min / km</div>
+            <div style="font-size:11px;opacity:0.65;letter-spacing:0.12em;margin-top:6px">min / km</div>` : ''}
           </div>
           <div style="padding:0 22px 24px;margin-top:auto;">
             <div style="height:1px;background:rgba(255,255,255,0.07);margin-bottom:14px"></div>
@@ -3369,12 +3448,86 @@ function handleFile(file) {
   ds.textContent = 'CSV listo';
   ds.style.color = 'rgba(127,255,212,0.45)';
   updateRecapBtn();
+  // Parsear eagerly para mostrar métricas disponibles
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const text = e.target.result.replace(/^﻿/, '');
+      const name = document.getElementById('session-name').value.trim();
+      _csvStats = processData(parseGarminCSV(text), name);
+      updateTplMetricsZone();
+    } catch(e) {
+      try {
+        const r2 = new FileReader();
+        r2.onload = e2 => {
+          try {
+            const name = document.getElementById('session-name').value.trim();
+            _csvStats = processData(parseGarminCSV(e2.target.result.replace(/^﻿/,'')), name);
+            updateTplMetricsZone();
+          } catch(_) { updateTplMetricsZone(); }
+        };
+        r2.readAsText(file, 'ISO-8859-1');
+      } catch(_) { updateTplMetricsZone(); }
+    }
+  };
+  reader.readAsText(file, 'UTF-8');
 }
 
 let _recapLayout  = 'full';
-let _bgMediaUrl   = null;   // URL.createObjectURL del archivo cargado
-let _bgMediaType  = null;   // 'image' | 'video'
-let _tplAspect    = '9/16'; // aspecto de la plantilla: '9/16' | '4/5' | '1/1'
+let _bgMediaUrl   = null;
+let _bgMediaType  = null;
+let _tplAspect    = '9/16';
+let _tplMetrics   = new Set(['dist','time','pace','hr','elev']); // métricas visibles en plantilla
+
+const TPL_METRIC_DEFS = [
+  { key:'dist',  label:'Distancia',      icon:'📏', avail: s => s && s.dist > 0,
+    val: s => `${(+s.dist).toFixed(2)} km` },
+  { key:'time',  label:'Tiempo',          icon:'⏱',  avail: s => s && timeToSec(s.time) > 0,
+    val: s => s.time },
+  { key:'pace',  label:'Ritmo',           icon:'🏃', avail: s => s && s.avgPaceSec > 0,
+    val: s => `${secToMMSS(s.avgPaceSec)} /km` },
+  { key:'hr',    label:'Frec. Cardíaca',  icon:'❤️', avail: s => s && s.avgHR > 0,
+    val: s => `${s.avgHR} ppm` },
+  { key:'elev',  label:'Desnivel',        icon:'⛰',  avail: s => s && (s.elevation > 0 || s.descent > 0),
+    val: s => `+${s.elevation}/-${s.descent} m` },
+];
+
+function updateTplMetricsZone() {
+  // Obtener stats rápidas (CSV ya parseado, o GPS directo)
+  let stats = _csvStats;
+  if (!stats && _gpsPoints && _gpsPoints.length > 1) {
+    const g = computeGPSStats(_gpsPoints);
+    stats = { dist: g.dist||0, time: g.time||'0:00', avgPaceSec: g.avgPaceSec||0,
+              avgHR: g.avgHR||0, elevation: g.elevation||0, descent: g.descent||0 };
+  }
+  const zone = document.getElementById('tpl-metrics-zone');
+  if (!stats) { zone.style.display = 'none'; return; }
+
+  zone.style.display = 'block';
+  const list = document.getElementById('tpl-metrics-list');
+  list.innerHTML = '';
+
+  TPL_METRIC_DEFS.forEach(m => {
+    if (!m.avail(stats)) return;
+    const checked = _tplMetrics.has(m.key);
+    const row = document.createElement('div');
+    row.className = 'tpl-metric-row' + (checked ? ' checked' : '');
+    row.dataset.key = m.key;
+    row.innerHTML = `
+      <div class="tpl-metric-check">${checked ? '✓' : ''}</div>
+      <span class="tpl-metric-icon">${m.icon}</span>
+      <span class="tpl-metric-label">${m.label}</span>
+      <span class="tpl-metric-val">${m.val(stats)}</span>`;
+    row.addEventListener('click', () => {
+      row.classList.toggle('checked');
+      const isOn = row.classList.contains('checked');
+      row.querySelector('.tpl-metric-check').textContent = isOn ? '✓' : '';
+      if (isOn) _tplMetrics.add(m.key);
+      else       _tplMetrics.delete(m.key);
+    });
+    list.appendChild(row);
+  });
+}
 
 function applyRecapLayout() {
   const rv     = document.getElementById('recap-view');
@@ -3478,6 +3631,7 @@ function handleGPSFile(file) {
       el.textContent = `✓ ${file.name} · ${pts.length} puntos`;
       el.classList.add('loaded');
       updateRecapBtn();
+      updateTplMetricsZone();
     } catch (err) {
       showError('GPS: ' + err.message);
     }
