@@ -517,64 +517,6 @@ body {
   font-size: clamp(11px, 2.2vw, 16px) !important;
 }
 
-/* ── THEMES ── */
-#theme-zone {
-  display: flex;
-  flex-direction: column;
-  gap: 7px;
-  padding: 10px 0 4px;
-  border-top: 1px solid rgba(255,255,255,0.07);
-}
-.theme-zone-label {
-  font-size: 11px;
-  color: rgba(255,255,255,0.25);
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-#theme-cards {
-  display: flex;
-  gap: 7px;
-  flex-wrap: wrap;
-}
-.theme-card {
-  background: transparent;
-  border: 1.5px solid rgba(255,255,255,0.1);
-  border-radius: 7px;
-  padding: 0;
-  cursor: pointer;
-  transition: border-color 0.2s, transform 0.15s;
-  overflow: hidden;
-  width: 56px;
-  flex-shrink: 0;
-}
-.theme-card:hover { transform: scale(1.06); }
-.theme-card.active { border-color: rgba(255,255,255,0.75); }
-.theme-preview {
-  width: 100%;
-  height: 36px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 13px;
-  font-weight: 900;
-  font-family: 'Arial Black', Arial, sans-serif;
-  letter-spacing: -0.02em;
-}
-.theme-name {
-  font-size: 7.5px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: rgba(255,255,255,0.38);
-  text-align: center;
-  padding: 3px 2px 4px;
-  background: rgba(0,0,0,0.6);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
 
 .mv-duration {
   text-align: center;
@@ -1349,32 +1291,6 @@ body {
     </div>
 
     <!-- Temas -->
-    <div id="theme-zone">
-      <div class="theme-zone-label"><span>🎨</span> Tema</div>
-      <div id="theme-cards">
-        <button class="theme-card active" data-theme="none" title="Sin tema · usa tu propia foto">
-          <div class="theme-preview" style="background:repeating-linear-gradient(45deg,#1a1a1a 0px,#1a1a1a 6px,#111 6px,#111 12px);color:rgba(255,255,255,0.4)">📷</div>
-          <div class="theme-name">Custom</div>
-        </button>
-        <button class="theme-card" data-theme="night" title="Noche">
-          <div class="theme-preview" style="background:#0a0a0a;color:#ffffff">Aa</div>
-          <div class="theme-name">Noche</div>
-        </button>
-        <button class="theme-card" data-theme="dawn" title="Strava">
-          <div class="theme-preview" style="background:linear-gradient(160deg,#3d1500,#0a0a0a);color:#FF4F00">Aa</div>
-          <div class="theme-name">Strava</div>
-        </button>
-        <button class="theme-card" data-theme="garmin" title="Garmin">
-          <div class="theme-preview" style="background:linear-gradient(160deg,#002847,#000d1a);color:#109AD7">Aa</div>
-          <div class="theme-name">Garmin</div>
-        </button>
-        <button class="theme-card" data-theme="clean" title="Blanco">
-          <div class="theme-preview" style="background:#f0f0f0;color:#111111">Aa</div>
-          <div class="theme-name">Blanco</div>
-        </button>
-      </div>
-    </div>
-
     <!-- Color de texto -->
     <div id="text-color-zone">
       <span style="font-size:13px;color:rgba(255,255,255,0.2)">🎨</span>
@@ -3198,7 +3114,7 @@ function renderTemplateCover(stats) {
 
   const color = _recapTextColor || '#ffffff';
   const font  = _recapFont ? `'${_recapFont}', sans-serif` : "-apple-system, 'Helvetica Neue', sans-serif";
-  const bg    = (_themeBg && _themeBg !== '') ? _themeBg : '#0a0a0a';
+  const bg    = '#0a0a0a';
   const bs    = `font-family:${font};color:${color};`;
 
   // Helpers para marcadores animables
@@ -3407,7 +3323,6 @@ function handleFile(file) {
   updateRecapBtn();
 }
 
-let _themeBg     = null;
 let _recapLayout = 'full';
 let _bgMediaUrl  = null;   // URL.createObjectURL del archivo cargado
 let _bgMediaType = null;   // 'image' | 'video'
@@ -3437,41 +3352,6 @@ function applyRecapLayout() {
 
 // CSS background string del tema activo
 
-const THEMES = {
-  none:   { bg: null,                                                    text: null },
-  night:  { bg: '#0a0a0a',                                               text: '#ffffff' },
-  dawn:   { bg: 'linear-gradient(160deg,#3d1500 0%,#0a0a0a 100%)',       text: '#FF4F00' },
-  garmin: { bg: 'linear-gradient(160deg,#002847 0%,#000d1a 100%)',       text: '#109AD7' },
-  clean:  { bg: '#f0f0f0',                                               text: '#111111' },
-};
-
-function applyTheme(id) {
-  const t = THEMES[id] || THEMES.none;
-  // Actualizar card activa
-  document.querySelectorAll('.theme-card').forEach(c => c.classList.toggle('active', c.dataset.theme === id));
-
-  if (id === 'none') {
-    _themeBg = null;
-    // No toca el color de texto ni la foto
-  } else {
-    _themeBg = t.bg;
-    // Aplicar color de texto y sincronizar swatch
-    if (t.text) {
-      applyRecapTextColor(t.text);
-      const match = document.querySelector(`.color-swatch[data-color="${t.text}"]`);
-      document.querySelectorAll('.color-swatch').forEach(b => b.classList.remove('active'));
-      if (match) match.classList.add('active');
-      else document.getElementById('custom-color-input').value = t.text;
-    }
-  }
-  updateTplPreviews();
-  applyBgPhoto();
-}
-
-// Wiring theme cards
-document.querySelectorAll('.theme-card').forEach(card => {
-  card.addEventListener('click', () => applyTheme(card.dataset.theme));
-});
 
 
 function applyBgPhoto() {
@@ -3490,8 +3370,6 @@ function applyBgPhoto() {
     } else {
       el.style.backgroundImage = `url(${_bgMediaUrl})`;
     }
-  } else if (_themeBg) {
-    el.style.background = _themeBg;
   }
 }
 
@@ -3605,7 +3483,7 @@ function applyRecapFont(fontFamily) {
 function updateTplPreviews() {
   const color = _recapTextColor || '#ffffff';
   const font  = _recapFont ? `'${_recapFont}', sans-serif` : "-apple-system, 'Helvetica Neue', sans-serif";
-  const bg    = (_themeBg && _themeBg !== '') ? _themeBg : '#000000';
+  const bg    = '#0a0a0a';
   let s = document.getElementById('tpl-preview-override');
   if (!s) { s = document.createElement('style'); s.id = 'tpl-preview-override'; document.head.appendChild(s); }
   s.textContent = `
