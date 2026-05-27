@@ -128,6 +128,36 @@ body {
   background: rgba(255,255,255,0.02);
 }
 
+#aspect-zone {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.aspect-btn {
+  flex: 1;
+  background: transparent;
+  border: 1.5px solid rgba(255,255,255,0.12);
+  border-radius: 8px;
+  padding: 10px 4px 8px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+  transition: border-color 0.2s, background 0.2s;
+  color: rgba(255,255,255,0.4);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  font-family: inherit;
+}
+.aspect-btn:hover { border-color: rgba(255,255,255,0.3); background: rgba(255,255,255,0.03); }
+.aspect-btn.active { border-color: rgba(255,255,255,0.8); color: rgba(255,255,255,0.85); }
+.aspect-btn.active .aspect-icon { border-color: rgba(255,255,255,0.85); }
+.aspect-icon {
+  border: 2px solid rgba(255,255,255,0.35);
+  border-radius: 2px;
+}
+
 #photo-zone {
   border: 1px dashed rgba(255,255,255,0.18);
   border-radius: 8px;
@@ -1275,6 +1305,22 @@ body {
     </div>
     <input type="file" id="photo-input" accept="image/*,video/mp4,video/quicktime,video/mov" style="display:none">
 
+    <!-- Aspecto de la plantilla -->
+    <div id="aspect-zone">
+      <button class="aspect-btn active" data-aspect="9/16" title="Vertical completo (9:16)">
+        <div class="aspect-icon" style="width:14px;height:24px;"></div>
+        <span>9:16</span>
+      </button>
+      <button class="aspect-btn" data-aspect="4/5" title="Vertical (4:5)">
+        <div class="aspect-icon" style="width:18px;height:22px;"></div>
+        <span>4:5</span>
+      </button>
+      <button class="aspect-btn" data-aspect="1/1" title="Cuadrado (1:1)">
+        <div class="aspect-icon" style="width:20px;height:20px;"></div>
+        <span>1:1</span>
+      </button>
+    </div>
+
     <!-- Fuentes -->
     <div id="font-zone">
       <div class="font-zone-label">Font</div>
@@ -2286,6 +2332,8 @@ function newSession() {
   document.getElementById('file-input').value  = '';
   document.getElementById('photo-input').value = '';
   if (_bgMediaUrl) { URL.revokeObjectURL(_bgMediaUrl); _bgMediaUrl = null; _bgMediaType = null; }
+  _tplAspect = '9/16';
+  document.querySelectorAll('.aspect-btn').forEach(b => b.classList.toggle('active', b.dataset.aspect === '9/16'));
   const _pz = document.getElementById('photo-zone');
   document.getElementById('photo-zone-icon').textContent = '🖼';
   document.getElementById('photo-zone-text').textContent = 'Foto / Video de fondo';
@@ -3159,7 +3207,7 @@ function renderTemplateCover(stats) {
 
   if (['bold','izq','der'].includes(_recapTemplate)) {
     html = `
-      <div style="${bs}background:${bg};border-radius:16px;overflow:hidden;aspect-ratio:3/4;position:relative;">
+      <div style="${bs}background:${bg};border-radius:16px;overflow:hidden;aspect-ratio:${_tplAspect};position:relative;">
         ${mediaLayer}
         ${mediaOverlay}
         <div style="position:relative;z-index:1;display:flex;flex-direction:column;height:100%;">
@@ -3323,9 +3371,10 @@ function handleFile(file) {
   updateRecapBtn();
 }
 
-let _recapLayout = 'full';
-let _bgMediaUrl  = null;   // URL.createObjectURL del archivo cargado
-let _bgMediaType = null;   // 'image' | 'video'
+let _recapLayout  = 'full';
+let _bgMediaUrl   = null;   // URL.createObjectURL del archivo cargado
+let _bgMediaType  = null;   // 'image' | 'video'
+let _tplAspect    = '9/16'; // aspecto de la plantilla: '9/16' | '4/5' | '1/1'
 
 function applyRecapLayout() {
   const rv     = document.getElementById('recap-view');
@@ -3405,6 +3454,15 @@ pz.addEventListener('drop', e => {
   e.preventDefault(); pz.classList.remove('drag-over');
   const f = e.dataTransfer.files[0];
   if (f && (f.type.startsWith('image') || f.type.startsWith('video'))) handlePhotoFile(f);
+});
+
+// Selector de aspecto
+document.querySelectorAll('.aspect-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.aspect-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    _tplAspect = btn.dataset.aspect;
+  });
 });
 
 // GPS file
