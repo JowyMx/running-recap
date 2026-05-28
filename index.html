@@ -214,6 +214,29 @@ body {
   color: rgba(255,255,255,0.32);
   letter-spacing: 0.04em;
 }
+.tpl-hero-btn {
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255,255,255,0.2);
+  background: transparent;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; color: transparent;
+  flex-shrink: 0;
+  transition: border-color 0.15s, background 0.15s;
+}
+.tpl-hero-btn:hover { border-color: rgba(255,255,255,0.5); }
+.tpl-hero-btn.active {
+  background: rgba(255,255,255,0.9);
+  border-color: rgba(255,255,255,0.9);
+  color: #0a0a0a;
+}
+.tpl-metric-row.is-hero .tpl-metric-label { color: #fff; }
+.tpl-hero-tag {
+  font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase;
+  color: rgba(255,255,255,0.45); background: rgba(255,255,255,0.08);
+  border-radius: 4px; padding: 2px 6px; flex-shrink: 0;
+}
 
 #photo-zone {
   border: 1px dashed rgba(255,255,255,0.18);
@@ -1434,8 +1457,8 @@ body {
                 <div style="padding:10px 18px 0;display:flex;flex-direction:column;align-items:flex-start;">
                   <div style="font-size:7px;letter-spacing:0.2em;color:rgba(255,255,255,0.25);text-transform:uppercase;margin-bottom:7px">26 MAY 2026</div>
                   <div style="width:22px;height:2px;background:#fff;border-radius:2px;margin-bottom:7px"></div>
-                  <div style="font-size:46px;font-weight:900;color:#fff;letter-spacing:-0.04em;line-height:0.95">5:33</div>
-                  <div style="font-size:9px;color:rgba(255,255,255,0.28);letter-spacing:0.1em;margin-top:4px">min / km</div>
+                  <div class="tpl-thumb-hero-val" style="font-size:46px;font-weight:900;color:#fff;letter-spacing:-0.04em;line-height:0.95">5:33</div>
+                  <div class="tpl-thumb-hero-unit" style="font-size:9px;color:rgba(255,255,255,0.28);letter-spacing:0.1em;margin-top:4px">min / km</div>
                   <div style="height:1px;background:rgba(255,255,255,0.07);margin:10px 0 8px;width:100%"></div>
                   <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:4px;width:100%">
                     <div><div style="font-size:7px;color:rgba(255,255,255,0.25);text-transform:uppercase;margin-bottom:2px">km</div><div style="font-size:13px;font-weight:800;color:#fff">12.01</div></div>
@@ -1466,8 +1489,8 @@ body {
                 <div style="padding:10px 18px 0;display:flex;flex-direction:column;align-items:center;text-align:center;">
                   <div style="font-size:7px;letter-spacing:0.2em;color:rgba(255,255,255,0.25);text-transform:uppercase;margin-bottom:7px">26 MAY 2026</div>
                   <div style="width:22px;height:2px;background:#00ff88;border-radius:2px;margin-bottom:7px"></div>
-                  <div style="font-size:46px;font-weight:900;color:#fff;letter-spacing:-0.04em;line-height:0.95">5:46</div>
-                  <div style="font-size:9px;color:rgba(255,255,255,0.28);letter-spacing:0.1em;margin-top:4px">min / km</div>
+                  <div class="tpl-thumb-hero-val" style="font-size:46px;font-weight:900;color:#fff;letter-spacing:-0.04em;line-height:0.95">5:46</div>
+                  <div class="tpl-thumb-hero-unit" style="font-size:9px;color:rgba(255,255,255,0.28);letter-spacing:0.1em;margin-top:4px">min / km</div>
                   <div style="height:1px;background:rgba(255,255,255,0.07);margin:10px 0 8px;width:100%"></div>
                   <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:4px;width:100%">
                     <div><div style="font-size:7px;color:rgba(255,255,255,0.25);text-transform:uppercase;margin-bottom:2px">km</div><div style="font-size:13px;font-weight:800;color:#fff">6.78</div></div>
@@ -1498,8 +1521,8 @@ body {
                 <div style="padding:10px 18px 0;display:flex;flex-direction:column;align-items:flex-end;text-align:right;">
                   <div style="font-size:7px;letter-spacing:0.2em;color:rgba(255,255,255,0.25);text-transform:uppercase;margin-bottom:7px">26 MAY 2026</div>
                   <div style="width:22px;height:2px;background:#fff;border-radius:2px;margin-bottom:7px"></div>
-                  <div style="font-size:46px;font-weight:900;color:#fff;letter-spacing:-0.04em;line-height:0.95">5:33</div>
-                  <div style="font-size:9px;color:rgba(255,255,255,0.28);letter-spacing:0.1em;margin-top:4px">min / km</div>
+                  <div class="tpl-thumb-hero-val" style="font-size:46px;font-weight:900;color:#fff;letter-spacing:-0.04em;line-height:0.95">5:33</div>
+                  <div class="tpl-thumb-hero-unit" style="font-size:9px;color:rgba(255,255,255,0.28);letter-spacing:0.1em;margin-top:4px">min / km</div>
                   <div style="height:1px;background:rgba(255,255,255,0.07);margin:10px 0 8px;width:100%"></div>
                   <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:4px;width:100%">
                     <div><div style="font-size:7px;color:rgba(255,255,255,0.25);text-transform:uppercase;margin-bottom:2px">km</div><div style="font-size:13px;font-weight:800;color:#fff">12.01</div></div>
@@ -1520,7 +1543,7 @@ body {
 
     <!-- Métricas de plantilla (aparece al cargar archivos) -->
     <div id="tpl-metrics-zone" style="display:none">
-      <div class="tpl-metrics-label">Métricas en plantilla</div>
+      <div class="tpl-metrics-label">Métricas en plantilla <span style="font-size:9px;opacity:0.45;letter-spacing:0.05em;text-transform:none;font-weight:400">· ★ = destacada</span></div>
       <div id="tpl-metrics-list"></div>
     </div>
 
@@ -2398,6 +2421,7 @@ function newSession() {
   _tplAspect = '9/16';
   document.querySelectorAll('.aspect-btn').forEach(b => b.classList.toggle('active', b.dataset.aspect === '9/16'));
   _tplMetrics = new Set(['dist','time','pace','hr','elev']);
+  _tplHeroMetric = 'pace';
   document.getElementById('tpl-metrics-zone').style.display = 'none';
   document.getElementById('tpl-metrics-list').innerHTML = '';
   const _pz = document.getElementById('photo-zone');
@@ -3252,19 +3276,53 @@ function renderTemplateCover(stats) {
     ? ''
     : `<div style="position:absolute;inset:0;background:linear-gradient(to bottom,transparent 50%,${bg} 100%)"></div>`;
 
-  // Métricas comunes — filtradas por _tplMetrics
+  // Métricas comunes — filtradas por _tplMetrics (sin la hero que ya va arriba grande)
   const tm = _tplMetrics;
+  const hero = _tplHeroMetric;
+
+  // Sección hero (valor grande) — según métrica seleccionada
+  const heroAvail = {
+    dist:  distRaw > 0,
+    time:  timeSec > 0,
+    pace:  s.avgPaceSec > 0,
+    hr:    hrRaw > 0,
+    elev:  elevRaw > 0,
+  };
+  const heroBigVal = {
+    dist:  A('dist', distRaw, 'dist'),
+    time:  timeA('time', timeSec),
+    pace:  paceA('pace', s.avgPaceSec),
+    hr:    A('hr', hrRaw, 'int'),
+    elev:  elevA('elev', elevRaw, descentRaw),
+  };
+  const heroUnitLabel = {
+    dist:  'km',
+    time:  'tiempo',
+    pace:  'min / km',
+    hr:    'ppm',
+    elev:  'm desnivel',
+  };
+  const showHero = tm.has(hero) && heroAvail[hero];
+  const heroSection = showHero ? `
+    <div style="width:26px;height:3px;background:${color};border-radius:2px;margin-bottom:10px"></div>
+    <div style="font-size:64px;font-weight:900;letter-spacing:-0.04em;line-height:0.95">${heroBigVal[hero]}</div>
+    <div style="font-size:11px;opacity:0.65;letter-spacing:0.12em;margin-top:6px">${heroUnitLabel[hero]}</div>` : '';
+
+  // Grid de métricas secundarias (excluye la hero)
   const gridCells = [
-    (tm.has('dist') && distRaw > 0)
-      ? `<div><div style="font-size:9px;letter-spacing:0.12em;text-transform:uppercase;opacity:0.65;margin-bottom:5px">KM</div><div style="font-size:19px;font-weight:800;letter-spacing:-0.02em">${A('dist', distRaw, 'dist')}</div></div>`
+    (tm.has('dist') && hero !== 'dist' && distRaw > 0)
+      ? `<div><div style="font-size:9px;letter-spacing:0.12em;text-transform:uppercase;opacity:0.65;margin-bottom:5px">KM</div><div style="font-size:19px;font-weight:800;letter-spacing:-0.02em">${A('dist2', distRaw, 'dist')}</div></div>`
       : null,
-    (tm.has('time') && timeSec > 0)
-      ? `<div><div style="font-size:9px;letter-spacing:0.12em;text-transform:uppercase;opacity:0.65;margin-bottom:5px">TIEMPO</div><div style="font-size:19px;font-weight:800;letter-spacing:-0.02em">${timeA('time', timeSec)}</div></div>`
+    (tm.has('time') && hero !== 'time' && timeSec > 0)
+      ? `<div><div style="font-size:9px;letter-spacing:0.12em;text-transform:uppercase;opacity:0.65;margin-bottom:5px">TIEMPO</div><div style="font-size:19px;font-weight:800;letter-spacing:-0.02em">${timeA('time2', timeSec)}</div></div>`
       : null,
-    (tm.has('hr') && hrRaw > 0)
+    (tm.has('pace') && hero !== 'pace' && s.avgPaceSec > 0)
+      ? `<div><div style="font-size:9px;letter-spacing:0.12em;text-transform:uppercase;opacity:0.65;margin-bottom:5px">RITMO</div><div style="font-size:19px;font-weight:800;letter-spacing:-0.02em">${paceA('pace2', s.avgPaceSec)}</div></div>`
+      : null,
+    (tm.has('hr') && hero !== 'hr' && hrRaw > 0)
       ? `<div><div style="font-size:9px;letter-spacing:0.12em;text-transform:uppercase;opacity:0.65;margin-bottom:5px">PPM</div><div style="font-size:19px;font-weight:800;letter-spacing:-0.02em">${A('hr', hrRaw, 'int')}</div></div>`
       : null,
-    (tm.has('elev') && elevRaw > 0)
+    (tm.has('elev') && hero !== 'elev' && elevRaw > 0)
       ? `<div><div style="font-size:9px;letter-spacing:0.12em;text-transform:uppercase;opacity:0.65;margin-bottom:5px">DESNIVEL</div><div style="font-size:19px;font-weight:800;letter-spacing:-0.02em">${elevA('elev', elevRaw, descentRaw)}</div></div>`
       : null,
   ].filter(Boolean);
@@ -3295,10 +3353,7 @@ function renderTemplateCover(stats) {
           </div>
           <div style="padding:10px 22px 0;display:flex;flex-direction:column;align-items:${align};text-align:${textAlign};">
             <div style="font-size:9px;letter-spacing:0.2em;opacity:0.65;text-transform:uppercase;margin-bottom:12px">${date}</div>
-            ${tm.has('pace') && s.avgPaceSec > 0 ? `
-            <div style="width:26px;height:3px;background:${color};border-radius:2px;margin-bottom:10px"></div>
-            <div style="font-size:64px;font-weight:900;letter-spacing:-0.04em;line-height:0.95">${paceA('pace', s.avgPaceSec)}</div>
-            <div style="font-size:11px;opacity:0.65;letter-spacing:0.12em;margin-top:6px">min / km</div>` : ''}
+            ${heroSection}
           </div>
           <div style="padding:0 22px 24px;margin-top:auto;">
             <div style="height:1px;background:rgba(255,255,255,0.07);margin-bottom:14px"></div>
@@ -3478,6 +3533,7 @@ let _bgMediaUrl   = null;
 let _bgMediaType  = null;
 let _tplAspect    = '9/16';
 let _tplMetrics   = new Set(['dist','time','pace','hr','elev']); // métricas visibles en plantilla
+let _tplHeroMetric = 'pace'; // métrica destacada (hero grande)
 
 const TPL_METRIC_DEFS = [
   { key:'dist',  label:'Distancia',      icon:'📏', avail: s => s && s.dist > 0,
@@ -3491,6 +3547,29 @@ const TPL_METRIC_DEFS = [
   { key:'elev',  label:'Desnivel',        icon:'⛰',  avail: s => s && (s.elevation > 0 || s.descent > 0),
     val: s => `+${s.elevation}/-${s.descent} m` },
 ];
+
+// Formatos hero para thumbnails (sin animación, texto directo)
+const TPL_HERO_THUMB = {
+  dist:  { avail: s => s && +s.dist > 0,              val: s => (+s.dist).toFixed(2),                        unit: 'km'       },
+  time:  { avail: s => s && timeToSec(s.time) > 0,    val: s => s.time,                                      unit: 'tiempo'   },
+  pace:  { avail: s => s && s.avgPaceSec > 0,         val: s => secToMMSS(s.avgPaceSec),                     unit: 'min / km' },
+  hr:    { avail: s => s && s.avgHR > 0,              val: s => `${s.avgHR}`,                                 unit: 'ppm'      },
+  elev:  { avail: s => s && (s.elevation > 0 || s.descent > 0), val: s => `+${s.elevation}`,                 unit: 'm desn.'  },
+};
+
+function updateTplThumbnails() {
+  let stats = _csvStats;
+  if (!stats && _gpsPoints && _gpsPoints.length > 1) {
+    const g = computeGPSStats(_gpsPoints);
+    stats = { dist: g.dist||0, time: g.time||'0:00', avgPaceSec: g.avgPaceSec||0,
+              avgHR: g.avgHR||0, elevation: g.elevation||0, descent: g.descent||0 };
+  }
+  const heroDef = TPL_HERO_THUMB[_tplHeroMetric];
+  const heroVal  = (heroDef && stats && heroDef.avail(stats)) ? heroDef.val(stats)  : (heroDef ? heroDef.val({dist:12.01,time:'1:06:00',avgPaceSec:333,avgHR:138,elevation:36,descent:33}) : '—');
+  const heroUnit = heroDef ? heroDef.unit : '';
+  document.querySelectorAll('.tpl-thumb-hero-val').forEach(el  => el.textContent = heroVal);
+  document.querySelectorAll('.tpl-thumb-hero-unit').forEach(el => el.textContent = heroUnit);
+}
 
 function updateTplMetricsZone() {
   // Obtener stats rápidas (CSV ya parseado, o GPS directo)
@@ -3509,16 +3588,37 @@ function updateTplMetricsZone() {
 
   TPL_METRIC_DEFS.forEach(m => {
     if (!m.avail(stats)) return;
-    const checked = _tplMetrics.has(m.key);
+    const checked  = _tplMetrics.has(m.key);
+    const isHero   = _tplHeroMetric === m.key;
     const row = document.createElement('div');
-    row.className = 'tpl-metric-row' + (checked ? ' checked' : '');
+    row.className = 'tpl-metric-row' + (checked ? ' checked' : '') + (isHero ? ' is-hero' : '');
     row.dataset.key = m.key;
     row.innerHTML = `
+      <button class="tpl-hero-btn${isHero ? ' active' : ''}" title="Destacar" data-hero="${m.key}">★</button>
       <div class="tpl-metric-check">${checked ? '✓' : ''}</div>
       <span class="tpl-metric-icon">${m.icon}</span>
       <span class="tpl-metric-label">${m.label}</span>
       <span class="tpl-metric-val">${m.val(stats)}</span>`;
+
+    // Hero button: selecciona como métrica destacada
+    row.querySelector('.tpl-hero-btn').addEventListener('click', e => {
+      e.stopPropagation();
+      _tplHeroMetric = m.key;
+      // Activar también como visible si estaba desactivada
+      if (!_tplMetrics.has(m.key)) {
+        _tplMetrics.add(m.key);
+        row.classList.add('checked');
+        row.querySelector('.tpl-metric-check').textContent = '✓';
+      }
+      // Refrescar estado hero en todos los botones
+      document.querySelectorAll('.tpl-hero-btn').forEach(b => b.classList.toggle('active', b.dataset.hero === m.key));
+      document.querySelectorAll('.tpl-metric-row').forEach(r => r.classList.toggle('is-hero', r.dataset.key === m.key));
+      updateTplThumbnails();
+    });
+
+    // Check toggle: muestra/oculta métrica (pero no puede desactivar la hero)
     row.addEventListener('click', () => {
+      if (_tplHeroMetric === m.key) return; // hero siempre visible
       row.classList.toggle('checked');
       const isOn = row.classList.contains('checked');
       row.querySelector('.tpl-metric-check').textContent = isOn ? '✓' : '';
@@ -3527,6 +3627,8 @@ function updateTplMetricsZone() {
     });
     list.appendChild(row);
   });
+
+  updateTplThumbnails();
 }
 
 function applyRecapLayout() {
