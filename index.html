@@ -3492,16 +3492,43 @@ function renderTemplateCover(stats) {
     if (!rows || rows.length === 0) {
       return `<div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:11px;opacity:0.3;letter-spacing:0.2em">SIN VUELTAS</div>`;
     }
-    const maxVisible = 42;
+    const maxVisible = 50;
     const visible = rows.slice(0, maxVisible);
-
-    // Escalar tamaño de fila según cantidad de vueltas visibles
     const n = visible.length;
-    const rowFs  = n <= 8 ? '12px' : n <= 12 ? '11px' : n <= 18 ? '10px' : n <= 28 ? '9px'  : '8px';
-    const hdrFs  = n <= 8 ? '8px'  : n <= 12 ? '7px'  : n <= 18 ? '7px'  : n <= 28 ? '6px'  : '6px';
-    const rowPad = n <= 8 ? '4px'  : n <= 12 ? '3px'  : n <= 18 ? '2px'  : n <= 28 ? '1px'  : '1px';
-    const barH   = n <= 8 ? '12px' : n <= 12 ? '10px' : n <= 18 ? '8px'  : n <= 28 ? '6px'  : '5px';
-    const cumFs  = n <= 8 ? '10px' : n <= 12 ? '9px'  : n <= 18 ? '8px'  : n <= 28 ? '7px'  : '6px';
+
+    // Para carreras largas agrupar de 2 en 2 (>21) o de 5 en 5 (>42)
+    const groupSize = n > 42 ? 5 : n > 21 ? 2 : 1;
+
+    // Construir filas agrupadas
+    const groupedRows = [];
+    for (let gi = 0; gi < visible.length; gi += groupSize) {
+      const grp = visible.slice(gi, Math.min(gi + groupSize, visible.length));
+      let grpTimeSec = 0, grpDist = 0;
+      grp.forEach(r => {
+        grpTimeSec += timeToSec(r.time || '');
+        grpDist    += resolveRowDist(r);
+      });
+      const grpPaceSec   = grpTimeSec > 0 && grpDist > 0
+        ? grpTimeSec / grpDist
+        : resolveRowPaceSec(grp[0]);
+      const grpPaceLabel = grpPaceSec > 0 ? secToMMSS(grpPaceSec) : '—';
+      const cumKm = visible.slice(0, gi + grp.length)
+        .reduce((acc, r) => acc + resolveRowDist(r), 0);
+      const label = groupSize > 1 ? Math.round(cumKm) : (() => {
+        const rawD = parseFloat(grp[0].dist) || 0;
+        return rawD === 0 ? grp[0].n
+          : rawD >= 0.95 ? Math.round(cumKm)
+          : rawD.toFixed(2);
+      })();
+      groupedRows.push({ label, paceSec: grpPaceSec, paceLabel: grpPaceLabel, lapTimeSec: grpTimeSec });
+    }
+
+    const nd = groupedRows.length;
+    const rowFs  = nd <= 8 ? '12px' : nd <= 12 ? '11px' : nd <= 18 ? '10px' : '9px';
+    const hdrFs  = nd <= 8 ? '8px'  : '7px';
+    const rowPad = nd <= 8 ? '4px'  : nd <= 12 ? '3px'  : nd <= 18 ? '2px'  : '1px';
+    const barH   = nd <= 8 ? '12px' : nd <= 12 ? '10px' : nd <= 18 ? '8px'  : '7px';
+    const cumFs  = nd <= 8 ? '10px' : nd <= 12 ? '9px'  : '8px';
 
     // Resolver ritmo por vuelta: campo directo o calculado desde tiempo/distancia
     // Distancia por vuelta: del CSV, o 1 km (auto-lap Garmin)
@@ -3530,36 +3557,23 @@ function renderTemplateCover(stats) {
       return '—';
     }
 
-    const validSecs = visible.map(resolveRowPaceSec).filter(v => v > 0);
+    const validSecs = groupedRows.map(r => r.paceSec).filter(v => v > 0);
     const minPace   = validSecs.length ? Math.min(...validSecs) : 0;
     const maxPace   = validSecs.length ? Math.max(...validSecs) : 0;
     const pRange    = maxPace - minPace || 1;
 
     let cum = 0;
-    const rowsHtml = visible.map((r, i) => {
-      const sec        = resolveRowPaceSec(r);
-      const rawDist    = parseFloat(r.dist) || 0;
-      const lapTimeSec = timeToSec(r.time || '');
-
-      // Acumulado: tiempo real si disponible, si no ritmo × dist
-      cum += lapTimeSec > 0 ? lapTimeSec : sec * resolveRowDist(r);
-
-      const pct    = sec > 0 ? Math.round(((maxPace - sec) / pRange) * 70 + 15) : 0;
+    const rowsHtml = groupedRows.map(r => {
+      cum += r.lapTimeSec > 0 ? r.lapTimeSec : r.paceSec * (groupSize > 1 ? groupSize : 1) * 60;
+      const pct    = r.paceSec > 0 ? Math.round(((maxPace - r.paceSec) / pRange) * 70 + 15) : 0;
       const cumH   = Math.floor(cum/3600), cumM = Math.floor((cum%3600)/60), cumS = Math.round(cum%60);
       const cumVal = cumH > 0
         ? `${cumH}:${String(cumM).padStart(2,'0')}:${String(cumS).padStart(2,'0')}`
         : `${String(cumM).padStart(2,'0')}:${String(cumS).padStart(2,'0')}`;
 
-      // KM: número de vuelta o km acumulado
-      const distVal = rawDist === 0 ? r.n
-        : rawDist >= 0.95 ? Math.round(visible.slice(0,i+1).reduce((acc,rr)=>acc+(parseFloat(rr.dist)||0),0))
-        : rawDist.toFixed(2);
-
-      const paceVal = resolveRowPaceLabel(r);
-
       return `<div style="display:grid;grid-template-columns:2em 3.2em minmax(0,1fr) auto;align-items:center;gap:4px;padding:${rowPad} 0;border-bottom:1px solid rgba(255,255,255,0.09);">
-        <div style="font-size:${rowFs};font-weight:900;text-align:right;opacity:0.9">${distVal}</div>
-        <div style="font-size:${rowFs};font-weight:900;text-align:right;color:${color}">${paceVal}</div>
+        <div style="font-size:${rowFs};font-weight:900;text-align:right;opacity:0.9">${r.label}</div>
+        <div style="font-size:${rowFs};font-weight:900;text-align:right;color:${color}">${r.paceLabel}</div>
         <div style="position:relative;height:${barH};">
           <div class="tpl-lap-bar" data-w="${pct}" style="position:absolute;left:0;top:0;height:100%;width:0;background:rgba(255,255,255,0.82);border-radius:3px;transition:width 0.55s cubic-bezier(0.4,0,0.2,1);"></div>
         </div>
@@ -3602,32 +3616,23 @@ function renderTemplateCover(stats) {
   }
 
   if (_recapTemplate === 'laps') {
-    const nLaps       = Math.min((s.tableRows || []).length, 42);
-    const lapSection  = buildTplLapRows();
-    // Para carreras largas: comprimir sección inferior para dar más espacio a las filas
-    const manyLaps    = nLaps > 25;
-    const lapsPadB    = manyLaps ? '4px'  : '10px';
-    const heroPadT    = manyLaps ? '6px'  : '10px';
-    const heroDateMgn = manyLaps ? '6px'  : '12px';
-    const metricsPadB = manyLaps ? '10px' : '24px';
-    const showMetrics = !manyLaps;  // ocultar grid de métricas cuando hay muchas vueltas
-
+    const lapSection = buildTplLapRows();
     html = `
       <div style="${bs}background:${bg};border-radius:16px;overflow:hidden;aspect-ratio:${_tplAspect};position:relative;">
         ${mediaLayer}
         ${mediaOverlay}
         <div style="position:relative;z-index:1;display:flex;flex-direction:column;height:100%;">
-          <div style="flex:1;overflow:hidden;padding:18px 22px ${lapsPadB};">
+          <div style="flex:1;overflow:hidden;padding:18px 22px 10px;">
             <div style="font-size:8px;letter-spacing:0.22em;opacity:0.4;text-transform:uppercase;margin-bottom:8px;text-align:${textAlign}">VUELTAS</div>
             ${lapSection}
           </div>
-          <div style="padding:${heroPadT} 22px 0;display:flex;flex-direction:column;align-items:${align};text-align:${textAlign};">
-            <div style="font-size:9px;letter-spacing:0.2em;opacity:0.65;text-transform:uppercase;margin-bottom:${heroDateMgn}">${date}</div>
+          <div style="padding:10px 22px 0;display:flex;flex-direction:column;align-items:${align};text-align:${textAlign};">
+            <div style="font-size:9px;letter-spacing:0.2em;opacity:0.65;text-transform:uppercase;margin-bottom:12px">${date}</div>
             ${heroSection}
           </div>
-          <div style="padding:0 22px ${metricsPadB};margin-top:auto;">
-            <div style="height:1px;background:rgba(255,255,255,0.07);margin-bottom:${showMetrics ? '14px' : '0'}"></div>
-            ${showMetrics ? metricsGrid : ''}
+          <div style="padding:0 22px 24px;margin-top:auto;">
+            <div style="height:1px;background:rgba(255,255,255,0.07);margin-bottom:14px"></div>
+            ${metricsGrid}
           </div>
         </div>
       </div>`;
