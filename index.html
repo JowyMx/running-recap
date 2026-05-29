@@ -3512,15 +3512,19 @@ function renderTemplateCover(stats) {
     const visible = rows.slice(0, maxVisible);
 
     // Resolver ritmo por vuelta: campo directo o calculado desde tiempo/distancia
+    // Distancia por vuelta: del CSV, o 1 km (auto-lap Garmin)
+    function resolveRowDist(r) {
+      const d = parseFloat(r.dist);
+      return (d > 0) ? d : 1;
+    }
+
     function resolveRowPaceSec(r) {
       if (!isDash(r.pace)) {
         const ps = paceToSec(r.pace);
         if (ps > 0) return ps;
       }
-      // fallback: calcular desde tiempo / distancia
       const lapTimeSec = timeToSec(r.time || '');
-      const lapDist    = parseFloat(r.dist) || 0;
-      if (lapTimeSec > 0 && lapDist > 0) return lapTimeSec / lapDist;
+      if (lapTimeSec > 0) return lapTimeSec / resolveRowDist(r);
       return 0;
     }
 
@@ -3530,8 +3534,7 @@ function renderTemplateCover(stats) {
         if (ps > 0) return r.pace;
       }
       const lapTimeSec = timeToSec(r.time || '');
-      const lapDist    = parseFloat(r.dist) || 0;
-      if (lapTimeSec > 0 && lapDist > 0) return secToMMSS(lapTimeSec / lapDist);
+      if (lapTimeSec > 0) return secToMMSS(lapTimeSec / resolveRowDist(r));
       return '—';
     }
 
@@ -3542,16 +3545,12 @@ function renderTemplateCover(stats) {
 
     let cum = 0;
     const rowsHtml = visible.map((r, i) => {
-      const sec     = resolveRowPaceSec(r);
-      const lapDist = parseFloat(r.dist) || 0;
-
-      // Acumulado: sumar tiempo real de vuelta si está disponible, si no ritmo×dist
+      const sec        = resolveRowPaceSec(r);
+      const rawDist    = parseFloat(r.dist) || 0;
       const lapTimeSec = timeToSec(r.time || '');
-      if (lapTimeSec > 0) {
-        cum += lapTimeSec;
-      } else {
-        cum += sec * (lapDist || 1);
-      }
+
+      // Acumulado: tiempo real si disponible, si no ritmo × dist
+      cum += lapTimeSec > 0 ? lapTimeSec : sec * resolveRowDist(r);
 
       const pct    = sec > 0 ? Math.round(((maxPace - sec) / pRange) * 70 + 15) : 0;
       const cumH   = Math.floor(cum/3600), cumM = Math.floor((cum%3600)/60), cumS = Math.round(cum%60);
@@ -3559,10 +3558,10 @@ function renderTemplateCover(stats) {
         ? `${cumH}:${String(cumM).padStart(2,'0')}:${String(cumS).padStart(2,'0')}`
         : `${String(cumM).padStart(2,'0')}:${String(cumS).padStart(2,'0')}`;
 
-      const d = lapDist;
-      const distVal = d === 0 ? r.n
-        : d >= 0.95 ? Math.round(visible.slice(0,i+1).reduce((acc,rr)=>acc+(parseFloat(rr.dist)||0),0))
-        : d.toFixed(2);
+      // KM: número de vuelta o km acumulado
+      const distVal = rawDist === 0 ? r.n
+        : rawDist >= 0.95 ? Math.round(visible.slice(0,i+1).reduce((acc,rr)=>acc+(parseFloat(rr.dist)||0),0))
+        : rawDist.toFixed(2);
 
       const paceVal = resolveRowPaceLabel(r);
 
