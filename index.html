@@ -2924,13 +2924,15 @@ function buildElevSvgString(pts, lineColor) {
         <stop offset="100%" stop-color="${lineColor}" stop-opacity="0"/>
       </linearGradient>
     </defs>
-    <path d="${areaD}" fill="url(#tpl-eg)"/>
-    <path d="${lineD}" fill="none" stroke="${lineColor}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
-    ${kmMarks}
-    <circle cx="${mxX}" cy="${mxY}" r="3.5" fill="${lineColor}" opacity="0.9"/>
-    <text x="${mxX}" y="${mxY-9}" font-family="Arial Black,Arial" font-weight="900" font-size="10" fill="${lineColor}" text-anchor="${mxAnchor}" opacity="0.9">${Math.round(maxEle)}m</text>
-    <circle cx="${mnX}" cy="${mnY}" r="3" fill="${lineColor}" opacity="0.6"/>
-    <text x="${mnX}" y="${mnY+15}" font-family="Arial Black,Arial" font-weight="900" font-size="10" fill="${lineColor}" text-anchor="${mnAnchor}" opacity="0.6">${Math.round(minEle)}m</text>
+    <path id="tpl-elev-area" d="${areaD}" fill="url(#tpl-eg)" opacity="0" style="transition:opacity 0.8s ease 0.4s"/>
+    <path id="tpl-elev-line" d="${lineD}" fill="none" stroke="${lineColor}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+    <g id="tpl-elev-labels" opacity="0" style="transition:opacity 0.6s ease 1.8s">
+      ${kmMarks}
+      <circle cx="${mxX}" cy="${mxY}" r="3.5" fill="${lineColor}" opacity="0.9"/>
+      <text x="${mxX}" y="${mxY-9}" font-family="Arial Black,Arial" font-weight="900" font-size="10" fill="${lineColor}" text-anchor="${mxAnchor}" opacity="0.9">${Math.round(maxEle)}m</text>
+      <circle cx="${mnX}" cy="${mnY}" r="3" fill="${lineColor}" opacity="0.6"/>
+      <text x="${mnX}" y="${mnY+15}" font-family="Arial Black,Arial" font-weight="900" font-size="10" fill="${lineColor}" text-anchor="${mnAnchor}" opacity="0.6">${Math.round(minEle)}m</text>
+    </g>
   </svg>`;
 }
 
@@ -3551,7 +3553,7 @@ function renderTemplateCover(stats) {
         <div style="font-size:12px;font-weight:900;text-align:right;opacity:0.9">${distVal}</div>
         <div style="font-size:12px;font-weight:900;text-align:right;color:${color}">${paceVal}</div>
         <div style="position:relative;height:12px;">
-          <div style="position:absolute;left:0;top:0;height:100%;width:${pct}%;background:rgba(255,255,255,0.82);border-radius:3px;"></div>
+          <div class="tpl-lap-bar" data-w="${pct}" style="position:absolute;left:0;top:0;height:100%;width:0;background:rgba(255,255,255,0.82);border-radius:3px;transition:width 0.55s cubic-bezier(0.4,0,0.2,1);"></div>
         </div>
         <div style="font-size:10px;font-weight:700;text-align:right;opacity:0.45;white-space:nowrap">${cumVal}</div>
       </div>`;
@@ -3648,10 +3650,39 @@ function renderTemplateCover(stats) {
   requestAnimationFrame(() => animateCoverValues(card));
 
   // Dibujar ruta GPS en canvas si aplica
-  if (_gpsPoints && _gpsPoints.length > 1) {
+  if (_recapTemplate === 'map' && _gpsPoints && _gpsPoints.length > 1) {
     requestAnimationFrame(() => {
       const c = document.getElementById('tpl-cover-canvas-bold');
       if (c) { c.width = c.offsetWidth; c.height = c.offsetHeight; drawRoute(c, _gpsPoints); }
+    });
+  }
+
+  // Animación progresiva: barras de vueltas
+  if (_recapTemplate === 'laps') {
+    requestAnimationFrame(() => {
+      card.querySelectorAll('.tpl-lap-bar').forEach((bar, i) => {
+        setTimeout(() => { bar.style.width = bar.dataset.w + '%'; }, i * 90);
+      });
+    });
+  }
+
+  // Animación progresiva: perfil de elevación
+  if (_recapTemplate === 'elev') {
+    requestAnimationFrame(() => {
+      const line = card.querySelector('#tpl-elev-line');
+      const area = card.querySelector('#tpl-elev-area');
+      const lbls = card.querySelector('#tpl-elev-labels');
+      if (line && line.getTotalLength) {
+        const len = line.getTotalLength();
+        line.style.strokeDasharray = len;
+        line.style.strokeDashoffset = len;
+        requestAnimationFrame(() => {
+          line.style.transition = 'stroke-dashoffset 2s cubic-bezier(0.4,0,0.2,1)';
+          line.style.strokeDashoffset = '0';
+        });
+      }
+      if (area) requestAnimationFrame(() => { area.style.opacity = '1'; });
+      if (lbls) requestAnimationFrame(() => { lbls.style.opacity = '1'; });
     });
   }
 }
