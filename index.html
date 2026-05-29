@@ -2287,10 +2287,10 @@ function processData(data, customName) {
   const tableRows = rows.map(r => ({
     n:    r[idKey],
     hr:   r['Frecuencia cardiaca media'] || r['FC media'] || r['Frecuencia cardíaca media'],
-    pace: r['Ritmo medio'] || r['Ritmo'] || r['Pace'] || r['Ritmo promedio'] || r['Avg Pace'],
+    pace: r['Ritmo medio'] || r['Ritmo'] || r['Ritmo medio '] || r['Pace'] || r['Ritmo promedio'] || r['Avg Pace'] || r['Ritmo med'] || r['Ritmo Medio'],
     time: r['Tiempo'] || r['Tiempo de movimiento'] || r['Tiempo de vuelta'] || r['Duración'] || r['Time'],
     pow:  r['Potencia media'],
-    dist: r['Distancia'] || r['Distancia (km)'] || r['Distance'],
+    dist: r['Distancia'] || r['Distancia (km)'] || r['Distancia km'] || r['Distance'] || r['Dist'],
     cad:    r['Cadencia de carrera media'] || r['Cadencia media'] || r['Cadencia'],
     stride: r['Longitud media de zancada'] || r['Longitud de zancada media'] || r['Longitud de zancada'],
     elev:     r['Ascenso total'] || r['Desnivel positivo total'] || r['Desnivel positivo'] || r['Subida total'],
