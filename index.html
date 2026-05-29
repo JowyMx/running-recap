@@ -3452,17 +3452,22 @@ function renderTemplateCover(stats) {
     <div style="font-size:11px;opacity:0.65;letter-spacing:0.12em;margin-top:6px">${heroUnitLabel[hero]}</div>` : '';
 
   // Grid de métricas secundarias (excluye la hero)
+  // Alineación según selector
+  const alignMap  = { left:'flex-start', center:'center', right:'flex-end' };
+  const textMap   = { left:'left',       center:'center', right:'right'    };
+  const align     = alignMap[_tplAlign] || 'center';
+  const textAlign = textMap[_tplAlign]  || 'center';
+
   // Número de columnas: 1→1, 2→2, 3→3, 4→2×2, 5→3+2
   const _gcRaw = [
-    (tm.has('dist') && hero !== 'dist' && distRaw > 0)  ? { lbl:'KM',       val: A('dist2', distRaw, 'dist')           } : null,
-    (tm.has('time') && hero !== 'time' && timeSec > 0)  ? { lbl:'TIEMPO',   val: timeA('time2', timeSec)                } : null,
-    (tm.has('pace') && hero !== 'pace' && s.avgPaceSec > 0) ? { lbl:'RITMO', val: paceA('pace2', s.avgPaceSec)          } : null,
-    (tm.has('hr')   && hero !== 'hr'   && hrRaw > 0)    ? { lbl:'PPM',      val: A('hr', hrRaw, 'int')                  } : null,
-    (tm.has('elev') && hero !== 'elev' && elevRaw > 0)  ? { lbl:'DESNIVEL', val: elevA('elev', elevRaw, descentRaw)     } : null,
+    (tm.has('dist') && hero !== 'dist' && distRaw > 0)       ? { lbl:'KM',       val: A('dist2', distRaw, 'dist')       } : null,
+    (tm.has('time') && hero !== 'time' && timeSec > 0)       ? { lbl:'TIEMPO',   val: timeA('time2', timeSec)            } : null,
+    (tm.has('pace') && hero !== 'pace' && s.avgPaceSec > 0)  ? { lbl:'RITMO',    val: paceA('pace2', s.avgPaceSec)       } : null,
+    (tm.has('hr')   && hero !== 'hr'   && hrRaw > 0)         ? { lbl:'PPM',      val: A('hr', hrRaw, 'int')              } : null,
+    (tm.has('elev') && hero !== 'elev' && elevRaw > 0)       ? { lbl:'DESNIVEL', val: elevA('elev', elevRaw, descentRaw) } : null,
   ].filter(Boolean);
 
-  const _gcCols = _gcRaw.length <= 3 ? _gcRaw.length : 2;
-  // font-size del valor: más grande con pocas columnas, más compacto con muchas
+  const _gcCols    = _gcRaw.length <= 3 ? _gcRaw.length : 2;
   const _gcValSize = _gcCols === 1 ? '26px' : _gcCols === 2 ? '22px' : '17px';
   const _gcLblSize = _gcCols <= 2 ? '9px' : '8px';
 
@@ -3476,12 +3481,6 @@ function renderTemplateCover(stats) {
   const metricsGrid = gridCells.length
     ? `<div style="display:grid;grid-template-columns:repeat(${_gcCols},1fr);gap:6px 14px">${gridCells.join('')}</div>`
     : '';
-
-  // Alineación según selector
-  const alignMap  = { left:'flex-start', center:'center', right:'flex-end' };
-  const textMap   = { left:'left',       center:'center', right:'right'    };
-  const align     = alignMap[_tplAlign] || 'center';
-  const textAlign = textMap[_tplAlign]  || 'center';
 
   const hasGPS = _gpsPoints && _gpsPoints.length > 1;
 
