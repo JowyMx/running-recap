@@ -3492,16 +3492,16 @@ function renderTemplateCover(stats) {
     if (!rows || rows.length === 0) {
       return `<div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:11px;opacity:0.3;letter-spacing:0.2em">SIN VUELTAS</div>`;
     }
-    const maxVisible = 16;
+    const maxVisible = 42;
     const visible = rows.slice(0, maxVisible);
 
     // Escalar tamaño de fila según cantidad de vueltas visibles
     const n = visible.length;
-    const rowFs  = n <= 8  ? '12px' : n <= 12 ? '11px' : '10px';  // font-size valor
-    const hdrFs  = n <= 8  ? '8px'  : n <= 12 ? '7px'  : '7px';   // font-size cabecera
-    const rowPad = n <= 8  ? '4px'  : n <= 12 ? '3px'  : '2px';   // padding vertical fila
-    const barH   = n <= 8  ? '12px' : n <= 12 ? '10px' : '8px';   // alto barra
-    const cumFs  = n <= 8  ? '10px' : n <= 12 ? '9px'  : '8px';   // font-size acumulado
+    const rowFs  = n <= 8 ? '12px' : n <= 12 ? '11px' : n <= 18 ? '10px' : n <= 28 ? '9px'  : '8px';
+    const hdrFs  = n <= 8 ? '8px'  : n <= 12 ? '7px'  : n <= 18 ? '7px'  : n <= 28 ? '6px'  : '6px';
+    const rowPad = n <= 8 ? '4px'  : n <= 12 ? '3px'  : n <= 18 ? '2px'  : n <= 28 ? '1px'  : '1px';
+    const barH   = n <= 8 ? '12px' : n <= 12 ? '10px' : n <= 18 ? '8px'  : n <= 28 ? '6px'  : '5px';
+    const cumFs  = n <= 8 ? '10px' : n <= 12 ? '9px'  : n <= 18 ? '8px'  : n <= 28 ? '7px'  : '6px';
 
     // Resolver ritmo por vuelta: campo directo o calculado desde tiempo/distancia
     // Distancia por vuelta: del CSV, o 1 km (auto-lap Garmin)
