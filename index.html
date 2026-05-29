@@ -128,6 +128,31 @@ body {
   background: rgba(255,255,255,0.02);
 }
 
+#tpl-align-zone {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+}
+.tpl-align-btn {
+  flex: 1;
+  background: transparent;
+  border: 1.5px solid rgba(255,255,255,0.12);
+  border-radius: 8px;
+  padding: 7px 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  transition: border-color 0.2s, background 0.2s;
+  color: rgba(255,255,255,0.4);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  font-family: inherit;
+  text-transform: uppercase;
+}
+.tpl-align-btn:hover { border-color: rgba(255,255,255,0.3); background: rgba(255,255,255,0.03); }
+.tpl-align-btn.active { border-color: rgba(255,255,255,0.8); color: rgba(255,255,255,0.85); }
 #aspect-zone {
   display: flex;
   gap: 8px;
@@ -1462,42 +1487,23 @@ body {
     <!-- Plantillas -->
     <div id="template-zone">
       <div class="template-zone-label">Plantilla</div>
+      <!-- Selector de alineación -->
+      <div id="tpl-align-zone">
+        <button class="tpl-align-btn" data-align="left" title="Izquierda">
+          &#9664; Izq
+        </button>
+        <button class="tpl-align-btn active" data-align="center" title="Centro">
+          &#9632; Centro
+        </button>
+        <button class="tpl-align-btn" data-align="right" title="Derecha">
+          Der &#9654;
+        </button>
+      </div>
+
       <div id="template-cards">
 
-        <!-- T1: Bold Izquierda -->
-        <button class="tpl-card" data-tpl="izq">
-          <div class="tpl-thumb">
-            <div class="tpl-thumb-inner">
-              <div style="background:#0a0a0a;width:290px;height:387px;">
-                <div style="height:110px;position:relative;background:linear-gradient(135deg,#0d1a0d,#0a0a0a);overflow:hidden;">
-                  <svg style="position:absolute;inset:0;width:100%;height:100%;opacity:0.55" viewBox="0 0 260 200" preserveAspectRatio="xMidYMid meet" fill="none">
-                    <polyline points="80,170 100,140 110,148 125,110 140,100 150,118 165,70 180,80 195,50 210,85 225,60 245,95" stroke="rgba(255,255,255,0.85)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-                    <circle cx="80" cy="170" r="5" fill="rgba(255,255,255,0.6)"/>
-                    <rect x="241" y="91" width="8" height="8" rx="1" fill="rgba(255,255,255,0.6)"/>
-                  </svg>
-                  <div style="position:absolute;inset:0;background:linear-gradient(to bottom,transparent 45%,#0a0a0a 100%)"></div>
-                </div>
-                <div style="padding:10px 18px 0;display:flex;flex-direction:column;align-items:flex-start;">
-                  <div style="font-size:7px;letter-spacing:0.2em;color:rgba(255,255,255,0.25);text-transform:uppercase;margin-bottom:7px">26 MAY 2026</div>
-                  <div style="width:22px;height:2px;background:#fff;border-radius:2px;margin-bottom:7px"></div>
-                  <div class="tpl-thumb-hero-val" style="font-size:46px;font-weight:900;color:#fff;letter-spacing:-0.04em;line-height:0.95">5:33</div>
-                  <div class="tpl-thumb-hero-unit" style="font-size:9px;color:rgba(255,255,255,0.28);letter-spacing:0.1em;margin-top:4px">min / km</div>
-                  <div style="height:1px;background:rgba(255,255,255,0.07);margin:10px 0 8px;width:100%"></div>
-                  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:4px;width:100%">
-                    <div><div style="font-size:7px;color:rgba(255,255,255,0.25);text-transform:uppercase;margin-bottom:2px">km</div><div style="font-size:13px;font-weight:800;color:#fff">12.01</div></div>
-                    <div><div style="font-size:7px;color:rgba(255,255,255,0.25);text-transform:uppercase;margin-bottom:2px">tiempo</div><div style="font-size:13px;font-weight:800;color:#fff">1:06</div></div>
-                    <div><div style="font-size:7px;color:rgba(255,255,255,0.25);text-transform:uppercase;margin-bottom:2px">ppm</div><div style="font-size:13px;font-weight:800;color:#fff">138</div></div>
-                    <div><div style="font-size:7px;color:rgba(255,255,255,0.25);text-transform:uppercase;margin-bottom:2px">desn.</div><div style="font-size:10px;font-weight:800;color:#fff">+36/-33</div></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="tpl-name">Izquierda</div>
-        </button>
-
-        <!-- T2: Bold Centro -->
-        <button class="tpl-card active" data-tpl="bold">
+        <!-- Plantilla: Mapa (alineación controlada por #tpl-align-zone) -->
+        <button class="tpl-card active" data-tpl="map">
           <div class="tpl-thumb">
             <div class="tpl-thumb-inner">
               <div style="background:#0a0a0a;width:290px;height:387px;">
@@ -1525,93 +1531,11 @@ body {
               </div>
             </div>
           </div>
-          <div class="tpl-name">Centro</div>
+          <div class="tpl-name">Mapa</div>
         </button>
 
-        <!-- T3: Bold Derecha -->
-        <button class="tpl-card" data-tpl="der">
-          <div class="tpl-thumb">
-            <div class="tpl-thumb-inner">
-              <div style="background:#0a0a0a;width:290px;height:387px;">
-                <div style="height:110px;position:relative;background:linear-gradient(135deg,#0d1a0d,#0a0a0a);overflow:hidden;">
-                  <svg style="position:absolute;inset:0;width:100%;height:100%;opacity:0.55" viewBox="0 0 260 200" preserveAspectRatio="xMidYMid meet" fill="none">
-                    <polyline points="80,170 100,140 110,148 125,110 140,100 150,118 165,70 180,80 195,50 210,85 225,60 245,95" stroke="rgba(255,255,255,0.85)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-                    <circle cx="80" cy="170" r="5" fill="rgba(255,255,255,0.6)"/>
-                    <rect x="241" y="91" width="8" height="8" rx="1" fill="rgba(255,255,255,0.6)"/>
-                  </svg>
-                  <div style="position:absolute;inset:0;background:linear-gradient(to bottom,transparent 45%,#0a0a0a 100%)"></div>
-                </div>
-                <div style="padding:10px 18px 0;display:flex;flex-direction:column;align-items:flex-end;text-align:right;">
-                  <div style="font-size:7px;letter-spacing:0.2em;color:rgba(255,255,255,0.25);text-transform:uppercase;margin-bottom:7px">26 MAY 2026</div>
-                  <div style="width:22px;height:2px;background:#fff;border-radius:2px;margin-bottom:7px"></div>
-                  <div class="tpl-thumb-hero-val" style="font-size:46px;font-weight:900;color:#fff;letter-spacing:-0.04em;line-height:0.95">5:33</div>
-                  <div class="tpl-thumb-hero-unit" style="font-size:9px;color:rgba(255,255,255,0.28);letter-spacing:0.1em;margin-top:4px">min / km</div>
-                  <div style="height:1px;background:rgba(255,255,255,0.07);margin:10px 0 8px;width:100%"></div>
-                  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:4px;width:100%">
-                    <div><div style="font-size:7px;color:rgba(255,255,255,0.25);text-transform:uppercase;margin-bottom:2px">km</div><div style="font-size:13px;font-weight:800;color:#fff">12.01</div></div>
-                    <div><div style="font-size:7px;color:rgba(255,255,255,0.25);text-transform:uppercase;margin-bottom:2px">tiempo</div><div style="font-size:13px;font-weight:800;color:#fff">1:06</div></div>
-                    <div><div style="font-size:7px;color:rgba(255,255,255,0.25);text-transform:uppercase;margin-bottom:2px">ppm</div><div style="font-size:13px;font-weight:800;color:#fff">138</div></div>
-                    <div><div style="font-size:7px;color:rgba(255,255,255,0.25);text-transform:uppercase;margin-bottom:2px">desn.</div><div style="font-size:10px;font-weight:800;color:#fff">+36/-33</div></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="tpl-name">Derecha</div>
-        </button>
-
-        <!-- T4: Vueltas Izquierda -->
-        <button class="tpl-card" data-tpl="izq-v">
-          <div class="tpl-thumb">
-            <div class="tpl-thumb-inner">
-              <div style="background:#0a0a0a;width:290px;height:387px;display:flex;flex-direction:column;">
-                <div style="flex:1;padding:14px 18px 8px;overflow:hidden;">
-                  <div style="font-size:7px;letter-spacing:0.2em;color:rgba(255,255,255,0.25);text-transform:uppercase;margin-bottom:6px">VUELTAS</div>
-                  <!-- header -->
-                  <div style="display:grid;grid-template-columns:2em 3.2em 1fr auto;gap:3px;padding:2px 0;border-bottom:1px solid rgba(255,255,255,0.22);margin-bottom:1px;">
-                    <div style="font-size:8px;font-weight:700;letter-spacing:0.15em;text-align:right;color:rgba(255,255,255,0.45)">KM</div>
-                    <div style="font-size:8px;font-weight:700;letter-spacing:0.15em;text-align:right;color:rgba(255,255,255,0.45)">RITMO</div>
-                    <div></div>
-                    <div style="font-size:8px;font-weight:700;letter-spacing:0.15em;text-align:right;color:rgba(255,255,255,0.45)">TOTAL</div>
-                  </div>
-                  <!-- rows -->
-                  <div style="display:grid;grid-template-columns:2em 3.2em 1fr auto;gap:3px;padding:3px 0;border-bottom:1px solid rgba(255,255,255,0.08);align-items:center;">
-                    <div style="font-size:13px;font-weight:900;text-align:right">1</div><div style="font-size:13px;font-weight:900;text-align:right;color:#ff6a2e">5:48</div><div style="position:relative;height:10px;"><div style="position:absolute;left:0;top:0;height:100%;width:82%;background:rgba(255,255,255,0.8);border-radius:2px;"></div></div><div style="font-size:11px;font-weight:700;text-align:right;color:rgba(255,255,255,0.4)">05:48</div>
-                  </div>
-                  <div style="display:grid;grid-template-columns:2em 3.2em 1fr auto;gap:3px;padding:3px 0;border-bottom:1px solid rgba(255,255,255,0.08);align-items:center;">
-                    <div style="font-size:13px;font-weight:900;text-align:right">2</div><div style="font-size:13px;font-weight:900;text-align:right;color:#ff6a2e">6:02</div><div style="position:relative;height:10px;"><div style="position:absolute;left:0;top:0;height:100%;width:68%;background:rgba(255,255,255,0.8);border-radius:2px;"></div></div><div style="font-size:11px;font-weight:700;text-align:right;color:rgba(255,255,255,0.4)">11:50</div>
-                  </div>
-                  <div style="display:grid;grid-template-columns:2em 3.2em 1fr auto;gap:3px;padding:3px 0;border-bottom:1px solid rgba(255,255,255,0.08);align-items:center;">
-                    <div style="font-size:13px;font-weight:900;text-align:right">3</div><div style="font-size:13px;font-weight:900;text-align:right;color:#ff6a2e">6:14</div><div style="position:relative;height:10px;"><div style="position:absolute;left:0;top:0;height:100%;width:55%;background:rgba(255,255,255,0.8);border-radius:2px;"></div></div><div style="font-size:11px;font-weight:700;text-align:right;color:rgba(255,255,255,0.4)">18:04</div>
-                  </div>
-                  <div style="display:grid;grid-template-columns:2em 3.2em 1fr auto;gap:3px;padding:3px 0;border-bottom:1px solid rgba(255,255,255,0.08);align-items:center;">
-                    <div style="font-size:13px;font-weight:900;text-align:right">4</div><div style="font-size:13px;font-weight:900;text-align:right;color:#ff6a2e">5:55</div><div style="position:relative;height:10px;"><div style="position:absolute;left:0;top:0;height:100%;width:75%;background:rgba(255,255,255,0.8);border-radius:2px;"></div></div><div style="font-size:11px;font-weight:700;text-align:right;color:rgba(255,255,255,0.4)">23:59</div>
-                  </div>
-                  <div style="display:grid;grid-template-columns:2em 3.2em 1fr auto;gap:3px;padding:3px 0;align-items:center;">
-                    <div style="font-size:13px;font-weight:900;text-align:right">5</div><div style="font-size:13px;font-weight:900;text-align:right;color:#ff6a2e">6:20</div><div style="position:relative;height:10px;"><div style="position:absolute;left:0;top:0;height:100%;width:45%;background:rgba(255,255,255,0.8);border-radius:2px;"></div></div><div style="font-size:11px;font-weight:700;text-align:right;color:rgba(255,255,255,0.4)">30:19</div>
-                  </div>
-                </div>
-                <div style="padding:8px 18px 0;display:flex;flex-direction:column;align-items:flex-start;">
-                  <div style="font-size:7px;letter-spacing:0.2em;color:rgba(255,255,255,0.25);text-transform:uppercase;margin-bottom:5px">26 MAY 2026</div>
-                  <div style="width:22px;height:2px;background:#fff;border-radius:2px;margin-bottom:5px"></div>
-                  <div class="tpl-thumb-hero-val" style="font-size:38px;font-weight:900;color:#fff;letter-spacing:-0.04em;line-height:0.95">5:33</div>
-                  <div class="tpl-thumb-hero-unit" style="font-size:8px;color:rgba(255,255,255,0.28);letter-spacing:0.1em;margin-top:3px">min / km</div>
-                  <div style="height:1px;background:rgba(255,255,255,0.07);margin:8px 0 6px;width:100%"></div>
-                  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:4px;width:100%">
-                    <div><div style="font-size:7px;color:rgba(255,255,255,0.25);text-transform:uppercase;margin-bottom:2px">km</div><div style="font-size:12px;font-weight:800;color:#fff">12.01</div></div>
-                    <div><div style="font-size:7px;color:rgba(255,255,255,0.25);text-transform:uppercase;margin-bottom:2px">tiempo</div><div style="font-size:12px;font-weight:800;color:#fff">1:06</div></div>
-                    <div><div style="font-size:7px;color:rgba(255,255,255,0.25);text-transform:uppercase;margin-bottom:2px">ppm</div><div style="font-size:12px;font-weight:800;color:#fff">138</div></div>
-                    <div><div style="font-size:7px;color:rgba(255,255,255,0.25);text-transform:uppercase;margin-bottom:2px">desn.</div><div style="font-size:10px;font-weight:800;color:#fff">+36/-33</div></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="tpl-name">Izq. Vueltas</div>
-        </button>
-
-        <!-- T5: Vueltas Centro -->
-        <button class="tpl-card" data-tpl="bold-v">
+        <!-- Plantilla: Vueltas (alineación controlada por #tpl-align-zone) -->
+        <button class="tpl-card" data-tpl="laps">
           <div class="tpl-thumb">
             <div class="tpl-thumb-inner">
               <div style="background:#0a0a0a;width:290px;height:387px;display:flex;flex-direction:column;">
@@ -1623,21 +1547,11 @@ body {
                     <div></div>
                     <div style="font-size:8px;font-weight:700;letter-spacing:0.15em;text-align:right;color:rgba(255,255,255,0.45)">TOTAL</div>
                   </div>
-                  <div style="display:grid;grid-template-columns:2em 3.2em 1fr auto;gap:3px;padding:3px 0;border-bottom:1px solid rgba(255,255,255,0.08);align-items:center;">
-                    <div style="font-size:13px;font-weight:900;text-align:right">1</div><div style="font-size:13px;font-weight:900;text-align:right;color:#00ff88">5:48</div><div style="position:relative;height:10px;"><div style="position:absolute;left:0;top:0;height:100%;width:82%;background:rgba(255,255,255,0.8);border-radius:2px;"></div></div><div style="font-size:11px;font-weight:700;text-align:right;color:rgba(255,255,255,0.4)">05:48</div>
-                  </div>
-                  <div style="display:grid;grid-template-columns:2em 3.2em 1fr auto;gap:3px;padding:3px 0;border-bottom:1px solid rgba(255,255,255,0.08);align-items:center;">
-                    <div style="font-size:13px;font-weight:900;text-align:right">2</div><div style="font-size:13px;font-weight:900;text-align:right;color:#00ff88">6:02</div><div style="position:relative;height:10px;"><div style="position:absolute;left:0;top:0;height:100%;width:68%;background:rgba(255,255,255,0.8);border-radius:2px;"></div></div><div style="font-size:11px;font-weight:700;text-align:right;color:rgba(255,255,255,0.4)">11:50</div>
-                  </div>
-                  <div style="display:grid;grid-template-columns:2em 3.2em 1fr auto;gap:3px;padding:3px 0;border-bottom:1px solid rgba(255,255,255,0.08);align-items:center;">
-                    <div style="font-size:13px;font-weight:900;text-align:right">3</div><div style="font-size:13px;font-weight:900;text-align:right;color:#00ff88">6:14</div><div style="position:relative;height:10px;"><div style="position:absolute;left:0;top:0;height:100%;width:55%;background:rgba(255,255,255,0.8);border-radius:2px;"></div></div><div style="font-size:11px;font-weight:700;text-align:right;color:rgba(255,255,255,0.4)">18:04</div>
-                  </div>
-                  <div style="display:grid;grid-template-columns:2em 3.2em 1fr auto;gap:3px;padding:3px 0;border-bottom:1px solid rgba(255,255,255,0.08);align-items:center;">
-                    <div style="font-size:13px;font-weight:900;text-align:right">4</div><div style="font-size:13px;font-weight:900;text-align:right;color:#00ff88">5:55</div><div style="position:relative;height:10px;"><div style="position:absolute;left:0;top:0;height:100%;width:75%;background:rgba(255,255,255,0.8);border-radius:2px;"></div></div><div style="font-size:11px;font-weight:700;text-align:right;color:rgba(255,255,255,0.4)">23:59</div>
-                  </div>
-                  <div style="display:grid;grid-template-columns:2em 3.2em 1fr auto;gap:3px;padding:3px 0;align-items:center;">
-                    <div style="font-size:13px;font-weight:900;text-align:right">5</div><div style="font-size:13px;font-weight:900;text-align:right;color:#00ff88">6:20</div><div style="position:relative;height:10px;"><div style="position:absolute;left:0;top:0;height:100%;width:45%;background:rgba(255,255,255,0.8);border-radius:2px;"></div></div><div style="font-size:11px;font-weight:700;text-align:right;color:rgba(255,255,255,0.4)">30:19</div>
-                  </div>
+                  <div style="display:grid;grid-template-columns:2em 3.2em 1fr auto;gap:3px;padding:3px 0;border-bottom:1px solid rgba(255,255,255,0.08);align-items:center;"><div style="font-size:13px;font-weight:900;text-align:right">1</div><div style="font-size:13px;font-weight:900;text-align:right;color:#00ff88">5:48</div><div style="position:relative;height:10px;"><div style="position:absolute;left:0;top:0;height:100%;width:82%;background:rgba(255,255,255,0.8);border-radius:2px;"></div></div><div style="font-size:11px;font-weight:700;text-align:right;color:rgba(255,255,255,0.4)">05:48</div></div>
+                  <div style="display:grid;grid-template-columns:2em 3.2em 1fr auto;gap:3px;padding:3px 0;border-bottom:1px solid rgba(255,255,255,0.08);align-items:center;"><div style="font-size:13px;font-weight:900;text-align:right">2</div><div style="font-size:13px;font-weight:900;text-align:right;color:#00ff88">6:02</div><div style="position:relative;height:10px;"><div style="position:absolute;left:0;top:0;height:100%;width:68%;background:rgba(255,255,255,0.8);border-radius:2px;"></div></div><div style="font-size:11px;font-weight:700;text-align:right;color:rgba(255,255,255,0.4)">11:50</div></div>
+                  <div style="display:grid;grid-template-columns:2em 3.2em 1fr auto;gap:3px;padding:3px 0;border-bottom:1px solid rgba(255,255,255,0.08);align-items:center;"><div style="font-size:13px;font-weight:900;text-align:right">3</div><div style="font-size:13px;font-weight:900;text-align:right;color:#00ff88">6:14</div><div style="position:relative;height:10px;"><div style="position:absolute;left:0;top:0;height:100%;width:55%;background:rgba(255,255,255,0.8);border-radius:2px;"></div></div><div style="font-size:11px;font-weight:700;text-align:right;color:rgba(255,255,255,0.4)">18:04</div></div>
+                  <div style="display:grid;grid-template-columns:2em 3.2em 1fr auto;gap:3px;padding:3px 0;border-bottom:1px solid rgba(255,255,255,0.08);align-items:center;"><div style="font-size:13px;font-weight:900;text-align:right">4</div><div style="font-size:13px;font-weight:900;text-align:right;color:#00ff88">5:55</div><div style="position:relative;height:10px;"><div style="position:absolute;left:0;top:0;height:100%;width:75%;background:rgba(255,255,255,0.8);border-radius:2px;"></div></div><div style="font-size:11px;font-weight:700;text-align:right;color:rgba(255,255,255,0.4)">23:59</div></div>
+                  <div style="display:grid;grid-template-columns:2em 3.2em 1fr auto;gap:3px;padding:3px 0;align-items:center;"><div style="font-size:13px;font-weight:900;text-align:right">5</div><div style="font-size:13px;font-weight:900;text-align:right;color:#00ff88">6:20</div><div style="position:relative;height:10px;"><div style="position:absolute;left:0;top:0;height:100%;width:45%;background:rgba(255,255,255,0.8);border-radius:2px;"></div></div><div style="font-size:11px;font-weight:700;text-align:right;color:rgba(255,255,255,0.4)">30:19</div></div>
                 </div>
                 <div style="padding:8px 18px 0;display:flex;flex-direction:column;align-items:center;text-align:center;">
                   <div style="font-size:7px;letter-spacing:0.2em;color:rgba(255,255,255,0.25);text-transform:uppercase;margin-bottom:5px">26 MAY 2026</div>
@@ -1655,55 +1569,7 @@ body {
               </div>
             </div>
           </div>
-          <div class="tpl-name">Cen. Vueltas</div>
-        </button>
-
-        <!-- T6: Vueltas Derecha -->
-        <button class="tpl-card" data-tpl="der-v">
-          <div class="tpl-thumb">
-            <div class="tpl-thumb-inner">
-              <div style="background:#0a0a0a;width:290px;height:387px;display:flex;flex-direction:column;">
-                <div style="flex:1;padding:14px 18px 8px;overflow:hidden;">
-                  <div style="font-size:7px;letter-spacing:0.2em;color:rgba(255,255,255,0.25);text-transform:uppercase;margin-bottom:6px;text-align:right">VUELTAS</div>
-                  <div style="display:grid;grid-template-columns:2em 3.2em 1fr auto;gap:3px;padding:2px 0;border-bottom:1px solid rgba(255,255,255,0.22);margin-bottom:1px;">
-                    <div style="font-size:8px;font-weight:700;letter-spacing:0.15em;text-align:right;color:rgba(255,255,255,0.45)">KM</div>
-                    <div style="font-size:8px;font-weight:700;letter-spacing:0.15em;text-align:right;color:rgba(255,255,255,0.45)">RITMO</div>
-                    <div></div>
-                    <div style="font-size:8px;font-weight:700;letter-spacing:0.15em;text-align:right;color:rgba(255,255,255,0.45)">TOTAL</div>
-                  </div>
-                  <div style="display:grid;grid-template-columns:2em 3.2em 1fr auto;gap:3px;padding:3px 0;border-bottom:1px solid rgba(255,255,255,0.08);align-items:center;">
-                    <div style="font-size:13px;font-weight:900;text-align:right">1</div><div style="font-size:13px;font-weight:900;text-align:right;color:#ff6a2e">5:48</div><div style="position:relative;height:10px;"><div style="position:absolute;left:0;top:0;height:100%;width:82%;background:rgba(255,255,255,0.8);border-radius:2px;"></div></div><div style="font-size:11px;font-weight:700;text-align:right;color:rgba(255,255,255,0.4)">05:48</div>
-                  </div>
-                  <div style="display:grid;grid-template-columns:2em 3.2em 1fr auto;gap:3px;padding:3px 0;border-bottom:1px solid rgba(255,255,255,0.08);align-items:center;">
-                    <div style="font-size:13px;font-weight:900;text-align:right">2</div><div style="font-size:13px;font-weight:900;text-align:right;color:#ff6a2e">6:02</div><div style="position:relative;height:10px;"><div style="position:absolute;left:0;top:0;height:100%;width:68%;background:rgba(255,255,255,0.8);border-radius:2px;"></div></div><div style="font-size:11px;font-weight:700;text-align:right;color:rgba(255,255,255,0.4)">11:50</div>
-                  </div>
-                  <div style="display:grid;grid-template-columns:2em 3.2em 1fr auto;gap:3px;padding:3px 0;border-bottom:1px solid rgba(255,255,255,0.08);align-items:center;">
-                    <div style="font-size:13px;font-weight:900;text-align:right">3</div><div style="font-size:13px;font-weight:900;text-align:right;color:#ff6a2e">6:14</div><div style="position:relative;height:10px;"><div style="position:absolute;left:0;top:0;height:100%;width:55%;background:rgba(255,255,255,0.8);border-radius:2px;"></div></div><div style="font-size:11px;font-weight:700;text-align:right;color:rgba(255,255,255,0.4)">18:04</div>
-                  </div>
-                  <div style="display:grid;grid-template-columns:2em 3.2em 1fr auto;gap:3px;padding:3px 0;border-bottom:1px solid rgba(255,255,255,0.08);align-items:center;">
-                    <div style="font-size:13px;font-weight:900;text-align:right">4</div><div style="font-size:13px;font-weight:900;text-align:right;color:#ff6a2e">5:55</div><div style="position:relative;height:10px;"><div style="position:absolute;left:0;top:0;height:100%;width:75%;background:rgba(255,255,255,0.8);border-radius:2px;"></div></div><div style="font-size:11px;font-weight:700;text-align:right;color:rgba(255,255,255,0.4)">23:59</div>
-                  </div>
-                  <div style="display:grid;grid-template-columns:2em 3.2em 1fr auto;gap:3px;padding:3px 0;align-items:center;">
-                    <div style="font-size:13px;font-weight:900;text-align:right">5</div><div style="font-size:13px;font-weight:900;text-align:right;color:#ff6a2e">6:20</div><div style="position:relative;height:10px;"><div style="position:absolute;left:0;top:0;height:100%;width:45%;background:rgba(255,255,255,0.8);border-radius:2px;"></div></div><div style="font-size:11px;font-weight:700;text-align:right;color:rgba(255,255,255,0.4)">30:19</div>
-                  </div>
-                </div>
-                <div style="padding:8px 18px 0;display:flex;flex-direction:column;align-items:flex-end;text-align:right;">
-                  <div style="font-size:7px;letter-spacing:0.2em;color:rgba(255,255,255,0.25);text-transform:uppercase;margin-bottom:5px">26 MAY 2026</div>
-                  <div style="width:22px;height:2px;background:#fff;border-radius:2px;margin-bottom:5px"></div>
-                  <div class="tpl-thumb-hero-val" style="font-size:38px;font-weight:900;color:#fff;letter-spacing:-0.04em;line-height:0.95">5:33</div>
-                  <div class="tpl-thumb-hero-unit" style="font-size:8px;color:rgba(255,255,255,0.28);letter-spacing:0.1em;margin-top:3px">min / km</div>
-                  <div style="height:1px;background:rgba(255,255,255,0.07);margin:8px 0 6px;width:100%"></div>
-                  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:4px;width:100%">
-                    <div><div style="font-size:7px;color:rgba(255,255,255,0.25);text-transform:uppercase;margin-bottom:2px">km</div><div style="font-size:12px;font-weight:800;color:#fff">12.01</div></div>
-                    <div><div style="font-size:7px;color:rgba(255,255,255,0.25);text-transform:uppercase;margin-bottom:2px">tiempo</div><div style="font-size:12px;font-weight:800;color:#fff">1:06</div></div>
-                    <div><div style="font-size:7px;color:rgba(255,255,255,0.25);text-transform:uppercase;margin-bottom:2px">ppm</div><div style="font-size:12px;font-weight:800;color:#fff">138</div></div>
-                    <div><div style="font-size:7px;color:rgba(255,255,255,0.25);text-transform:uppercase;margin-bottom:2px">desn.</div><div style="font-size:10px;font-weight:800;color:#fff">+36/-33</div></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="tpl-name">Der. Vueltas</div>
+          <div class="tpl-name">Vueltas</div>
         </button>
 
       </div>
@@ -2583,6 +2449,8 @@ function newSession() {
   if (_bgMediaUrl) { URL.revokeObjectURL(_bgMediaUrl); _bgMediaUrl = null; _bgMediaType = null; }
   _tplAspect = '9/16';
   document.querySelectorAll('.aspect-btn').forEach(b => b.classList.toggle('active', b.dataset.aspect === '9/16'));
+  _tplAlign = 'center';
+  document.querySelectorAll('.tpl-align-btn').forEach(b => b.classList.toggle('active', b.dataset.align === 'center'));
   _tplMetrics = new Set(['dist','time','pace','hr','elev']);
   _tplHeroMetric = 'pace';
   document.getElementById('tpl-metrics-zone').style.display = 'none';
@@ -3494,11 +3362,11 @@ function renderTemplateCover(stats) {
     ? `<div style="display:grid;grid-template-columns:repeat(${gridCells.length},1fr);gap:4px">${gridCells.join('')}</div>`
     : '';
 
-  // Alineación según plantilla
-  const alignMap = { bold:'center', izq:'flex-start', der:'flex-end', 'bold-v':'center', 'izq-v':'flex-start', 'der-v':'flex-end' };
-  const textMap  = { bold:'center', izq:'left',       der:'right',    'bold-v':'center', 'izq-v':'left',        'der-v':'right'    };
-  const align    = alignMap[_recapTemplate] || 'center';
-  const textAlign = textMap[_recapTemplate] || 'center';
+  // Alineación según selector
+  const alignMap  = { left:'flex-start', center:'center', right:'flex-end' };
+  const textMap   = { left:'left',       center:'center', right:'right'    };
+  const align     = alignMap[_tplAlign] || 'center';
+  const textAlign = textMap[_tplAlign]  || 'center';
 
   const hasGPS = _gpsPoints && _gpsPoints.length > 1;
 
@@ -3587,7 +3455,7 @@ function renderTemplateCover(stats) {
 
   let html = '';
 
-  if (['bold','izq','der'].includes(_recapTemplate)) {
+  if (_recapTemplate === 'map') {
     html = `
       <div style="${bs}background:${bg};border-radius:16px;overflow:hidden;aspect-ratio:${_tplAspect};position:relative;">
         ${mediaLayer}
@@ -3609,7 +3477,7 @@ function renderTemplateCover(stats) {
       </div>`;
   }
 
-  if (['bold-v','izq-v','der-v'].includes(_recapTemplate)) {
+  if (_recapTemplate === 'laps') {
     const lapSection = buildTplLapRows();
     html = `
       <div style="${bs}background:${bg};border-radius:16px;overflow:hidden;aspect-ratio:${_tplAspect};position:relative;">
@@ -3801,6 +3669,7 @@ let _recapLayout  = 'full';
 let _bgMediaUrl   = null;
 let _bgMediaType  = null;
 let _tplAspect    = '9/16';
+let _tplAlign     = localStorage.getItem('tplAlign') || 'center';
 let _tplMetrics   = new Set(['dist','time','pace','hr','elev']); // métricas visibles en plantilla
 let _tplHeroMetric = 'pace'; // métrica destacada (hero grande)
 
@@ -3991,6 +3860,18 @@ document.querySelectorAll('.aspect-btn').forEach(btn => {
   });
 });
 
+// Selector de alineación
+document.querySelectorAll('.tpl-align-btn').forEach(btn => {
+  if (btn.dataset.align === _tplAlign) btn.classList.add('active');
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tpl-align-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    _tplAlign = btn.dataset.align;
+    localStorage.setItem('tplAlign', _tplAlign);
+    updateTplPreviews();
+  });
+});
+
 // GPS file
 function handleGPSFile(file) {
   if (!file) return;
@@ -4088,7 +3969,12 @@ document.querySelectorAll('.font-chip').forEach(btn => {
 });
 
 // ── Template picker ──
-let _recapTemplate = localStorage.getItem('recapTemplate') || 'bold';
+(function migrateRecapTemplate() {
+  const old = localStorage.getItem('recapTemplate');
+  if (['izq','bold','der'].includes(old)) { localStorage.setItem('recapTemplate','map'); }
+  else if (['izq-v','bold-v','der-v'].includes(old)) { localStorage.setItem('recapTemplate','laps'); }
+})();
+let _recapTemplate = localStorage.getItem('recapTemplate') || 'map';
 (function initTemplatePicker() {
   document.querySelectorAll('.tpl-card').forEach(btn => {
     if (btn.dataset.tpl === _recapTemplate) btn.classList.add('active');
