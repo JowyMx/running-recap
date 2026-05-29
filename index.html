@@ -3492,8 +3492,16 @@ function renderTemplateCover(stats) {
     if (!rows || rows.length === 0) {
       return `<div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:11px;opacity:0.3;letter-spacing:0.2em">SIN VUELTAS</div>`;
     }
-    const maxVisible = 12;
+    const maxVisible = 16;
     const visible = rows.slice(0, maxVisible);
+
+    // Escalar tamaño de fila según cantidad de vueltas visibles
+    const n = visible.length;
+    const rowFs  = n <= 8  ? '12px' : n <= 12 ? '11px' : '10px';  // font-size valor
+    const hdrFs  = n <= 8  ? '8px'  : n <= 12 ? '7px'  : '7px';   // font-size cabecera
+    const rowPad = n <= 8  ? '4px'  : n <= 12 ? '3px'  : '2px';   // padding vertical fila
+    const barH   = n <= 8  ? '12px' : n <= 12 ? '10px' : '8px';   // alto barra
+    const cumFs  = n <= 8  ? '10px' : n <= 12 ? '9px'  : '8px';   // font-size acumulado
 
     // Resolver ritmo por vuelta: campo directo o calculado desde tiempo/distancia
     // Distancia por vuelta: del CSV, o 1 km (auto-lap Garmin)
@@ -3549,21 +3557,21 @@ function renderTemplateCover(stats) {
 
       const paceVal = resolveRowPaceLabel(r);
 
-      return `<div style="display:grid;grid-template-columns:2em 3.2em minmax(0,1fr) auto;align-items:center;gap:5px;padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.09);">
-        <div style="font-size:12px;font-weight:900;text-align:right;opacity:0.9">${distVal}</div>
-        <div style="font-size:12px;font-weight:900;text-align:right;color:${color}">${paceVal}</div>
-        <div style="position:relative;height:12px;">
+      return `<div style="display:grid;grid-template-columns:2em 3.2em minmax(0,1fr) auto;align-items:center;gap:4px;padding:${rowPad} 0;border-bottom:1px solid rgba(255,255,255,0.09);">
+        <div style="font-size:${rowFs};font-weight:900;text-align:right;opacity:0.9">${distVal}</div>
+        <div style="font-size:${rowFs};font-weight:900;text-align:right;color:${color}">${paceVal}</div>
+        <div style="position:relative;height:${barH};">
           <div class="tpl-lap-bar" data-w="${pct}" style="position:absolute;left:0;top:0;height:100%;width:0;background:rgba(255,255,255,0.82);border-radius:3px;transition:width 0.55s cubic-bezier(0.4,0,0.2,1);"></div>
         </div>
-        <div style="font-size:10px;font-weight:700;text-align:right;opacity:0.45;white-space:nowrap">${cumVal}</div>
+        <div style="font-size:${cumFs};font-weight:700;text-align:right;opacity:0.45;white-space:nowrap">${cumVal}</div>
       </div>`;
     }).join('');
 
-    const header = `<div style="display:grid;grid-template-columns:2em 3.2em minmax(0,1fr) auto;align-items:center;gap:5px;padding:3px 0;border-bottom:1px solid rgba(255,255,255,0.25);margin-bottom:1px;">
-      <div style="font-size:8px;font-weight:700;letter-spacing:0.18em;text-align:right;opacity:0.5">KM</div>
-      <div style="font-size:8px;font-weight:700;letter-spacing:0.18em;text-align:right;opacity:0.5">RITMO</div>
+    const header = `<div style="display:grid;grid-template-columns:2em 3.2em minmax(0,1fr) auto;align-items:center;gap:4px;padding:3px 0;border-bottom:1px solid rgba(255,255,255,0.25);margin-bottom:1px;">
+      <div style="font-size:${hdrFs};font-weight:700;letter-spacing:0.15em;text-align:right;opacity:0.5">KM</div>
+      <div style="font-size:${hdrFs};font-weight:700;letter-spacing:0.15em;text-align:right;opacity:0.5">RITMO</div>
       <div></div>
-      <div style="font-size:8px;font-weight:700;letter-spacing:0.18em;text-align:right;opacity:0.5">TOTAL</div>
+      <div style="font-size:${hdrFs};font-weight:700;letter-spacing:0.15em;text-align:right;opacity:0.5">TOTAL</div>
     </div>`;
 
     return header + rowsHtml;
