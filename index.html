@@ -3602,23 +3602,32 @@ function renderTemplateCover(stats) {
   }
 
   if (_recapTemplate === 'laps') {
-    const lapSection = buildTplLapRows();
+    const nLaps       = Math.min((s.tableRows || []).length, 42);
+    const lapSection  = buildTplLapRows();
+    // Para carreras largas: comprimir sección inferior para dar más espacio a las filas
+    const manyLaps    = nLaps > 25;
+    const lapsPadB    = manyLaps ? '4px'  : '10px';
+    const heroPadT    = manyLaps ? '6px'  : '10px';
+    const heroDateMgn = manyLaps ? '6px'  : '12px';
+    const metricsPadB = manyLaps ? '10px' : '24px';
+    const showMetrics = !manyLaps;  // ocultar grid de métricas cuando hay muchas vueltas
+
     html = `
       <div style="${bs}background:${bg};border-radius:16px;overflow:hidden;aspect-ratio:${_tplAspect};position:relative;">
         ${mediaLayer}
         ${mediaOverlay}
         <div style="position:relative;z-index:1;display:flex;flex-direction:column;height:100%;">
-          <div style="flex:1;overflow:hidden;padding:18px 22px 10px;">
+          <div style="flex:1;overflow:hidden;padding:18px 22px ${lapsPadB};">
             <div style="font-size:8px;letter-spacing:0.22em;opacity:0.4;text-transform:uppercase;margin-bottom:8px;text-align:${textAlign}">VUELTAS</div>
             ${lapSection}
           </div>
-          <div style="padding:10px 22px 0;display:flex;flex-direction:column;align-items:${align};text-align:${textAlign};">
-            <div style="font-size:9px;letter-spacing:0.2em;opacity:0.65;text-transform:uppercase;margin-bottom:12px">${date}</div>
+          <div style="padding:${heroPadT} 22px 0;display:flex;flex-direction:column;align-items:${align};text-align:${textAlign};">
+            <div style="font-size:9px;letter-spacing:0.2em;opacity:0.65;text-transform:uppercase;margin-bottom:${heroDateMgn}">${date}</div>
             ${heroSection}
           </div>
-          <div style="padding:0 22px 24px;margin-top:auto;">
-            <div style="height:1px;background:rgba(255,255,255,0.07);margin-bottom:14px"></div>
-            ${metricsGrid}
+          <div style="padding:0 22px ${metricsPadB};margin-top:auto;">
+            <div style="height:1px;background:rgba(255,255,255,0.07);margin-bottom:${showMetrics ? '14px' : '0'}"></div>
+            ${showMetrics ? metricsGrid : ''}
           </div>
         </div>
       </div>`;
