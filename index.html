@@ -3467,7 +3467,7 @@ function renderTemplateCover(stats) {
   const _gcLblSize = _gcCols <= 2 ? '9px' : '8px';
 
   const gridCells = _gcRaw.map(c =>
-    `<div style="padding:4px 0">
+    `<div style="padding:4px 0;text-align:${textAlign}">
        <div style="font-size:${_gcLblSize};letter-spacing:0.12em;text-transform:uppercase;opacity:0.55;margin-bottom:5px">${c.lbl}</div>
        <div style="font-size:${_gcValSize};font-weight:800;letter-spacing:-0.02em;line-height:1">${c.val}</div>
      </div>`
