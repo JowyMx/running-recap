@@ -2286,10 +2286,11 @@ function processData(data, customName) {
   const idKey   = type === 'intervals' ? 'Intervalo' : 'Vueltas';
   const tableRows = rows.map(r => ({
     n:    r[idKey],
-    hr:   r['Frecuencia cardiaca media'],
-    pace: r['Ritmo medio'],
+    hr:   r['Frecuencia cardiaca media'] || r['FC media'] || r['Frecuencia cardíaca media'],
+    pace: r['Ritmo medio'] || r['Ritmo'] || r['Pace'] || r['Ritmo promedio'] || r['Avg Pace'],
+    time: r['Tiempo'] || r['Tiempo de movimiento'] || r['Tiempo de vuelta'] || r['Duración'] || r['Time'],
     pow:  r['Potencia media'],
-    dist: r['Distancia'],
+    dist: r['Distancia'] || r['Distancia (km)'] || r['Distance'],
     cad:    r['Cadencia de carrera media'] || r['Cadencia media'] || r['Cadencia'],
     stride: r['Longitud media de zancada'] || r['Longitud de zancada media'] || r['Longitud de zancada'],
     elev:     r['Ascenso total'] || r['Desnivel positivo total'] || r['Desnivel positivo'] || r['Subida total'],
@@ -3509,26 +3510,62 @@ function renderTemplateCover(stats) {
     }
     const maxVisible = 12;
     const visible = rows.slice(0, maxVisible);
-    const paceSecs = visible.filter(r => !isDash(r.pace)).map(r => paceToSec(r.pace));
-    const minPace  = Math.min(...paceSecs);
-    const maxPace  = Math.max(...paceSecs);
-    const pRange   = maxPace - minPace || 1;
+
+    // Resolver ritmo por vuelta: campo directo o calculado desde tiempo/distancia
+    function resolveRowPaceSec(r) {
+      if (!isDash(r.pace)) {
+        const ps = paceToSec(r.pace);
+        if (ps > 0) return ps;
+      }
+      // fallback: calcular desde tiempo / distancia
+      const lapTimeSec = timeToSec(r.time || '');
+      const lapDist    = parseFloat(r.dist) || 0;
+      if (lapTimeSec > 0 && lapDist > 0) return lapTimeSec / lapDist;
+      return 0;
+    }
+
+    function resolveRowPaceLabel(r) {
+      if (!isDash(r.pace)) {
+        const ps = paceToSec(r.pace);
+        if (ps > 0) return r.pace;
+      }
+      const lapTimeSec = timeToSec(r.time || '');
+      const lapDist    = parseFloat(r.dist) || 0;
+      if (lapTimeSec > 0 && lapDist > 0) return secToMMSS(lapTimeSec / lapDist);
+      return '—';
+    }
+
+    const validSecs = visible.map(resolveRowPaceSec).filter(v => v > 0);
+    const minPace   = validSecs.length ? Math.min(...validSecs) : 0;
+    const maxPace   = validSecs.length ? Math.max(...validSecs) : 0;
+    const pRange    = maxPace - minPace || 1;
 
     let cum = 0;
     const rowsHtml = visible.map((r, i) => {
-      const sec      = isDash(r.pace) ? 0 : paceToSec(r.pace);
-      const lapDist  = parseFloat(r.dist) || 1;
-      cum += sec * lapDist;
-      const pct      = isDash(r.pace) ? 0 : Math.round(((maxPace - sec) / pRange) * 70 + 15);
-      const cumH = Math.floor(cum/3600), cumM = Math.floor((cum%3600)/60), cumS = Math.round(cum%60);
+      const sec     = resolveRowPaceSec(r);
+      const lapDist = parseFloat(r.dist) || 0;
+
+      // Acumulado: sumar tiempo real de vuelta si está disponible, si no ritmo×dist
+      const lapTimeSec = timeToSec(r.time || '');
+      if (lapTimeSec > 0) {
+        cum += lapTimeSec;
+      } else {
+        cum += sec * (lapDist || 1);
+      }
+
+      const pct    = sec > 0 ? Math.round(((maxPace - sec) / pRange) * 70 + 15) : 0;
+      const cumH   = Math.floor(cum/3600), cumM = Math.floor((cum%3600)/60), cumS = Math.round(cum%60);
       const cumVal = cumH > 0
         ? `${cumH}:${String(cumM).padStart(2,'0')}:${String(cumS).padStart(2,'0')}`
         : `${String(cumM).padStart(2,'0')}:${String(cumS).padStart(2,'0')}`;
-      const d = parseFloat(r.dist) || 0;
+
+      const d = lapDist;
       const distVal = d === 0 ? r.n
-        : d >= 0.95 ? Math.round(visible.slice(0,i+1).reduce((s,rr)=>s+(parseFloat(rr.dist)||0),0))
+        : d >= 0.95 ? Math.round(visible.slice(0,i+1).reduce((acc,rr)=>acc+(parseFloat(rr.dist)||0),0))
         : d.toFixed(2);
-      const paceVal  = isDash(r.pace) ? '—' : r.pace;
+
+      const paceVal = resolveRowPaceLabel(r);
+
       return `<div style="display:grid;grid-template-columns:2em 3.2em minmax(0,1fr) auto;align-items:center;gap:5px;padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.09);">
         <div style="font-size:12px;font-weight:900;text-align:right;opacity:0.9">${distVal}</div>
         <div style="font-size:12px;font-weight:900;text-align:right;color:${color}">${paceVal}</div>
