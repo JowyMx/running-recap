@@ -3686,32 +3686,58 @@ function renderTemplateCover(stats) {
     const barGap  = nd <= 12 ? 5 : nd <= 21 ? 3 : 2;
     const labelFs = nd <= 12 ? '9px' : nd <= 21 ? '8px' : '7px';
 
-    const paceFs  = nd <= 12 ? '9px' : nd <= 21 ? '8px' : '7px';
-
-    const barsHtml = groupedRows.map((r, i) => {
-      const pct = r.paceSec > 0 ? Math.round(((maxPace - r.paceSec) / pRange) * 70 + 15) : 10;
-      return `
-        <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;min-width:0;">
-          <!-- ritmo encima de la barra -->
-          <div style="font-size:${paceFs};font-weight:800;color:${color};opacity:0.85;white-space:nowrap;flex-shrink:0;letter-spacing:-0.02em;">${r.paceLabel}</div>
-          <!-- zona de barra anclada al fondo -->
-          <div style="flex:1;position:relative;width:100%;">
-            <div class="tpl-lap-bar-v" data-pct="${pct}"
-                 style="position:absolute;bottom:0;left:0;right:0;
-                        height:0%;
-                        background:rgba(255,255,255,0.85);
-                        border-radius:3px 3px 0 0;
-                        transition:height 0.65s cubic-bezier(0.4,0,0.2,1);">
-            </div>
-          </div>
-          <!-- eje X -->
-          <div style="height:1px;background:rgba(255,255,255,0.2);width:100%;flex-shrink:0;"></div>
-          <!-- etiqueta km -->
-          <div style="font-size:${labelFs};font-weight:700;opacity:0.55;white-space:nowrap;flex-shrink:0;">${r.label}</div>
-        </div>`;
+    // ── Eje Y: 3 ticks (rápido, medio, lento) ────────────────────────────────
+    const yTickPaces = [minPace, (minPace + maxPace) / 2, maxPace];
+    const yTicksHtml = yTickPaces.map(p => {
+      const pct = Math.round(((maxPace - p) / pRange) * 70 + 15);
+      return `<div style="position:absolute;bottom:${pct}%;right:4px;transform:translateY(50%);
+                           font-size:8px;font-weight:700;color:${color};opacity:0.45;
+                           white-space:nowrap;line-height:1;">${secToMMSS(Math.round(p))}</div>`;
     }).join('');
 
-    return `<div style="display:flex;gap:${barGap}px;height:100%;align-items:stretch;">${barsHtml}</div>`;
+    // Líneas de referencia horizontales
+    const refLinesHtml = yTickPaces.map(p => {
+      const pct = Math.round(((maxPace - p) / pRange) * 70 + 15);
+      return `<div style="position:absolute;left:0;right:0;bottom:${pct}%;
+                           height:1px;background:rgba(255,255,255,0.07);pointer-events:none;"></div>`;
+    }).join('');
+
+    // Barras (sin label de ritmo encima)
+    const barsHtml = groupedRows.map((r, i) => {
+      const pct = r.paceSec > 0 ? Math.round(((maxPace - r.paceSec) / pRange) * 70 + 15) : 10;
+      return `<div style="flex:1;position:relative;min-width:0;">
+        <div class="tpl-lap-bar-v" data-pct="${pct}"
+             style="position:absolute;bottom:0;left:0;right:0;height:0%;
+                    background:rgba(255,255,255,0.85);border-radius:3px 3px 0 0;
+                    transition:height 0.65s cubic-bezier(0.4,0,0.2,1);">
+        </div>
+      </div>`;
+    }).join('');
+
+    // Etiquetas km (eje X)
+    const kmLabelsHtml = groupedRows.map(r =>
+      `<div style="flex:1;text-align:center;font-size:${labelFs};font-weight:700;opacity:0.5;white-space:nowrap;overflow:hidden;">${r.label}</div>`
+    ).join('');
+
+    const KM_LABEL_H = '18px';
+
+    return `
+      <div style="display:flex;height:100%;gap:0;">
+        <!-- Eje Y -->
+        <div style="display:flex;flex-direction:column;width:32px;flex-shrink:0;">
+          <div style="flex:1;position:relative;">${yTicksHtml}</div>
+          <div style="height:${KM_LABEL_H};flex-shrink:0;"></div>
+        </div>
+        <!-- Barras + eje X + km -->
+        <div style="flex:1;display:flex;flex-direction:column;min-width:0;">
+          <div style="flex:1;position:relative;">
+            ${refLinesHtml}
+            <div style="position:absolute;inset:0;display:flex;gap:${barGap}px;">${barsHtml}</div>
+          </div>
+          <div style="height:1px;background:rgba(255,255,255,0.2);flex-shrink:0;"></div>
+          <div style="display:flex;gap:${barGap}px;height:${KM_LABEL_H};align-items:center;">${kmLabelsHtml}</div>
+        </div>
+      </div>`;
   }
 
   let html = '';
