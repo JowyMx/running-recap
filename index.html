@@ -2666,7 +2666,7 @@ function newSession() {
   _tplAlign = 'center';
   document.querySelectorAll('.tpl-align-btn').forEach(b => b.classList.toggle('active', b.dataset.align === 'center'));
   _tplMetrics = new Set(['dist','time','pace','hr','elev']);
-  _tplHeroMetric = 'pace';
+  _tplHeroMetric = 'dist';
   document.getElementById('tpl-metrics-zone').style.display = 'none';
   document.getElementById('tpl-metrics-list').innerHTML = '';
   const _pz = document.getElementById('photo-zone');
@@ -4175,7 +4175,7 @@ let _tplAspect    = '9/16';
 let _tplAlign     = localStorage.getItem('tplAlign') || 'center';
 let _tplAnimDur   = parseInt(localStorage.getItem('tplAnimDur') || '3', 10); // segundos
 let _tplMetrics   = new Set(['dist','time','pace','hr','elev']); // métricas visibles en plantilla
-let _tplHeroMetric = 'pace'; // métrica destacada (hero grande)
+let _tplHeroMetric = 'dist'; // métrica destacada (hero grande)
 
 const TPL_METRIC_DEFS = [
   { key:'dist',  label:'Distancia',      icon:'📏', avail: s => s && s.dist > 0,
