@@ -55,9 +55,10 @@ body {
   height: 38px;
   cursor: pointer;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
+  gap: 10px;
   transition: border-color 0.2s, background 0.2s;
   margin-bottom: 4px;
 }
@@ -65,7 +66,7 @@ body {
   border-color: rgba(255,255,255,0.55);
   background: rgba(255,255,255,0.03);
 }
-.drop-icon { display: flex; align-items: center; justify-content: center; margin-bottom: 7px; color: rgba(255,255,255,0.45); }
+.drop-icon { display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: rgba(255,255,255,0.45); }
 .drop-text {
   font-size: clamp(11px, 2vw, 13px);
   font-weight: 700;
@@ -116,10 +117,10 @@ body {
   height: 38px;
   cursor: pointer;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
-  justify-content: center;
-  gap: 8px;
+  justify-content: flex-start;
+  gap: 10px;
   margin-bottom: 8px;
   transition: border-color 0.2s, background 0.2s;
 }
@@ -289,8 +290,8 @@ body {
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: center;
-  gap: 8px;
+  justify-content: flex-start;
+  gap: 10px;
   margin-bottom: 8px;
   transition: border-color 0.2s, background 0.2s;
 }
