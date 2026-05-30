@@ -3683,20 +3683,28 @@ function renderTemplateCover(stats) {
     const maxPace   = validSecs.length ? Math.max(...validSecs) : 0;
     const pRange    = maxPace - minPace || 1;
 
-    const barGap   = nd <= 12 ? 5 : nd <= 21 ? 3 : 2;
-    const labelFs  = nd <= 12 ? '9px' : nd <= 21 ? '8px' : '7px';
-    const showPace = nd <= 14; // ritmo encima de cada barra solo si caben
+    const barGap  = nd <= 12 ? 5 : nd <= 21 ? 3 : 2;
+    const labelFs = nd <= 12 ? '9px' : nd <= 21 ? '8px' : '7px';
 
     const barsHtml = groupedRows.map((r, i) => {
       const pct = r.paceSec > 0 ? Math.round(((maxPace - r.paceSec) / pRange) * 70 + 15) : 10;
-      return `<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;min-width:0;">
-        ${showPace ? `<div style="font-size:7px;font-weight:700;color:${color};opacity:0.7;white-space:nowrap;writing-mode:vertical-lr;transform:rotate(180deg);max-height:40px;overflow:hidden">${r.paceLabel}</div>` : ''}
-        <div style="flex:1;width:100%;display:flex;flex-direction:column;justify-content:flex-end;">
-          <div class="tpl-lap-bar-v" data-pct="${pct}" style="width:100%;flex:${pct};transform:scaleY(0);transform-origin:bottom;background:rgba(255,255,255,0.82);border-radius:3px 3px 0 0;min-height:3px;transition:transform 0.55s cubic-bezier(0.4,0,0.2,1);"></div>
-          <div style="flex:${100-pct}"></div>
-        </div>
-        <div style="font-size:${labelFs};font-weight:700;opacity:0.55;white-space:nowrap;flex-shrink:0">${r.label}</div>
-      </div>`;
+      return `
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;min-width:0;">
+          <!-- zona de barras: posición relativa para anclar barra al fondo -->
+          <div style="flex:1;position:relative;width:100%;">
+            <div class="tpl-lap-bar-v" data-pct="${pct}"
+                 style="position:absolute;bottom:0;left:0;right:0;
+                        height:0%;
+                        background:rgba(255,255,255,0.85);
+                        border-radius:3px 3px 0 0;
+                        transition:height 0.65s cubic-bezier(0.4,0,0.2,1);">
+            </div>
+          </div>
+          <!-- eje X -->
+          <div style="height:1px;background:rgba(255,255,255,0.2);width:100%;flex-shrink:0;"></div>
+          <!-- etiqueta km -->
+          <div style="font-size:${labelFs};font-weight:700;opacity:0.55;white-space:nowrap;flex-shrink:0;">${r.label}</div>
+        </div>`;
     }).join('');
 
     return `<div style="display:flex;gap:${barGap}px;height:100%;align-items:stretch;">${barsHtml}</div>`;
@@ -3822,11 +3830,11 @@ function renderTemplateCover(stats) {
     });
   }
 
-  // Animación progresiva: barras verticales
+  // Animación progresiva: barras verticales (crecen desde el eje X hacia arriba)
   if (_recapTemplate === 'laps-v') {
     requestAnimationFrame(() => {
       card.querySelectorAll('.tpl-lap-bar-v').forEach((bar, i) => {
-        setTimeout(() => { bar.style.transform = 'scaleY(1)'; }, i * 80);
+        setTimeout(() => { bar.style.height = bar.dataset.pct + '%'; }, i * 80);
       });
     });
   }
