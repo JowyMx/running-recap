@@ -159,6 +159,52 @@ body {
   gap: 8px;
   margin-bottom: 8px;
 }
+#anim-dur-zone {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  padding: 6px 12px;
+  border: 1.5px solid rgba(255,255,255,0.12);
+  border-radius: 8px;
+}
+.anim-dur-label {
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.4);
+  font-family: inherit;
+}
+.anim-dur-controls {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.anim-dur-btn {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 6px;
+  color: rgba(255,255,255,0.6);
+  width: 26px;
+  height: 26px;
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1;
+  font-family: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.15s, color 0.15s;
+}
+.anim-dur-btn:hover { border-color: rgba(255,255,255,0.5); color: #fff; }
+#anim-dur-display {
+  font-size: 14px;
+  font-weight: 700;
+  color: rgba(255,255,255,0.85);
+  min-width: 28px;
+  text-align: center;
+  font-family: inherit;
+}
 .aspect-btn {
   flex: 1;
   background: transparent;
@@ -1458,6 +1504,16 @@ body {
       </button>
     </div>
 
+    <!-- Duración de animación -->
+    <div id="anim-dur-zone">
+      <span class="anim-dur-label">Duración</span>
+      <div class="anim-dur-controls">
+        <button class="anim-dur-btn" id="anim-dur-minus">−</button>
+        <span id="anim-dur-display">3s</span>
+        <button class="anim-dur-btn" id="anim-dur-plus">+</button>
+      </div>
+    </div>
+
     <!-- Fuentes -->
     <div id="font-zone">
       <div class="font-zone-label">Font</div>
@@ -2108,7 +2164,7 @@ function drawRoute(canvas, points) {
   }
 
   const markerAppeared = {}; // km → timestamp de primera aparición
-  const DUR_ROUTE = 2200;
+  const DUR_ROUTE = _tplAnimDur * 1000;
   const t0 = performance.now();
 
   function renderFrame(now) {
@@ -3907,20 +3963,30 @@ function renderTemplateCover(stats) {
     });
   }
 
+  const _dur = _tplAnimDur * 1000; // duración global en ms
+
   // Animación progresiva: barras horizontales
   if (_recapTemplate === 'laps') {
     requestAnimationFrame(() => {
-      card.querySelectorAll('.tpl-lap-bar').forEach((bar, i) => {
-        setTimeout(() => { bar.style.width = bar.dataset.w + '%'; }, i * 90);
+      const bars = card.querySelectorAll('.tpl-lap-bar');
+      const transDur = Math.round(_dur * 0.4);  // 40% del total para la transición CSS
+      const stagger  = bars.length > 1 ? Math.round((_dur * 0.6) / (bars.length - 1)) : 0;
+      bars.forEach((bar, i) => {
+        bar.style.transition = `width ${transDur}ms cubic-bezier(0.4,0,0.2,1)`;
+        setTimeout(() => { bar.style.width = bar.dataset.w + '%'; }, i * stagger);
       });
     });
   }
 
-  // Animación progresiva: barras verticales (crecen desde el eje X hacia arriba)
+  // Animación progresiva: barras verticales
   if (_recapTemplate === 'laps-v') {
     requestAnimationFrame(() => {
-      card.querySelectorAll('.tpl-lap-bar-v').forEach((bar, i) => {
-        setTimeout(() => { bar.style.height = bar.dataset.pct + '%'; }, i * 80);
+      const bars = card.querySelectorAll('.tpl-lap-bar-v');
+      const transDur = Math.round(_dur * 0.4);
+      const stagger  = bars.length > 1 ? Math.round((_dur * 0.6) / (bars.length - 1)) : 0;
+      bars.forEach((bar, i) => {
+        bar.style.transition = `height ${transDur}ms cubic-bezier(0.4,0,0.2,1)`;
+        setTimeout(() => { bar.style.height = bar.dataset.pct + '%'; }, i * stagger);
       });
     });
   }
@@ -3936,18 +4002,20 @@ function renderTemplateCover(stats) {
         line.style.strokeDasharray = len;
         line.style.strokeDashoffset = len;
         requestAnimationFrame(() => {
-          line.style.transition = 'stroke-dashoffset 2s cubic-bezier(0.4,0,0.2,1)';
+          line.style.transition = `stroke-dashoffset ${Math.round(_dur * 0.75)}ms cubic-bezier(0.4,0,0.2,1)`;
           line.style.strokeDashoffset = '0';
         });
       }
-      if (area) requestAnimationFrame(() => { area.style.opacity = '1'; });
-      if (lbls) requestAnimationFrame(() => { lbls.style.opacity = '1'; });
+      // Área: fade in al 20% del tiempo
+      if (area) { area.style.transition = `opacity ${Math.round(_dur*0.4)}ms ease ${Math.round(_dur*0.15)}ms`; requestAnimationFrame(() => { area.style.opacity = '1'; }); }
+      // Labels: fade in al 65% del tiempo
+      if (lbls) { lbls.style.transition = `opacity ${Math.round(_dur*0.3)}ms ease ${Math.round(_dur*0.65)}ms`; requestAnimationFrame(() => { lbls.style.opacity = '1'; }); }
     });
   }
 }
 
 function animateCoverValues(container) {
-  const DUR  = 2400;
+  const DUR  = _tplAnimDur * 1000;
   const ease = t => t < 0.5 ? 2*t*t : -1+(4-2*t)*t;
 
   const fmtDist = v => v.toFixed(2);
@@ -4101,6 +4169,7 @@ let _bgMediaUrl   = null;
 let _bgMediaType  = null;
 let _tplAspect    = '9/16';
 let _tplAlign     = localStorage.getItem('tplAlign') || 'center';
+let _tplAnimDur   = parseInt(localStorage.getItem('tplAnimDur') || '3', 10); // segundos
 let _tplMetrics   = new Set(['dist','time','pace','hr','elev']); // métricas visibles en plantilla
 let _tplHeroMetric = 'pace'; // métrica destacada (hero grande)
 
@@ -4304,6 +4373,19 @@ document.querySelectorAll('.tpl-align-btn').forEach(btn => {
     updateTplPreviews();
   });
 });
+
+// Selector de duración de animación
+(function initAnimDur() {
+  const display = document.getElementById('anim-dur-display');
+  const update  = () => { display.textContent = _tplAnimDur + 's'; };
+  update();
+  document.getElementById('anim-dur-minus').addEventListener('click', () => {
+    if (_tplAnimDur > 1) { _tplAnimDur--; localStorage.setItem('tplAnimDur', _tplAnimDur); update(); }
+  });
+  document.getElementById('anim-dur-plus').addEventListener('click', () => {
+    if (_tplAnimDur < 15) { _tplAnimDur++; localStorage.setItem('tplAnimDur', _tplAnimDur); update(); }
+  });
+})();
 
 // GPS file
 function handleGPSFile(file) {
