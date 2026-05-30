@@ -335,8 +335,8 @@ body {
 /* Template selector */
 #template-zone { width: 100%; margin-top: 18px; }
 .template-zone-label { font-size: 10px; letter-spacing: 0.25em; color: rgba(255,255,255,0.25); text-transform: uppercase; margin-bottom: 10px; }
-#template-cards { display: flex; flex-wrap: wrap; gap: 8px; padding-bottom: 2px; }
-.tpl-card { background: transparent; border: 1.5px solid rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; cursor: pointer; padding: 0; flex-shrink: 0; transition: border-color 0.2s, transform 0.15s; width: 110px; text-align: left; }
+#template-cards { display: flex; flex-wrap: wrap; gap: 8px; padding-bottom: 2px; justify-content: space-between; }
+.tpl-card { background: transparent; border: 1.5px solid rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; cursor: pointer; padding: 0; flex: 1; min-width: 90px; transition: border-color 0.2s, transform 0.15s; text-align: left; }
 .tpl-card:hover { transform: scale(1.04); border-color: rgba(255,255,255,0.3); }
 .tpl-card.active { border-color: rgba(255,255,255,0.8); }
 .tpl-thumb { width: 110px; height: 78px; overflow: hidden; position: relative; }
