@@ -65,7 +65,7 @@ body {
   border-color: rgba(255,255,255,0.55);
   background: rgba(255,255,255,0.03);
 }
-.drop-icon { display: none; }
+.drop-icon { display: flex; align-items: center; justify-content: center; margin-bottom: 7px; color: rgba(255,255,255,0.45); }
 .drop-text {
   font-size: clamp(11px, 2vw, 13px);
   font-weight: 700;
@@ -1407,13 +1407,23 @@ body {
       <input type="text" id="session-name" placeholder="Auto">
     </div>
     <div id="gps-zone" onclick="document.getElementById('gps-input').click()">
-      <div class="drop-icon">⊕</div>
+      <div class="drop-icon">
+        <svg width="16" height="22" viewBox="0 0 16 22" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+          <path d="M8 0C4.13 0 1 3.13 1 7c0 5.5 7 15 7 15s7-9.5 7-15c0-3.87-3.13-7-7-7zm0 9.5C6.62 9.5 5.5 8.38 5.5 7S6.62 4.5 8 4.5 10.5 5.62 10.5 7 9.38 9.5 8 9.5z"/>
+        </svg>
+      </div>
       <div class="drop-text" id="gps-zone-text">GPX / TCX / KML</div>
       <div class="drop-sub">Arrastra o haz clic para seleccionar</div>
     </div>
     <input type="file" id="gps-input" accept=".gpx,.tcx,.kml" style="display:none">
     <div id="drop-zone" onclick="document.getElementById('file-input').click()">
-      <div class="drop-icon">↑</div>
+      <div class="drop-icon">
+        <svg width="22" height="18" viewBox="0 0 22 18" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+          <rect x="0" y="9" width="6" height="9" rx="1.5"/>
+          <rect x="8" y="4" width="6" height="14" rx="1.5"/>
+          <rect x="16" y="0" width="6" height="18" rx="1.5"/>
+        </svg>
+      </div>
       <div class="drop-text" style="color:rgba(255,255,255,0.45)">CSV</div>
       <div class="drop-sub" style="color:rgba(255,255,255,0.18)">Arrastra o haz clic para seleccionar</div>
     </div>
@@ -1421,7 +1431,11 @@ body {
 
     <!-- Foto / Video de fondo -->
     <div id="photo-zone" onclick="document.getElementById('photo-input').click()">
-      <div class="drop-icon" id="photo-zone-icon">🖼</div>
+      <div class="drop-icon" id="photo-zone-icon">
+        <svg width="22" height="20" viewBox="0 0 22 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+          <path d="M7.5 0L5.67 2H3C1.9 2 1 2.9 1 4v14c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2h-2.67L14.5 0h-7zm3.5 16c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
+        </svg>
+      </div>
       <div class="drop-text" id="photo-zone-text">Foto / Video de fondo</div>
       <div class="drop-sub">Opcional · PNG, JPG, MP4, MOV</div>
     </div>
@@ -2502,7 +2516,7 @@ function newSession() {
   document.getElementById('tpl-metrics-zone').style.display = 'none';
   document.getElementById('tpl-metrics-list').innerHTML = '';
   const _pz = document.getElementById('photo-zone');
-  document.getElementById('photo-zone-icon').textContent = '🖼';
+  document.getElementById('photo-zone-icon').innerHTML = `<svg width="22" height="20" viewBox="0 0 22 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M7.5 0L5.67 2H3C1.9 2 1 2.9 1 4v14c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2h-2.67L14.5 0h-7zm3.5 16c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>`;
   document.getElementById('photo-zone-text').textContent = 'Foto / Video de fondo';
   document.getElementById('photo-zone-text').classList.remove('loaded');
   _pz.style.borderColor = '';
@@ -4028,7 +4042,9 @@ function handlePhotoFile(file) {
   _bgMediaType = file.type.startsWith('video') ? 'video' : 'image';
   const icon = document.getElementById('photo-zone-icon');
   const text = document.getElementById('photo-zone-text');
-  icon.textContent = _bgMediaType === 'video' ? '🎬' : '🖼';
+  const SVG_CAM   = `<svg width="22" height="20" viewBox="0 0 22 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M7.5 0L5.67 2H3C1.9 2 1 2.9 1 4v14c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2h-2.67L14.5 0h-7zm3.5 16c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>`;
+  const SVG_VIDEO = `<svg width="24" height="18" viewBox="0 0 24 18" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M0 2C0 .9.9 0 2 0h14c1.1 0 2 .9 2 2v14c0 1.1-.9 2-2 2H2c-1.1 0-2-.9-2-2V2zm16 3.5V2H2v14h14v-3.5l6 3.5V2l-6 3.5z"/></svg>`;
+  icon.innerHTML = _bgMediaType === 'video' ? SVG_VIDEO : SVG_CAM;
   text.textContent = `✓ ${file.name}`;
   text.classList.add('loaded');
   document.getElementById('photo-zone').style.borderColor = 'rgba(127,255,212,0.5)';
