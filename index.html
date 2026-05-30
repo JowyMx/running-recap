@@ -2082,6 +2082,32 @@ function drawRoute(canvas, points) {
 
   const path = pts.map(xy);
   const color = _recapTextColor || 'rgba(255,255,255,0.85)';
+
+  // ── Distancia acumulada por punto de la ruta ──────────────────────────────
+  const pathCumDist = [0]; // en km
+  for (let i = 1; i < pts.length; i++) {
+    const dx = (pts[i].lon - pts[i-1].lon) * Math.cos(latMid * Math.PI / 180) * 111.32;
+    const dy = (pts[i].lat - pts[i-1].lat) * 110.57;
+    pathCumDist.push(pathCumDist[i-1] + Math.sqrt(dx*dx + dy*dy));
+  }
+  const totalKm = pathCumDist[pathCumDist.length - 1];
+
+  // ── Posiciones canvas de cada marcador de km ──────────────────────────────
+  const kmMarkers = []; // { km, x, y }
+  let nextKm = 1;
+  for (let i = 1; i < pts.length && nextKm <= totalKm; i++) {
+    while (nextKm <= pathCumDist[i] && nextKm <= totalKm) {
+      const prev = pathCumDist[i-1], curr = pathCumDist[i];
+      const t = curr > prev ? (nextKm - prev) / (curr - prev) : 0;
+      const lat = pts[i-1].lat + t * (pts[i].lat - pts[i-1].lat);
+      const lon = pts[i-1].lon + t * (pts[i].lon - pts[i-1].lon);
+      const pos = xy({ lat, lon });
+      kmMarkers.push({ km: nextKm, x: pos.x, y: pos.y });
+      nextKm++;
+    }
+  }
+
+  const markerAppeared = {}; // km → timestamp de primera aparición
   const DUR_ROUTE = 2200;
   const t0 = performance.now();
 
@@ -2110,6 +2136,36 @@ function drawRoute(canvas, points) {
     }
     ctx.stroke();
 
+    // ── Marcadores de km ─────────────────────────────────────────────────────
+    const drawnKm = pathCumDist[endIdx];
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.font = 'bold 8px Arial';
+
+    kmMarkers.forEach(m => {
+      if (m.km > drawnKm) return;
+      if (!markerAppeared[m.km]) markerAppeared[m.km] = now;
+      const age   = now - markerAppeared[m.km];
+      const fade  = Math.min(1, age / 200);
+      const scale = age < 350 ? 1 + (1 - age / 350) * 1.8 : 1; // pop-in
+      const r     = 3 * scale;
+
+      // Círculo
+      ctx.globalAlpha = 0.9 * fade;
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.arc(m.x, m.y, r, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Número de km (solo cuando ya terminó el pop)
+      if (age > 200) {
+        ctx.globalAlpha = 0.75 * fade;
+        ctx.fillStyle = color;
+        ctx.fillText(m.km, m.x, m.y - r - 5);
+      }
+    });
+
+    ctx.globalAlpha = 1;
     ctx.fillStyle = color;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
