@@ -245,15 +245,16 @@ body {
   margin-bottom: 8px;
 }
 #tpl-metrics-list {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 5px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 .tpl-metric-row {
   display: flex;
-  flex-direction: column;
-  gap: 5px;
-  padding: 8px 10px;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px;
   border-radius: 8px;
   border: 1px solid rgba(255,255,255,0.07);
   cursor: pointer;
@@ -265,6 +266,7 @@ body {
   display: flex;
   align-items: center;
   gap: 6px;
+  flex: 1;
 }
 .tpl-metric-check {
   width: 16px;
