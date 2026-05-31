@@ -289,24 +289,22 @@ body {
   background: rgba(255,255,255,0.9);
   border-color: rgba(255,255,255,0.9);
 }
-.tpl-metric-icon { font-size: 13px; flex-shrink: 0; }
+.tpl-metric-icon { font-size: 11px; flex-shrink: 0; }
 .tpl-metric-label {
-  font-size: 10px;
+  font-size: 8px;
   font-weight: 700;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: rgba(255,255,255,0.7);
-  flex: 1;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 .tpl-metric-val {
-  font-size: 11px;
+  font-size: 9px;
   font-weight: 700;
   color: rgba(255,255,255,0.45);
   letter-spacing: 0.03em;
-  padding-left: 2px;
 }
 .tpl-hero-btn {
   width: 18px; height: 18px;
@@ -4183,15 +4181,15 @@ let _tplMetrics   = new Set(['dist','time','pace','hr','elev']); // métricas vi
 let _tplHeroMetric = 'dist'; // métrica destacada (hero grande)
 
 const TPL_METRIC_DEFS = [
-  { key:'dist',  label:'Distancia',      icon:'📏', avail: s => s && s.dist > 0,
+  { key:'dist',  label:'Dist.',   icon:'📏', avail: s => s && s.dist > 0,
     val: s => `${(+s.dist).toFixed(2)} km` },
-  { key:'time',  label:'Tiempo',          icon:'⏱',  avail: s => s && timeToSec(s.time) > 0,
+  { key:'time',  label:'Tiempo',  icon:'⏱',  avail: s => s && timeToSec(s.time) > 0,
     val: s => s.time },
-  { key:'pace',  label:'Ritmo',           icon:'🏃', avail: s => s && s.avgPaceSec > 0,
+  { key:'pace',  label:'Ritmo',   icon:'🏃', avail: s => s && s.avgPaceSec > 0,
     val: s => `${secToMMSS(s.avgPaceSec)} /km` },
-  { key:'hr',    label:'Frec. Cardíaca',  icon:'❤️', avail: s => s && s.avgHR > 0,
+  { key:'hr',    label:'FC',      icon:'❤️', avail: s => s && s.avgHR > 0,
     val: s => `${s.avgHR} ppm` },
-  { key:'elev',  label:'Desnivel',        icon:'⛰',  avail: s => s && (s.elevation > 0 || s.descent > 0),
+  { key:'elev',  label:'Desn.',   icon:'⛰',  avail: s => s && (s.elevation > 0 || s.descent > 0),
     val: s => `+${s.elevation}/-${s.descent} m` },
 ];
 
