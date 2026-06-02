@@ -3324,7 +3324,7 @@ function buildRecap(stats, sel, selBars, selCharts) {
       const paceVal = isDash(r.pace) ? '—' : r.pace;
       const hrVal   = isDash(r.hr)   ? '' : r.hr;
       const sec     = isDash(r.pace) ? 0 : paceToSec(r.pace);
-      const pct = isDash(r.pace) ? 0 : Math.round(((maxPace - sec) / paceRange) * 70 + 15);
+      const pct = isDash(r.pace) ? 0 : Math.round(((maxPace - sec) / paceRange) * 35 + 55);
       const distVal = (() => {
         const d = parseFloat(r.dist) || 0;
         if (d === 0) return r.n;
@@ -3375,7 +3375,7 @@ function buildRecap(stats, sel, selBars, selCharts) {
       const paceVal = isDash(r.pace) ? '—' : r.pace;
       const hrVal   = isDash(r.hr)   ? '' : r.hr;
       const sec     = isDash(r.pace) ? 0 : paceToSec(r.pace);
-      const pct     = isDash(r.pace) ? 0 : Math.round(((maxPace - sec) / paceRange) * 70 + 15);
+      const pct     = isDash(r.pace) ? 0 : Math.round(((maxPace - sec) / paceRange) * 35 + 55);
       const lapDist = parseFloat(r.dist) || 1;
       cumSecInt += sec * lapDist;
       const cumH = Math.floor(cumSecInt/3600), cumM = Math.floor((cumSecInt%3600)/60), cumS = Math.round(cumSecInt%60);
