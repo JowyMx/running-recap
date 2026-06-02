@@ -2124,17 +2124,20 @@ function drawRoute(canvas, points) {
     minLon = Math.min(minLon, p.lon); maxLon = Math.max(maxLon, p.lon);
   });
 
-  const pad    = 10;
+  const padTop    = 14;
+  const padBottom = 55; // más espacio abajo para no tapar la ruta con el gradiente
+  const padSide   = 14;
+  const pad    = padTop; // alias de compatibilidad
   const latR   = maxLat - minLat || 0.001;
   const lonR   = maxLon - minLon || 0.001;
   // Mercator-ish: correct lon scale for latitude
   const latMid = (minLat + maxLat) / 2;
   const lonRcorr = lonR * Math.cos(latMid * Math.PI / 180);
-  const scaleX = (W - 2*pad) / lonRcorr;
-  const scaleY = (H - 2*pad) / latR;
+  const scaleX = (W - padSide*2) / lonRcorr;
+  const scaleY = (H - padTop - padBottom) / latR;
   const scale  = Math.min(scaleX, scaleY);
   const offX   = (W - lonRcorr * scale) / 2;
-  const offY   = (H - latR    * scale) / 2;
+  const offY   = padBottom + (H - padTop - padBottom - latR * scale) / 2;
 
   function xy(p) {
     return {
@@ -3588,9 +3591,12 @@ function renderTemplateCover(stats) {
     ? `<div style="position:absolute;inset:0;background:rgba(0,0,0,0.5);z-index:0;pointer-events:none;"></div>`
     : '';
   // Gradiente inferior solo cuando no hay foto/video (el overlay uniforme ya cubre todo)
+  // Para el mapa: solo cubre el 20% inferior para no tapar la ruta
   const sectionGrad = hasBgMedia
     ? ''
-    : `<div style="position:absolute;inset:0;background:linear-gradient(to bottom,transparent 50%,${bg} 100%)"></div>`;
+    : (_recapTemplate === 'map'
+        ? `<div style="position:absolute;left:0;right:0;bottom:0;height:22%;background:linear-gradient(to bottom,transparent,${bg})"></div>`
+        : `<div style="position:absolute;inset:0;background:linear-gradient(to bottom,transparent 50%,${bg} 100%)"></div>`);
 
   // Métricas comunes — filtradas por _tplMetrics (sin la hero que ya va arriba grande)
   const tm = _tplMetrics;
