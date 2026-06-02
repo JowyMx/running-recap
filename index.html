@@ -3318,13 +3318,15 @@ function buildRecap(stats, sel, selBars, selCharts) {
     const minPace = Math.min(...paceSecs);
     const maxPace = Math.max(...paceSecs);
     const paceRange = maxPace - minPace || 1;
+    const pacePad  = 60; // margen fijo de 60s a cada lado → diferencias pequeñas lucen pequeñas
+    const paddedRange = paceRange + 2 * pacePad;
 
     let cumSec = 0;
     const rows = stats.tableRows.map((r, i) => {
       const paceVal = isDash(r.pace) ? '—' : r.pace;
       const hrVal   = isDash(r.hr)   ? '' : r.hr;
       const sec     = isDash(r.pace) ? 0 : paceToSec(r.pace);
-      const pct = isDash(r.pace) ? 0 : Math.round(((maxPace - sec) / paceRange) * 35 + 55);
+      const pct = isDash(r.pace) ? 0 : Math.round(((maxPace + pacePad - sec) / paddedRange) * 80 + 10);
       const distVal = (() => {
         const d = parseFloat(r.dist) || 0;
         if (d === 0) return r.n;
@@ -3369,13 +3371,15 @@ function buildRecap(stats, sel, selBars, selCharts) {
     const minPace   = Math.min(...paceSecs);
     const maxPace   = Math.max(...paceSecs);
     const paceRange = maxPace - minPace || 1;
+    const pacePad   = 60;
+    const paddedRange = paceRange + 2 * pacePad;
 
     let cumSecInt = 0;
     const rows = stats.tableRows.map(r => {
       const paceVal = isDash(r.pace) ? '—' : r.pace;
       const hrVal   = isDash(r.hr)   ? '' : r.hr;
       const sec     = isDash(r.pace) ? 0 : paceToSec(r.pace);
-      const pct     = isDash(r.pace) ? 0 : Math.round(((maxPace - sec) / paceRange) * 35 + 55);
+      const pct     = isDash(r.pace) ? 0 : Math.round(((maxPace + pacePad - sec) / paddedRange) * 80 + 10);
       const lapDist = parseFloat(r.dist) || 1;
       cumSecInt += sec * lapDist;
       const cumH = Math.floor(cumSecInt/3600), cumM = Math.floor((cumSecInt%3600)/60), cumS = Math.round(cumSecInt%60);
