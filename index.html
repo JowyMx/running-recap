@@ -3744,11 +3744,13 @@ function renderTemplateCover(stats) {
     const minPace   = validSecs.length ? Math.min(...validSecs) : 0;
     const maxPace   = validSecs.length ? Math.max(...validSecs) : 0;
     const pRange    = maxPace - minPace || 1;
+    const tplVisualRange = Math.min(pRange * 0.5, 40);
+    const tplMinBar      = 90 - tplVisualRange;
 
     let cum = 0;
     const rowsHtml = groupedRows.map(r => {
       cum += r.lapTimeSec > 0 ? r.lapTimeSec : r.paceSec * (groupSize > 1 ? groupSize : 1) * 60;
-      const pct    = r.paceSec > 0 ? Math.round(((maxPace - r.paceSec) / pRange) * 70 + 15) : 0;
+      const pct    = r.paceSec > 0 ? Math.round(((maxPace - r.paceSec) / pRange) * tplVisualRange + tplMinBar) : 0;
       const cumH   = Math.floor(cum/3600), cumM = Math.floor((cum%3600)/60), cumS = Math.round(cum%60);
       const cumVal = cumH > 0
         ? `${cumH}:${String(cumM).padStart(2,'0')}:${String(cumS).padStart(2,'0')}`
@@ -3828,14 +3830,14 @@ function renderTemplateCover(stats) {
 
     // Líneas de referencia horizontales
     const refLinesHtml = yTickPaces.map(p => {
-      const pct = Math.round(((maxPace - p) / pRange) * 70 + 15);
+      const pct = Math.round(((maxPace - p) / pRange) * tplVisualRange + tplMinBar);
       return `<div style="position:absolute;left:0;right:0;bottom:${pct}%;
                            height:1px;background:rgba(255,255,255,0.07);pointer-events:none;"></div>`;
     }).join('');
 
     // Barras (sin label de ritmo encima)
     const barsHtml = groupedRows.map((r, i) => {
-      const pct = r.paceSec > 0 ? Math.round(((maxPace - r.paceSec) / pRange) * 70 + 15) : 10;
+      const pct = r.paceSec > 0 ? Math.round(((maxPace - r.paceSec) / pRange) * tplVisualRange + tplMinBar) : 10;
       return `<div style="flex:1;position:relative;min-width:0;">
         <div class="tpl-lap-bar-v" data-pct="${pct}"
              style="position:absolute;bottom:0;left:0;right:0;height:0%;
