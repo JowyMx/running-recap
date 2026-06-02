@@ -3317,16 +3317,18 @@ function buildRecap(stats, sel, selBars, selCharts) {
       .map(r => paceToSec(r.pace));
     const minPace = Math.min(...paceSecs);
     const maxPace = Math.max(...paceSecs);
-    const paceRange = maxPace - minPace || 1;
-    const pacePad  = 60; // margen fijo de 60s a cada lado → diferencias pequeñas lucen pequeñas
-    const paddedRange = paceRange + 2 * pacePad;
+    const paceRange   = maxPace - minPace || 1;
+    // Rango visual proporcional: carreras consistentes → barras muy similares;
+    // intervalos → barras muy distintas. Máximo 40% de rango visual.
+    const visualRange = Math.min(paceRange * 0.5, 40);
+    const minBar      = 90 - visualRange;
 
     let cumSec = 0;
     const rows = stats.tableRows.map((r, i) => {
       const paceVal = isDash(r.pace) ? '—' : r.pace;
       const hrVal   = isDash(r.hr)   ? '' : r.hr;
       const sec     = isDash(r.pace) ? 0 : paceToSec(r.pace);
-      const pct = isDash(r.pace) ? 0 : Math.round(((maxPace + pacePad - sec) / paddedRange) * 80 + 10);
+      const pct = isDash(r.pace) ? 0 : Math.round(((maxPace - sec) / paceRange) * visualRange + minBar);
       const distVal = (() => {
         const d = parseFloat(r.dist) || 0;
         if (d === 0) return r.n;
@@ -3371,15 +3373,15 @@ function buildRecap(stats, sel, selBars, selCharts) {
     const minPace   = Math.min(...paceSecs);
     const maxPace   = Math.max(...paceSecs);
     const paceRange = maxPace - minPace || 1;
-    const pacePad   = 60;
-    const paddedRange = paceRange + 2 * pacePad;
+    const visualRange = Math.min(paceRange * 0.5, 40);
+    const minBar      = 90 - visualRange;
 
     let cumSecInt = 0;
     const rows = stats.tableRows.map(r => {
       const paceVal = isDash(r.pace) ? '—' : r.pace;
       const hrVal   = isDash(r.hr)   ? '' : r.hr;
       const sec     = isDash(r.pace) ? 0 : paceToSec(r.pace);
-      const pct     = isDash(r.pace) ? 0 : Math.round(((maxPace + pacePad - sec) / paddedRange) * 80 + 10);
+      const pct     = isDash(r.pace) ? 0 : Math.round(((maxPace - sec) / paceRange) * visualRange + minBar);
       const lapDist = parseFloat(r.dist) || 1;
       cumSecInt += sec * lapDist;
       const cumH = Math.floor(cumSecInt/3600), cumM = Math.floor((cumSecInt%3600)/60), cumS = Math.round(cumSecInt%60);
